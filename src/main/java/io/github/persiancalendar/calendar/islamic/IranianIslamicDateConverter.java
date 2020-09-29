@@ -16,7 +16,7 @@ public class IranianIslamicDateConverter {
     private static long jdSupportEnd;
     private static long jdSupportStart = 2453766;
 
-    public static int latestSupportedYearOfIran = 1399;
+    public static int latestSupportedYearOfIran = 1400;
 
     static {
         // https://github.com/ilius/starcal/blob/master/scal3/cal_types/hijri-monthes.json
@@ -37,7 +37,8 @@ public class IranianIslamicDateConverter {
                 1439, 29, 30, 30, 30, 30, 29, 30, 29, 29, 30, 29, 29,
                 1440, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29,
                 1441, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30,
-                1442, 29, 29, 30, 29, 30, 29, 30,/**/30, 30, 29, 30, 30
+                1442, 29, 29, 30, 29, 30, 29, 30, 30, 29, 30, 30, 29,
+                1443, 29, 30, 30, 29, 29, 30, 29,/**/30, 30, 29, 30, 30
         };
 
         int years = (int) Math.ceil(((float) hijriMonths.length) / 13);
