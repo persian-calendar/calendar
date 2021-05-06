@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class LookupTableConverter {
 
     private static final int startingYear = 1206;
-    private static long[] yearsStartingJdn = new long[1498 - startingYear];
+    private static final long[] yearsStartingJdn = new long[1498 - startingYear];
 
     static {
         int[] leapYears = {1210, 1214, 1218, 1222, 1226, 1230, 1234, 1238, 1243, 1247, 1251, 1255, 1259, 1263,
@@ -29,7 +29,7 @@ public class LookupTableConverter {
             return -1;
 
         return yearsStartingJdn[year - startingYear]
-                + (month <= 7 ? (month - 1) * 31 : (month - 1) * 30 + 6) // total days of months
+                + (month <= 7 ? (month - 1) * 31L : (month - 1) * 30L + 6) // total days of months
                 + day - 1;
     }
 
