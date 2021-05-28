@@ -3,7 +3,7 @@ package io.github.persiancalendar.calendar.persian;
 import java.util.Arrays;
 
 // Sad that we have to do this but in order to be compatible
-// with https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498.pdf
+// with https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
 // I see no other way
 public class LookupTableConverter {
 
