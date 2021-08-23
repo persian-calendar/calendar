@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class MainLogicTests {
+class MainTests {
     @Test
     fun islamic_converter_test() {
         listOf(
