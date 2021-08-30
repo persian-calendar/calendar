@@ -5,7 +5,6 @@ import org.junit.Test
 
 class ImportedTests {
 
-
     @Test
     fun `Partially conforming with calendariale tests`() {
         val J0000 = 1721425L // Ours is different apparently
@@ -136,7 +135,7 @@ class ImportedTests {
         }
     }
 
-    private val calendarCenterTests = """
+    private val calendarCenterResults = """
         [9/4/1306, 1/1/1346, 1/7/1927]
         [7/5/1306, 1/2/1346, 30/7/1927]
         [6/6/1306, 1/3/1346, 29/8/1927]
@@ -1305,18 +1304,16 @@ class ImportedTests {
 
     // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp
     @Test
-    fun `Conforming with Calendar Center tests`() {
-        calendarCenterTests.lines().forEach { line ->
-            line.trim('[', ']').split(", ").map { it.split("/").map { p -> p.toInt() } }
-                .let { (persian, islamic, gregorian) ->
-                    assertEquals(
-                        1, setOf(
-                            PersianDate(persian[2], persian[1], persian[0]).toJdn(),
-                            IslamicDate(islamic[2], islamic[1], islamic[0]).toJdn(),
-                            CivilDate(gregorian[2], gregorian[1], gregorian[0]).toJdn()
-                        ).size
-                    )
-                }
+    fun `Matches with Calendar Center converter Hijri months`() = calendarCenterResults.lines().forEach { line ->
+        val (persian, islamic, gregorian) = line.trim('[', ']').split(", ").map {
+            it.split("/").map { part -> part.toInt() }
         }
+        assertEquals(
+            1, setOf(
+                PersianDate(persian[2], persian[1], persian[0]).toJdn(),
+                IslamicDate(islamic[2], islamic[1], islamic[0]).toJdn(),
+                CivilDate(gregorian[2], gregorian[1], gregorian[0]).toJdn()
+            ).size
+        )
     }
 }
