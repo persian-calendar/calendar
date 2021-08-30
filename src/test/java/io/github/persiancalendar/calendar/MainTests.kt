@@ -5,6 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MainTests {
+
     @Test
     fun islamic_converter_test() {
         listOf(
@@ -116,6 +117,12 @@ class MainTests {
         //                System.out.print("\n");
         //            ++i;
         //        }
+
+        // https://imgur.com/a/AbIvGVT
+        assertEquals(
+            PersianDate(1367, 1, 25).toJdn(),
+            IslamicDate(1408, 8, 26).toJdn()
+        )
     }
 
     @Test
@@ -148,5 +155,4 @@ class MainTests {
         val endJdn = CivilDate(2350, 1, 1).toJdn()
         (startJdn..endJdn).forEach { assertEquals(it, CivilDate(it).toJdn()) }
     }
-
 }
