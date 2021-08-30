@@ -152,9 +152,15 @@ public class IranianIslamicDateConverter {
         return calculatedDay + day;
     }
 
-    private static int search(long[] array, long r) {
-        int i = 0;
-        while (i < array.length && array[i] < r) ++i;
+    private static int searchYearsStarts(long r) {
+        int i = (int) ((r - yearsStartJd[0]) / (30 * 12));
+        while (i < yearsStartJd.length && yearsStartJd[i] < r) ++i;
+        return i;
+    }
+
+    private static int searchInOneYear(long[] yearJdn, long r) {
+        int i = (int) ((r - yearJdn[0]) / 30);
+        while (i < yearJdn.length && yearJdn[i] < r) ++i;
         return i;
     }
 
@@ -162,16 +168,12 @@ public class IranianIslamicDateConverter {
         if (jd < jdSupportStart || jd >= jdSupportEnd || yearsStartJd == null)
             return null;
 
-        int yearIndex = search(yearsStartJd, jd);
+        int yearIndex = searchYearsStarts(jd);
         int year = yearIndex + supportedYearsStart - 1;
         long[] yearMonths = yearsMonthsInJd.get(year);
-        if (yearMonths == null) {
-            return null;
-        }
-        int month = search(yearMonths, jd);
-        if (yearMonths[month - 1] == 0) {
-            return null;
-        }
+        if (yearMonths == null) return null;
+        int month = searchInOneYear(yearMonths, jd);
+        if (yearMonths[month - 1] == 0) return null;
         int day = (int) (jd - yearMonths[month - 1]);
         return new int[]{year, month, day};
     }
