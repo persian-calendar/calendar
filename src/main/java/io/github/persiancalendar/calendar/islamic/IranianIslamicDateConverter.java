@@ -16,11 +16,11 @@ public class IranianIslamicDateConverter {
     private final static long jdSupportEnd;
     private final static long jdSupportStart = 2425063; // CivilDate(1927, 7, 1).toJdn()
 
-    public static int latestSupportedYearOfIran = 1400;
+    public static int latestSupportedYearOfIran = 1401;
 
     static {
-        // https://github.com/ilius/starcal/blob/master/scal3/cal_types/hijri-monthes.json
-        // https://calendar.ut.ac.ir/Fa/News/Data/Doc/Calendar%201398-%201.pdf
+        // https://calendar.ut.ac.ir/Fa/News/Data/Doc/Calendar%201401-Full.pdf
+        // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp
         int[] hijriMonths = {
                 1346, 29, 30, 30, 29, 30, 30, 30, 29, 29, 30, 29, 29,
                 1347, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30, 29,
@@ -119,7 +119,8 @@ public class IranianIslamicDateConverter {
                 1440, 30, 29, 30, 30, 30, 29, 30, 30, 29, 29, 30, 29,
                 1441, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30,
                 1442, 29, 29, 30, 29, 30, 29, 30, 30, 29, 30, 30, 29,
-                1443, 29, 30, 30, 29, 29, 30, 29,/**/30, 29, 30, 29, 30
+                1443, 29, 30, 30, 29, 29, 30, 29, 30, 29, 30, 30, 29,
+                1444, 30, 30, 29, 30, 29, 29, 30,/**/30, 29, 30, 29, 30
         };
 
         int years = (int) Math.ceil(((float) hijriMonths.length) / 13);
