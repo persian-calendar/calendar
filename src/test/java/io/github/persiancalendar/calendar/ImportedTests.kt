@@ -18,10 +18,8 @@ class ImportedTests {
         )
 
         (1206..1498).forEach {
-            assertEquals(
-                it.toString(), if (it in leapYears) 366 else 365,
-                PersianDate(it + 1, 1, 1).toJdn() - PersianDate(it, 1, 1).toJdn()
-            )
+            val yearLength = PersianDate(it + 1, 1, 1).toJdn() - PersianDate(it, 1, 1).toJdn()
+            assertEquals(it.toString(), if (it in leapYears) 366 else 365, yearLength)
         }
     }
 
