@@ -295,7 +295,7 @@ public class AlgorithmicConverter {
     // GMHA is the Greenwich Mean Hour Angle of the mean (fictitious) Sun
     // http://www.esrl.noaa.gov/gmd/grad/solcalc/
     // http://en.wikipedia.org/wiki/Equation_of_time
-    private static double EquationOfTime(double time) {
+    private static double equationOfTime(double time) {
         double julianCenturies = julianCenturies(time);
         double lambda = polynomialSum(lambdaCoefficients, julianCenturies);
         double anomaly = polynomialSum(anomalyCoefficients, julianCenturies);
@@ -329,7 +329,7 @@ public class AlgorithmicConverter {
     private static double asLocalTime(double apparentMidday, double longitude) {
         // slightly inaccurate since equation of time takes mean time not apparent time as its argument, but the difference is negligible
         double universalTime = apparentMidday - asDayFraction(longitude);
-        return apparentMidday - EquationOfTime(universalTime);
+        return apparentMidday - equationOfTime(universalTime);
     }
 
     // midday
