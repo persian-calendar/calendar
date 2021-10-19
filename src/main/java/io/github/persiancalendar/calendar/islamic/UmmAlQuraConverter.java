@@ -28,7 +28,7 @@ package io.github.persiancalendar.calendar.islamic;
 
 public class UmmAlQuraConverter {
 
-    private static int[] ummalquraData = {28607, 28636, 28665, 28695, 28724, 28754, 28783, 28813,
+    private static final int[] ummalquraData = {28607, 28636, 28665, 28695, 28724, 28754, 28783, 28813,
             28843, 28872, 28901, 28931, 28960, 28990, 29019, 29049, 29078, 29108, 29137, 29167,
             29196, 29226, 29255, 29285, 29315, 29345, 29375, 29404, 29434, 29463, 29492, 29522,
             29551, 29580, 29610, 29640, 29669, 29699, 29729, 29759,
@@ -207,8 +207,7 @@ public class UmmAlQuraConverter {
     public static int toJdn(int hy, int hm, int hd) {
         int i = getNewMoonMJDNIndex(hy, hm);
         int lookupResult = ummalquraData(i - 1);
-        if (lookupResult == -1)
-            return -1;
+        if (lookupResult == -1) return -1;
 
         return hd + lookupResult - 1 + 2400000;
     }
@@ -221,9 +220,7 @@ public class UmmAlQuraConverter {
         int hy = cYears + 1;
         int hm = totalMonths - 12 * cYears;
         int lookupResult = ummalquraData(i - 1);
-        if (lookupResult == -1) {
-            return null;
-        }
+        if (lookupResult == -1) return null;
 
         int hd = (int) (mjdn - lookupResult + 1);
 
@@ -237,9 +234,7 @@ public class UmmAlQuraConverter {
 
     private static int getNewMoonMJDNIndexByJDN(long mjdn) {
         for (int i = 0; i < ummalquraData.length; i = i + 1) {
-            if (ummalquraData[i] > mjdn) {
-                return i;
-            }
+            if (ummalquraData[i] > mjdn) return i;
         }
 
         return -1;
@@ -247,7 +242,7 @@ public class UmmAlQuraConverter {
 
     private static int ummalquraData(int index) {
         if (index < 0 || index >= ummalquraData.length) {
-//            throw new IllegalArgumentException("Valid date should be between 1356 AH (14 March 1937 CE) to 1500 AH (16 November 2077 CE)");
+            // throw new IllegalArgumentException("Valid date should be between 1356 AH (14 March 1937 CE) to 1500 AH (16 November 2077 CE)");
             return -1;
         }
 

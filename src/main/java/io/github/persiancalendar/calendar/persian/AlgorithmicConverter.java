@@ -65,8 +65,12 @@ public class AlgorithmicConverter {
         return new int[]{y, m, d};
     }
 
+    private static int daysInPreviousMonths(int month) {
+        return daysToMonth[month - 1];
+    }
+
     private static double asSeason(double longitude) {
-        return (longitude < 0) ? (longitude + fullCircleOfArc) : longitude;
+        return longitude < 0 ? longitude + fullCircleOfArc : longitude;
     }
 
     private static double initLongitude(double longitude) {
@@ -75,28 +79,26 @@ public class AlgorithmicConverter {
 
     private static double reminder(double divisor, double dividend) {
         double whole = Math.floor(divisor / dividend);
-        return divisor - (dividend * whole);
+        return divisor - dividend * whole;
     }
 
     private static double normalizeLongitude(double longitude) {
         longitude = reminder(longitude, fullCircleOfArc);
-        if (longitude < 0) {
-            longitude += fullCircleOfArc;
-        }
+        if (longitude < 0) longitude += fullCircleOfArc;
         return longitude;
     }
 
     private static double estimatePrior(double longitude, double time) {
-        double timeSunLastAtLongitude = time - (meanSpeedOfSun * asSeason(initLongitude(compute(time) - longitude)));
+        double timeSunLastAtLongitude = time - meanSpeedOfSun * asSeason(initLongitude(compute(time) - longitude));
         double longitudeErrorDelta = initLongitude(compute(timeSunLastAtLongitude) - longitude);
-        return Math.min(time, timeSunLastAtLongitude - (meanSpeedOfSun * longitudeErrorDelta));
+        return Math.min(time, timeSunLastAtLongitude - meanSpeedOfSun * longitudeErrorDelta);
     }
 
     private static double compute(double time) {
         double julianCenturies = julianCenturies(time);
         double lambda = 282.7771834
-                + (36000.76953744 * julianCenturies)
-                + (0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(julianCenturies));
+                + 36000.76953744 * julianCenturies
+                + 0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(julianCenturies);
 
         double longitude = lambda + aberration(julianCenturies) + nutation(julianCenturies);
         return initLongitude(longitude);
@@ -116,11 +118,11 @@ public class AlgorithmicConverter {
     private static double nutation(double julianCenturies) {
         double a = polynomialSum(coefficientsA, julianCenturies);
         double b = polynomialSum(coefficientsB, julianCenturies);
-        return (-0.004778 * sinOfDegree(a)) - (0.0003667 * sinOfDegree(b));
+        return -0.004778 * sinOfDegree(a) - 0.0003667 * sinOfDegree(b);
     }
 
     private static double aberration(double julianCenturies) {
-        return (0.0000974 * cosOfDegree(177.63 + (35999.01848 * julianCenturies))) - 0.005575;
+        return 0.0000974 * cosOfDegree(177.63 + (35999.01848 * julianCenturies)) - 0.005575;
     }
 
     private static double radiansFromDegrees(double degree) {
@@ -208,7 +210,7 @@ public class AlgorithmicConverter {
         long january1stOfYear = new CivilDate(gregorianYear, 1, 1).toJdn() - projectJdnOffset;
         double daysSinceStartOf1810 = january1stOfYear - startOf1810;
         double x = twelveHours + daysSinceStartOf1810;
-        return ((Math.pow(x, 2) / 41048480) - 15) / secondsPerDay;
+        return (Math.pow(x, 2) / 41048480 - 15) / secondsPerDay;
     }
 
     private static double ephemerisCorrection1988to2019(int gregorianYear) {
@@ -222,7 +224,7 @@ public class AlgorithmicConverter {
     }
 
     private static double angle(int degrees, int minutes, double seconds) {
-        return ((seconds / secondsPerMinute + minutes) / minutesPerDegree) + degrees;
+        return (seconds / secondsPerMinute + minutes) / minutesPerDegree + degrees;
     }
 
     private static double ephemerisCorrection1900to1987(int gregorianYear) {
@@ -305,25 +307,17 @@ public class AlgorithmicConverter {
         double tanHalfEpsilon = tanOfDegree(epsilon / 2);
         double y = tanHalfEpsilon * tanHalfEpsilon;
 
-        double dividend = ((y * sinOfDegree(2 * lambda))
-                - (2 * eccentricity * sinOfDegree(anomaly))
-                + (4 * eccentricity * y * sinOfDegree(anomaly) * cosOfDegree(2 * lambda))
-                - (0.5 * Math.pow(y, 2) * sinOfDegree(4 * lambda))
-                - (1.25 * Math.pow(eccentricity, 2) * sinOfDegree(2 * anomaly)));
+        double dividend = y * sinOfDegree(2 * lambda)
+                - 2 * eccentricity * sinOfDegree(anomaly)
+                + 4 * eccentricity * y * sinOfDegree(anomaly) * cosOfDegree(2 * lambda)
+                - 0.5 * Math.pow(y, 2) * sinOfDegree(4 * lambda)
+                - 1.25 * Math.pow(eccentricity, 2) * sinOfDegree(2 * anomaly);
         double divisor = 2 * Math.PI;
         double equation = dividend / divisor;
 
         // approximation of equation of time is not valid for dates that are many millennia in the past or future
         // thus limited to a half day
-        return copySign(Math.min(Math.abs(equation), twelveHours), equation);
-    }
-
-    private static boolean isNegative(double value) {
-        return Math.signum(value) == -1;
-    }
-
-    private static double copySign(double value, double sign) {
-        return isNegative(value) == isNegative(sign) ? value : -value;
+        return Math.copySign(Math.min(Math.abs(equation), twelveHours), equation);
     }
 
     private static double asLocalTime(double apparentMidday, double longitude) {
@@ -355,9 +349,7 @@ public class AlgorithmicConverter {
         for (; day != upperBoundNewYearDay; ++day) {
             double midday = middayAtPersianObservationSite((double) day);
             double l = compute(midday);
-            if ((longitudeSpring <= l) && (l <= twoDegreesAfterSpring)) {
-                break;
-            }
+            if (longitudeSpring <= l && l <= twoDegreesAfterSpring) break;
         }
         // Contract.Assert(day != upperBoundNewYearDay);
         return day - 1;
@@ -367,10 +359,6 @@ public class AlgorithmicConverter {
         int index = 0;
         while (ordinalDay > daysToMonth[index]) index++;
         return index;
-    }
-
-    private static int daysInPreviousMonths(int month) {
-        return daysToMonth[month - 1];
     }
 
     private enum CorrectionAlgorithm {

@@ -4,7 +4,7 @@ import io.github.persiancalendar.calendar.CivilDate;
 
 public class FallbackIslamicConverter {
 
-    private static int NMONTHS = (1405 * 12 + 1);
+    private static final int NMONTHS = (1405 * 12 + 1);
 
     private static long floor(double d) {
         return (long) Math.floor(d);
@@ -16,8 +16,7 @@ public class FallbackIslamicConverter {
         // conjunction number 1048 which occured on September 1984 25d
         // 3h 10m UT.
 
-        if (year < 0)
-            year++;
+        if (year < 0) year++;
 
         long k = month + year * 12 - NMONTHS; // nunber of months since 1/1/1405
 
@@ -91,7 +90,6 @@ public class FallbackIslamicConverter {
     }
 
     private static double visibility(long n) {
-
         // parameters for Makkah: for a new moon to be visible after sunset on
         // a the same day in which it started, it has to have started before
         // (SUNSET-MINAGE)-TIMZ=3 A.M. local time.

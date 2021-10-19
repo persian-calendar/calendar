@@ -9,14 +9,13 @@ import java.util.Map;
  * I've tried to optimize its runtime performance, so it is different to the way used on starcal.
  */
 public class IranianIslamicDateConverter {
-    private static Map<Integer, long[]> yearsMonthsInJd = new HashMap<>();
 
     private final static int supportedYearsStart;
     private final static long[] yearsStartJd;
     private final static long jdSupportEnd;
     private final static long jdSupportStart = 2425063; // CivilDate(1927, 7, 1).toJdn()
-
     public static int latestSupportedYearOfIran = 1401;
+    private static final Map<Integer, long[]> yearsMonthsInJd = new HashMap<>();
 
     static {
         // https://calendar.ut.ac.ir/Fa/News/Data/Doc/Calendar%201401-Full.pdf
@@ -166,8 +165,7 @@ public class IranianIslamicDateConverter {
     }
 
     public static int[] fromJdn(long jd) {
-        if (jd < jdSupportStart || jd >= jdSupportEnd || yearsStartJd == null)
-            return null;
+        if (jd < jdSupportStart || jd >= jdSupportEnd || yearsStartJd == null) return null;
 
         int yearIndex = searchYearsStarts(jd);
         int year = yearIndex + supportedYearsStart - 1;

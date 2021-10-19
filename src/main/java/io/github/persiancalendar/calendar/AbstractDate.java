@@ -7,6 +7,7 @@ package io.github.persiancalendar.calendar;
  */
 
 public abstract class AbstractDate {
+
     // Concrete things
     final private int year;
     final private int month;
@@ -57,13 +58,10 @@ public abstract class AbstractDate {
 
     @Override
     public boolean equals(Object obj) {
-        if (getClass() != obj.getClass()) return false;
-        if (obj instanceof AbstractDate) {
-            AbstractDate date = (AbstractDate) obj;
-            return getYear() == date.getYear() &&
-                    getMonth() == date.getMonth() &&
-                    getDayOfMonth() == date.getDayOfMonth();
-        }
-        return false;
+        if (getClass() != obj.getClass() || !(obj instanceof AbstractDate)) return false;
+        AbstractDate date = (AbstractDate) obj;
+        return getYear() == date.getYear() &&
+                getMonth() == date.getMonth() &&
+                getDayOfMonth() == date.getDayOfMonth();
     }
 }
