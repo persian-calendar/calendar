@@ -7,7 +7,7 @@ import org.junit.Test
 class MainTests {
 
     @Test
-    fun islamic_converter_test() {
+    fun `Islamic converter test`() {
         listOf(
             listOf(2453767, 1427, 1, 1), listOf(2455658, 1432, 5, 2)
 //            listOf(2458579, 1440, 7, 29), listOf(2458580, 1440, 8, 1)
@@ -126,7 +126,7 @@ class MainTests {
     }
 
     @Test
-    fun practice_persian_converting_back_and_forth() {
+    fun `Practice Persian converting back and forth`() {
         assertEquals(PersianDate(1398, 1, 1).toJdn(), 2458564)
         val startJdn = CivilDate(1750, 1, 1).toJdn()
         val endJdn = CivilDate(2350, 1, 1).toJdn()
@@ -134,14 +134,14 @@ class MainTests {
     }
 
     @Test
-    fun practice_islamic_converting_back_and_forth() {
+    fun `Practice Islamic converting back and forth`() {
         val startJdn = CivilDate(1750, 1, 1).toJdn()
         val endJdn = CivilDate(2350, 1, 1).toJdn()
         (startJdn..endJdn).forEach { assertEquals(it, IslamicDate(it).toJdn()) }
     }
 
     @Test
-    fun practice_ummalqara_converting_back_and_forth() {
+    fun `Practice UmmAlqara converting back and forth`() {
         IslamicDate.useUmmAlQura = true
         val startJdn = CivilDate(1750, 1, 1).toJdn()
         val endJdn = CivilDate(2350, 1, 1).toJdn()
@@ -150,7 +150,7 @@ class MainTests {
     }
 
     @Test
-    fun practice_civil_converting_back_and_forth() {
+    fun `Practice Gregorian converting back and forth`() {
         val startJdn = CivilDate(1750, 1, 1).toJdn()
         val endJdn = CivilDate(2350, 1, 1).toJdn()
         (startJdn..endJdn).forEach { assertEquals(it, CivilDate(it).toJdn()) }
