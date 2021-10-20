@@ -125,34 +125,58 @@ class MainTests {
         )
     }
 
+    private val startJdn = CivilDate(1250, 1, 1).toJdn()
+    private val endJdn = CivilDate(2350, 1, 1).toJdn()
+
     @Test
     fun `Practice Persian converting back and forth`() {
         assertEquals(PersianDate(1398, 1, 1).toJdn(), 2458564)
-        val startJdn = CivilDate(1750, 1, 1).toJdn()
-        val endJdn = CivilDate(2350, 1, 1).toJdn()
-        (startJdn..endJdn).forEach { assertEquals(it, PersianDate(it).toJdn()) }
+        (startJdn..endJdn).map {
+            val date = PersianDate(it)
+            assertEquals(it, date.toJdn())
+            assertTrue(date.month in 1..12)
+            assertTrue(date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30)
+            date.dayOfMonth
+        }.ensureContinuity()
     }
 
     @Test
     fun `Practice Islamic converting back and forth`() {
-        val startJdn = CivilDate(1750, 1, 1).toJdn()
-        val endJdn = CivilDate(2350, 1, 1).toJdn()
-        (startJdn..endJdn).forEach { assertEquals(it, IslamicDate(it).toJdn()) }
+        (startJdn..endJdn).map {
+            val date = IslamicDate(it)
+            assertEquals(it, date.toJdn())
+            assertTrue(date.month in 1..12)
+            assertTrue(date.dayOfMonth in 1..30)
+            date.dayOfMonth
+        }.ensureContinuity()
     }
 
     @Test
     fun `Practice UmmAlqara converting back and forth`() {
         IslamicDate.useUmmAlQura = true
-        val startJdn = CivilDate(1750, 1, 1).toJdn()
-        val endJdn = CivilDate(2350, 1, 1).toJdn()
-        (startJdn..endJdn).forEach { assertEquals(it, IslamicDate(it).toJdn()) }
+        (startJdn..endJdn).map {
+            val date = IslamicDate(it)
+            assertEquals(it, date.toJdn())
+            assertTrue(date.month in 1..12)
+            assertTrue(date.dayOfMonth in 1..30)
+            date.dayOfMonth
+        }.ensureContinuity()
         IslamicDate.useUmmAlQura = false
     }
 
     @Test
     fun `Practice Gregorian converting back and forth`() {
-        val startJdn = CivilDate(1750, 1, 1).toJdn()
-        val endJdn = CivilDate(2350, 1, 1).toJdn()
-        (startJdn..endJdn).forEach { assertEquals(it, CivilDate(it).toJdn()) }
+        (startJdn..endJdn).map {
+            val date = CivilDate(it)
+            assertEquals(it, date.toJdn())
+            assertTrue(date.month in 1..12)
+            assertTrue(date.dayOfMonth in 1..31)
+            date.dayOfMonth
+        }.ensureContinuity()
     }
+
+    private fun List<Int>.ensureContinuity() = this.reduce { previousDayOfMonth, dayOfMonth ->
+        assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
+        dayOfMonth
+    }.let {}
 }

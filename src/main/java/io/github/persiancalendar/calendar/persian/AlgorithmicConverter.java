@@ -56,12 +56,13 @@ public class AlgorithmicConverter {
     }
 
     public static int[] fromJdn(long jdn) {
+        jdn++; // TODO: Investigate why this is needed
         long yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset);
         int y = (int) (Math.floor(((yearStart - persianEpoch) / meanTropicalYearInDays) + 0.5)) + 1;
 
         int ordinalDay = (int) (jdn - toJdn(y, 1, 1));
         int m = monthFromOrdinalDay(ordinalDay);
-        int d = ordinalDay - daysInPreviousMonths(m) + 1; // TODO: The original one didn't need +1, see why is needed now
+        int d = ordinalDay - daysInPreviousMonths(m);
         return new int[]{y, m, d};
     }
 
