@@ -1,7 +1,7 @@
 // Ported from
-// https://github.com/microsoft/referencesource/blob/5697c29/mscorlib/system/globalization/Persiancalendar.cs
-// https://github.com/microsoft/referencesource/blob/5697c29/mscorlib/system/globalization/CalendricalCalculationsHelper.cs
-// Which is released under The MIT License (MIT) per https://github.com/microsoft/referencesource/blob/5697c29/LICENSE.txt
+// https://github.com/dotnet/runtime/blob/4f4af6b5/src/libraries/System.Private.CoreLib/src/System/Globalization/PersianCalendar.cs
+// https://github.com/dotnet/runtime/blob/4f4af6b5/src/libraries/System.Private.CoreLib/src/System/Globalization/CalendricalCalculationsHelper.cs#L8
+// Which is released under The MIT License (MIT)
 package io.github.persiancalendar.calendar.persian;
 
 import io.github.persiancalendar.calendar.CivilDate;
