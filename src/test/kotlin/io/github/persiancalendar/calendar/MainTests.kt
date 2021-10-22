@@ -166,12 +166,12 @@ class MainTests {
 
     @Test
     fun `Practice Gregorian converting back and forth`() {
-        (startJdn..endJdn).map {
+        (startJdn..endJdn).mapNotNull {
             val date = CivilDate(it)
             assertEquals(it, date.toJdn())
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..31)
-            date.dayOfMonth
+            if (date.year == 1582 && date.month == 10) null else date.dayOfMonth
         }.ensureContinuity()
     }
 
