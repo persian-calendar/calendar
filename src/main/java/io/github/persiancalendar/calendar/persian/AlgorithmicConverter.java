@@ -11,7 +11,7 @@ public class AlgorithmicConverter {
     private static final long projectJdnOffset = 1_721_426; // Offset from Jdn to jdn used in this converter
     private static final long persianEpoch = 226895; // new DateTime(622, 3, 22).Ticks / TicksPerDay
     private static final double meanTropicalYearInDays = 365.242189;
-    private static final double fullCircleOfArc = 360.0; // 360.0;
+    private static final double fullCircleOfArc = 360.0;
     private static final double meanSpeedOfSun = meanTropicalYearInDays / fullCircleOfArc;
     private static final int halfCircleOfArc = 180;
     private static final double twoDegreesAfterSpring = 2.0;
@@ -78,13 +78,8 @@ public class AlgorithmicConverter {
         return normalizeLongitude(longitude + halfCircleOfArc) - halfCircleOfArc;
     }
 
-    private static double reminder(double divisor, double dividend) {
-        double whole = Math.floor(divisor / dividend);
-        return divisor - dividend * whole;
-    }
-
     private static double normalizeLongitude(double longitude) {
-        longitude = reminder(longitude, fullCircleOfArc);
+        longitude %= fullCircleOfArc;
         if (longitude < 0) longitude += fullCircleOfArc;
         return longitude;
     }
