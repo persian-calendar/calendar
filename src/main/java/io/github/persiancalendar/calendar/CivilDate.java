@@ -4,7 +4,7 @@ package io.github.persiancalendar.calendar;
  * @author Amir
  */
 
-public class CivilDate extends AbstractDate {
+public class CivilDate extends AbstractDate implements YearMonthDate<CivilDate> {
 
     public CivilDate(int year, int month, int dayOfMonth) {
         super(year, month, dayOfMonth);
@@ -72,5 +72,15 @@ public class CivilDate extends AbstractDate {
             return new int[]{year, month, day};
         } else
             return julianFromJdn(jdn);
+    }
+
+    @Override
+    public CivilDate monthStartOfMonthsDistance(int monthsDistance) {
+        return TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, CivilDate::new);
+    }
+
+    @Override
+    public int monthsDistanceTo(CivilDate date) {
+        return TwelveMonthsYear.monthsDistanceTo(this, date);
     }
 }

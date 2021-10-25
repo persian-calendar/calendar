@@ -8,7 +8,7 @@ import io.github.persiancalendar.calendar.islamic.UmmAlQuraConverter;
  * @author Amir
  */
 
-public class IslamicDate extends AbstractDate {
+public class IslamicDate extends AbstractDate implements YearMonthDate<IslamicDate> {
 
     // Converters
     public static boolean useUmmAlQura = false;
@@ -50,5 +50,15 @@ public class IslamicDate extends AbstractDate {
         if (result == null) result = FallbackIslamicConverter.fromJdn(jdn);
 
         return result;
+    }
+
+    @Override
+    public IslamicDate monthStartOfMonthsDistance(int monthsDistance) {
+        return TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, IslamicDate::new);
+    }
+
+    @Override
+    public int monthsDistanceTo(IslamicDate date) {
+        return TwelveMonthsYear.monthsDistanceTo(this, date);
     }
 }

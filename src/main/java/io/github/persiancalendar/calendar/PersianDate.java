@@ -3,7 +3,7 @@ package io.github.persiancalendar.calendar;
 import io.github.persiancalendar.calendar.persian.AlgorithmicConverter;
 import io.github.persiancalendar.calendar.persian.LookupTableConverter;
 
-public class PersianDate extends AbstractDate {
+public class PersianDate extends AbstractDate implements YearMonthDate<PersianDate> {
 
     public PersianDate(int year, int month, int dayOfMonth) {
         super(year, month, dayOfMonth);
@@ -28,5 +28,15 @@ public class PersianDate extends AbstractDate {
     protected int[] fromJdn(long jdn) {
         int[] result = LookupTableConverter.fromJdn(jdn);
         return result == null ? AlgorithmicConverter.fromJdn(jdn) : result;
+    }
+
+    @Override
+    public PersianDate monthStartOfMonthsDistance(int monthsDistance) {
+        return TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, PersianDate::new);
+    }
+
+    @Override
+    public int monthsDistanceTo(PersianDate date) {
+        return TwelveMonthsYear.monthsDistanceTo(this, date);
     }
 }

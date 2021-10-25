@@ -179,4 +179,35 @@ class MainTests {
         assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
         dayOfMonth
     }.let {}
+
+    @Test
+    fun `Test month distance methods`() {
+        run {
+            val date = CivilDate(2014, 7, 7)
+            assertEquals(0, date.monthsDistanceTo(date))
+            assertEquals(-10, date.monthsDistanceTo(CivilDate(2013, 9, 5)))
+            assertEquals(30, date.monthsDistanceTo(CivilDate(2017, 1, 7)))
+            assertEquals(CivilDate(2013, 12, 1), date.monthStartOfMonthsDistance(-7))
+            assertEquals(CivilDate(2014, 6, 1), date.monthStartOfMonthsDistance(-1))
+            assertEquals(CivilDate(2014, 7, 1), date.monthStartOfMonthsDistance(0))
+            assertEquals(CivilDate(2014, 8, 1), date.monthStartOfMonthsDistance(1))
+            assertEquals(CivilDate(2015, 1, 1), date.monthStartOfMonthsDistance(6))
+        }
+
+        (-40..40).forEach {
+            val date = PersianDate(1318, 2, 5)
+            val dateWithDistance = date.monthStartOfMonthsDistance(it)
+            assertEquals(it, date.monthsDistanceTo(dateWithDistance))
+        }
+        (-40..40).forEach {
+            val date = CivilDate(2016, 7, 26)
+            val dateWithDistance = date.monthStartOfMonthsDistance(it)
+            assertEquals(it, date.monthsDistanceTo(dateWithDistance))
+        }
+        (-40..40).forEach {
+            val date = IslamicDate(1440, 7, 26)
+            val dateWithDistance = date.monthStartOfMonthsDistance(it)
+            assertEquals(it, date.monthsDistanceTo(dateWithDistance))
+        }
+    }
 }
