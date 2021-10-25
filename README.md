@@ -36,7 +36,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    implementation 'com.github.persian-calendar:calendar:1.0.7'
+    implementation 'com.github.persian-calendar:calendar:1.1.0'
 }
 ```
  
