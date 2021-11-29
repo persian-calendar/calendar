@@ -28,9 +28,20 @@ public class LookupTableConverter {
         if (year < startingYear || year > startingYear + yearsStartingJdn.length - 1)
             return -1;
 
-        return yearsStartingJdn[year - startingYear]
-                + (month <= 7 ? (month - 1) * 31L : (month - 1) * 30L + 6) // total days of months
-                + day - 1;
+        return yearsStartingJdn[year - startingYear] + daysInPreviousMonths(month) + day - 1;
+    }
+
+    // First six months have length of 31, next 5 months are 30 and the last month is 29 and in leap years are 30
+    private static final int[] daysToMonth = {0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366};
+
+    private static int monthFromOrdinalDay(int ordinalDay) {
+        int index = ordinalDay / 31;
+        while (ordinalDay > daysToMonth[index]) index++;
+        return index;
+    }
+
+    private static int daysInPreviousMonths(int month) {
+        return daysToMonth[month - 1];
     }
 
     public static int[] fromJdn(long jdn) {
@@ -45,14 +56,9 @@ public class LookupTableConverter {
         long startOfYearJdn = yearsStartingJdn[year];
         year += startingYear;
 
-        long dayOfYear = (jdn - startOfYearJdn) + 1;
-        int month;
-        if (dayOfYear <= 186)
-            month = (int) Math.ceil(dayOfYear / 31d);
-        else
-            month = (int) Math.ceil((dayOfYear - 6) / 30d);
-
-        int day = (int) dayOfYear - (month <= 7 ? (month - 1) * 31 : (month - 1) * 30 + 6);
+        int dayOfYear = (int) (jdn - startOfYearJdn) + 1;
+        int month = monthFromOrdinalDay(dayOfYear);
+        int day = dayOfYear - daysInPreviousMonths(month);
 
         return new int[]{year, month, day};
     }

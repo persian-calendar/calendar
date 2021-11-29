@@ -63,9 +63,9 @@ class ImportedTests {
         ).forEach {
             assertEquals(it[0] + J0000, PersianDate(it[1], it[2], it[3]).toJdn())
             val from = PersianDate(it[0] + J0000)
-            assertEquals(from.year, it[1])
-            assertEquals(from.month, it[2])
-            assertEquals(from.dayOfMonth, it[3])
+            assertEquals(it[1], from.year)
+            assertEquals(it[2], from.month)
+            assertEquals(it[3], from.dayOfMonth)
         }
 
         listOf(
