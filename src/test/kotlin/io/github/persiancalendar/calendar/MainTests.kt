@@ -142,6 +142,8 @@ class MainTests {
 
     @Test
     fun `Practice Islamic converting back and forth`() {
+        val startJdn = CivilDate(1920, 1, 1).toJdn()
+        val endJdn = CivilDate(2020, 1, 1).toJdn()
         (startJdn..endJdn).map {
             val date = IslamicDate(it)
             assertEquals(it, date.toJdn())
