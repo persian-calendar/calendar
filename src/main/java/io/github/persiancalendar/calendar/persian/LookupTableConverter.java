@@ -11,7 +11,8 @@ public class LookupTableConverter {
     private static final long[] yearsStartingJdn = new long[1498 - startingYear];
 
     static {
-        int[] leapYears = {1210, 1214, 1218, 1222, 1226, 1230, 1234, 1238, 1243, 1247, 1251, 1255, 1259, 1263,
+        int[] leapYears = {
+                1210, 1214, 1218, 1222, 1226, 1230, 1234, 1238, 1243, 1247, 1251, 1255, 1259, 1263,
                 1267, 1271, 1276, 1280, 1284, 1288, 1292, 1296, 1300, 1304, 1309, 1313, 1317, 1321,
                 1325, 1329, 1333, 1337, 1342, 1346, 1350, 1354, 1358, 1362, 1366, 1370, 1375, 1379,
                 1383, 1387, 1391, 1395, 1399, 1403, 1408, 1412, 1416, 1420, 1424, 1428, 1432, 1436,
@@ -19,9 +20,11 @@ public class LookupTableConverter {
                 1498};
 
         yearsStartingJdn[0] = 2388438; /* jdn of 1206 */
-        for (int i = 0; i < yearsStartingJdn.length - 1; ++i)
-            yearsStartingJdn[i + 1] = yearsStartingJdn[i] +
-                    (Arrays.binarySearch(leapYears, i + startingYear) < 0 ? 365 : 366);
+        for (int i = 0, j = 0; i < yearsStartingJdn.length - 1; ++i) {
+            int year = i + startingYear;
+            yearsStartingJdn[i + 1] = yearsStartingJdn[i] + (leapYears[j] == year ? 366 : 365);
+            if (year >= leapYears[j] && j + 1 < leapYears.length) j++;
+        }
     }
 
     public static long toJdn(int year, int month, int day) {
