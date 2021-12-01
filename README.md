@@ -5,7 +5,7 @@ Calendar converter based on http://code.google.com/p/mobile-persian-calendar/ (G
 
   ```
   Copyright (C) 2006  Amir Khosroshahi (amir.khosroshahi)
-  Copyright (C) 2012-2019  Android Persian Calendar
+  Copyright (C) 2012-2021  Android Persian Calendar
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@ allprojects {
 Add the dependency
 ```
 dependencies {
-    implementation 'com.github.persian-calendar:calendar:1.1.0'
+    implementation 'com.github.persian-calendar:calendar:1.2.0'
 }
 ```
  
