@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ImportedTests {
-
     @Test
     fun `Conforms with officially published leap years`() {
         // Doesn't match with https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
@@ -1576,5 +1575,31 @@ class ImportedTests {
     fun `Conforms with dotnet Persian calendar leap years`() = (1..9377).forEach {
         val yearLength = PersianDate(it + 1, 1, 1).toJdn() - PersianDate(it, 1, 1).toJdn()
         assertEquals(it.toString(), if (it in leapYears) 366 else 365, yearLength)
+    }
+
+
+    @Test
+    fun `Test Nepali calendar implementation`() {
+        // https://github.com/techgaun/ad-bs-converter/blob/master/test/unit/converter.js
+        """2072/4/3 to 2015/7/19
+        2072/4/16 to 2015/8/1
+        2070/9/17 to 2014/1/1
+        2072/4/1 to 2015/7/17
+        1978/1/1 to 1921/4/13
+        2092/12/30 to 2036/4/14
+        2047/4/26 to 1990/8/10
+        2076/09/16 to 2020/01/1
+        2073/12/31 to 2017/4/13
+        2074/12/30 to 2018/4/13""".split("\n").forEach { line ->
+            val v = line.trimStart().replace(" to ", "/").split("/")
+                .map { it.trimStart('0').toInt() }
+            val nepaliDate = NepaliDate(v[0], v[1], v[2])
+            val jdn = CivilDate(v[3], v[4], v[5]).toJdn()
+            assertEquals(line, nepaliDate.toJdn(), jdn)
+            val date = NepaliDate(jdn)
+            assertEquals(line, v[0], date.year)
+            assertEquals(line, v[1], date.month)
+            assertEquals(line, v[2], date.dayOfMonth)
+        }
     }
 }

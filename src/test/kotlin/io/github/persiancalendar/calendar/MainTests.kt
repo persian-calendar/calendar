@@ -177,6 +177,17 @@ class MainTests {
         }.ensureContinuity()
     }
 
+    @Test
+    fun `Practice Nepali converting back and forth`() {
+        (2422793L..2464798L).mapNotNull {
+            val date = NepaliDate(it)
+            assertEquals(CivilDate(it).run { "$year/$month/$dayOfMonth" }, it, date.toJdn())
+            assertTrue(date.month in 1..12)
+            assertTrue(date.dayOfMonth in 1..32)
+            date.dayOfMonth
+        }.ensureContinuity()
+    }
+
     private fun List<Int>.ensureContinuity() = this.reduce { previousDayOfMonth, dayOfMonth ->
         assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
         dayOfMonth
