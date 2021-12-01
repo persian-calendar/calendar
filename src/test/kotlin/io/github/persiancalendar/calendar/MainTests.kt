@@ -179,7 +179,7 @@ class MainTests {
 
     @Test
     fun `Practice Nepali converting back and forth`() {
-        (2422793L..2464798L).mapNotNull {
+        (startJdn..endJdn).mapNotNull {
             val date = NepaliDate(it)
             assertEquals(CivilDate(it).run { "$year/$month/$dayOfMonth" }, it, date.toJdn())
             assertTrue(date.month in 1..12)

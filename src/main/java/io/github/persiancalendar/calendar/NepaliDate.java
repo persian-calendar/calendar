@@ -1,16 +1,12 @@
 package io.github.persiancalendar.calendar;
 
-import io.github.persiancalendar.calendar.islamic.FallbackIslamicConverter;
-import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter;
-import io.github.persiancalendar.calendar.islamic.UmmAlQuraConverter;
-
 // Also known as "Bikram Sambat" or https://en.wikipedia.org/wiki/Vikram_Samvat
 public class NepaliDate extends AbstractDate implements YearMonthDate<NepaliDate> {
 
     private final static long jdSupportStart = 2422793; // CivilDate(1927, 7, 1).toJdn()
-    private final static long jdSupportEnd;
     private final static int[] months;
     private final static int supportedYears;
+    private final static int supportedDays;
     private final static int supportedYearsStart = 1978;
 
     static {
@@ -141,28 +137,33 @@ public class NepaliDate extends AbstractDate implements YearMonthDate<NepaliDate
             months[m] = jd;
             jd += monthsData[m];
         }
-        jdSupportEnd = jd + jdSupportStart;
+        supportedDays = jd;
+    }
+
+    private int calculateEras(int days, int eraLength) {
+        return (int) Math.floor(days / (float) eraLength);
     }
 
     @Override
     public long toJdn() {
         int yearIndex = getYear() - supportedYearsStart;
-        if (yearIndex < 0 || yearIndex >= supportedYears) return -1;
-        return months[yearIndex * 12 + getMonth() - 1] + getDayOfMonth() + jdSupportStart - 1;
+        int eras = calculateEras(yearIndex, supportedYears);
+        yearIndex -= eras * supportedYears;
+        long erasDays = (long) eras * supportedDays;
+        return months[yearIndex * 12 + getMonth() - 1] + getDayOfMonth() + erasDays + jdSupportStart - 1;
     }
 
     @Override
     protected int[] fromJdn(long jdn) {
-        if (jdn < jdSupportStart || jdn >= jdSupportEnd) return null;
         int days = (int) (jdn - jdSupportStart);
+        int eras = calculateEras(days, supportedDays);
+        days -= eras * supportedDays;
+        int eraStartYear = supportedYearsStart + eras * supportedYears;
 
-        int index = (int) (days / 31.0001);
+        int index = (int) (days / 31.01);
         while (index + 1 < months.length && months[index + 1] <= days) ++index;
 
-        int yearIndex = index / 12;
-        int month = index % 12;
-        int day = days - months[index];
-        return new int[]{yearIndex + supportedYearsStart, month + 1, day + 1};
+        return new int[]{index / 12 + eraStartYear, index % 12 + 1, days - months[index] + 1};
     }
 
     public NepaliDate(int year, int month, int dayOfMonth) {
