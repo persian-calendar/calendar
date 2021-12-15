@@ -1,5 +1,6 @@
 package io.github.persiancalendar.calendar
 
+import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -221,6 +222,28 @@ class MainTests {
             val date = IslamicDate(1440, 7, 26)
             val dateWithDistance = date.monthStartOfMonthsDistance(it)
             assertEquals(it, date.monthsDistanceTo(dateWithDistance))
+        }
+    }
+
+    @Test
+    fun `Supported Year Islamic Calendar Conversions`() {
+        val dates = listOf(
+            listOf(1401, 1, 14, 1443, 9, 1),
+            listOf(1401, 2, 12, 1443, 10, 1),
+            listOf(1401, 3, 11, 1443, 11, 1),
+            listOf(1401, 4, 10, 1443, 12, 1),
+            listOf(1401, 5, 8, 1444, 1, 1),
+            listOf(1401, 6, 7, 1444, 2, 1),
+            listOf(1401, 7, 6, 1444, 3, 1),
+            listOf(1401, 8, 5, 1444, 4, 1),
+            listOf(1401, 9, 5, 1444, 5, 1),
+            listOf(1401, 10, 4, 1444, 6, 1),
+            listOf(1401, 11, 3, 1444, 7, 1),
+            listOf(1401, 12, 3, 1444, 8, 1),
+        )
+        assertEquals(dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran }, 12)
+        dates.forEach {
+            assertEquals(PersianDate(it[0], it[1], it[2]).toJdn(), IslamicDate(it[3], it[4], it[5]).toJdn())
         }
     }
 }
