@@ -20,7 +20,7 @@ public class AlgorithmicConverter {
     private static final int daysInUniformLengthCentury = 36525;
     private static final long startOf1810 = new CivilDate(1810, 1, 1).toJdn() - projectJdnOffset;
     private static final long startOf1900Century = new CivilDate(1900, 1, 1).toJdn() - projectJdnOffset;
-    private static final double twelveHours = 0.5; // half a day
+    private static final double twelveHours = .5; // half a day
     private static final int secondsPerDay = 24 * 60 * 60; // 24 hours * 60 minutes * 60 seconds
     private static final int secondsPerMinute = 60;
     private static final int minutesPerDegree = 60;
@@ -44,7 +44,7 @@ public class AlgorithmicConverter {
             new EphemerisCorrectionAlgorithmMap(1620, CorrectionAlgorithm.Year1620to1699),
             new EphemerisCorrectionAlgorithmMap(Integer.MIN_VALUE, CorrectionAlgorithm.Default) // default must be last
     };
-    private static final double longitudeSpring = 0.0;
+    private static final double longitudeSpring = .0;
 
     public static long toJdn(int year, int month, int day) {
         final int approximateHalfYear = 180;
@@ -126,7 +126,7 @@ public class AlgorithmicConverter {
     }
 
     private static double sumLongSequenceOfPeriodicTerms(double julianCenturies) {
-        double sum = 0.0;
+        double sum = .0;
         sum += periodicTerm(julianCenturies, 403406, 270.54861, 0.9287892);
         sum += periodicTerm(julianCenturies, 195207, 340.19128, 35999.1376958);
         sum += periodicTerm(julianCenturies, 119433, 63.91854, 35999.4089666);
@@ -290,7 +290,7 @@ public class AlgorithmicConverter {
         double dividend = y * Math.sin(Math.toRadians(2 * lambda))
                 - 2 * eccentricity * Math.sin(Math.toRadians(anomaly))
                 + 4 * eccentricity * y * Math.sin(Math.toRadians(anomaly)) * Math.cos(Math.toRadians(2 * lambda))
-                - 0.5 * Math.pow(y, 2) * Math.sin(Math.toRadians(4 * lambda))
+                - .5 * Math.pow(y, 2) * Math.sin(Math.toRadians(4 * lambda))
                 - 1.25 * Math.pow(eccentricity, 2) * Math.sin(Math.toRadians(2 * anomaly));
         double divisor = 2 * Math.PI;
         double equation = dividend / divisor;
