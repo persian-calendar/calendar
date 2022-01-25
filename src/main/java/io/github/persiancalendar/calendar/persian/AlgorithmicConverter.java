@@ -114,31 +114,15 @@ public class AlgorithmicConverter {
     private static double nutation(double julianCenturies) {
         double a = polynomialSum(coefficientsA, julianCenturies);
         double b = polynomialSum(coefficientsB, julianCenturies);
-        return -0.004778 * sinOfDegree(a) - 0.0003667 * sinOfDegree(b);
+        return -0.004778 * Math.sin(Math.toRadians(a)) - 0.0003667 * Math.sin(Math.toRadians(b));
     }
 
     private static double aberration(double julianCenturies) {
-        return 0.0000974 * cosOfDegree(177.63 + (35999.01848 * julianCenturies)) - 0.005575;
-    }
-
-    private static double radiansFromDegrees(double degree) {
-        return degree * Math.PI / 180;
-    }
-
-    private static double sinOfDegree(double degree) {
-        return Math.sin(radiansFromDegrees(degree));
-    }
-
-    private static double cosOfDegree(double degree) {
-        return Math.cos(radiansFromDegrees(degree));
-    }
-
-    private static double tanOfDegree(double degree) {
-        return Math.tan(radiansFromDegrees(degree));
+        return 0.0000974 * Math.cos(Math.toRadians(177.63 + (35999.01848 * julianCenturies))) - 0.005575;
     }
 
     private static double periodicTerm(double julianCenturies, int x, double y, double z) {
-        return x * sinOfDegree(y + z * julianCenturies);
+        return x * Math.sin(Math.toRadians(y + z * julianCenturies));
     }
 
     private static double sumLongSequenceOfPeriodicTerms(double julianCenturies) {
@@ -300,14 +284,14 @@ public class AlgorithmicConverter {
         double eccentricity = polynomialSum(eccentricityCoefficients, julianCenturies);
 
         double epsilon = obliquity(julianCenturies);
-        double tanHalfEpsilon = tanOfDegree(epsilon / 2);
+        double tanHalfEpsilon = Math.tan(Math.toRadians(epsilon / 2));
         double y = tanHalfEpsilon * tanHalfEpsilon;
 
-        double dividend = y * sinOfDegree(2 * lambda)
-                - 2 * eccentricity * sinOfDegree(anomaly)
-                + 4 * eccentricity * y * sinOfDegree(anomaly) * cosOfDegree(2 * lambda)
-                - 0.5 * Math.pow(y, 2) * sinOfDegree(4 * lambda)
-                - 1.25 * Math.pow(eccentricity, 2) * sinOfDegree(2 * anomaly);
+        double dividend = y * Math.sin(Math.toRadians(2 * lambda))
+                - 2 * eccentricity * Math.sin(Math.toRadians(anomaly))
+                + 4 * eccentricity * y * Math.sin(Math.toRadians(anomaly)) * Math.cos(Math.toRadians(2 * lambda))
+                - 0.5 * Math.pow(y, 2) * Math.sin(Math.toRadians(4 * lambda))
+                - 1.25 * Math.pow(eccentricity, 2) * Math.sin(Math.toRadians(2 * anomaly));
         double divisor = 2 * Math.PI;
         double equation = dividend / divisor;
 
