@@ -24,10 +24,6 @@ public class FallbackIslamicConverter {
     }
 
     private static double tmoonphase(long n, int nph) {
-
-        final double RPD = (1.74532925199433E-02); // radians per degree
-        // (pi/180)
-
         double xtra;
 
         double k = n + nph / 4d;
@@ -36,20 +32,18 @@ public class FallbackIslamicConverter {
         double t3 = t2 * T;
         double jd = 2415020.75933 + 29.53058868 * k - .0001178 * t2
                 - .000000155 * t3 + .00033
-                * Math.sin(RPD * (166.56 + 132.87 * T - .009173 * t2));
+                * Math.sin(Math.toRadians(166.56 + 132.87 * T - .009173 * t2));
 
         // Sun's mean anomaly
-        double sa = RPD
-                * (359.2242 + 29.10535608 * k - .0000333 * t2 - .00000347 * t3);
+        double sa = Math.toRadians(359.2242 + 29.10535608 * k - .0000333 * t2 - .00000347 * t3);
 
         // Moon's mean anomaly
-        double ma = RPD
-                * (306.0253 + 385.81691806 * k + .0107306 * t2 + .00001236 * t3);
+        double ma = Math.toRadians(306.0253 + 385.81691806 * k + .0107306 * t2 + .00001236 * t3);
 
         // Moon's argument of latitude
-        double tf = RPD
-                * 2d
-                * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3);
+        double tf = Math.toRadians(
+                2 * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3)
+        );
 
         // should reduce to interval 0-1.0 before calculating further
         switch (nph) {
