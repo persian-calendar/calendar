@@ -2,9 +2,10 @@ package io.github.persiancalendar.calendar.persian;
 
 import java.util.Arrays;
 
-// Sad that we have to do this but in order to be compatible
-// with https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
-// I see no other way
+// A simple and quick implementation just to be compatible with
+// https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
+// For a correct implementation accurate for ~9k years, have a look at AlgorithmicConverter
+// which matches also with the numbers we have here for IRST longitude.
 public class LookupTableConverter {
 
     private static final int startingYear = 1206;
