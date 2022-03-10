@@ -22,7 +22,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-configure<JavaPluginConvention> {
+configure<JavaPluginExtension> {
     sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
