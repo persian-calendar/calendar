@@ -5,10 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 
 class CalendarCenterConversions {
-
-    private val calendarCenterResults = """
-    """.trimIndent().trim()
-
     // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp
     @ParameterizedTest
     @CsvFileSource(resources = ["/CalendarCenterData.csv"], numLinesToSkip = 1)
