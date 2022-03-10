@@ -1,9 +1,9 @@
 package io.github.persiancalendar.calendar
 
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class MainTests {
 
@@ -182,7 +182,7 @@ class MainTests {
     fun `Practice Nepali converting back and forth`() {
         (startJdn..endJdn).mapNotNull {
             val date = NepaliDate(it)
-            assertEquals(CivilDate(it).run { "$year/$month/$dayOfMonth" }, it, date.toJdn())
+            assertEquals(it, date.toJdn(), CivilDate(it).run { "$year/$month/$dayOfMonth" })
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..32)
             date.dayOfMonth

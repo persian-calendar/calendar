@@ -1,7 +1,7 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class ImportedTests {
 
@@ -19,7 +19,7 @@ class ImportedTests {
 
         (1206..1498).forEach {
             val yearLength = PersianDate(it + 1, 1, 1).toJdn() - PersianDate(it, 1, 1).toJdn()
-            assertEquals(it.toString(), if (it in leapYears) 366 else 365, yearLength)
+            assertEquals(if (it in leapYears) 366 else 365, yearLength, it.toString())
         }
     }
 
@@ -145,7 +145,7 @@ class ImportedTests {
 //        listOf(744313, 1460, 10, 12),
             listOf(764652, 1518, 3, 5)
         ).forEach {
-            assertEquals("${it[0]}", it[0] + J0000, IslamicDate(it[1], it[2], it[3]).toJdn())
+            assertEquals(it[0] + J0000, IslamicDate(it[1], it[2], it[3]).toJdn(), "${it[0]}")
             val from = IslamicDate(it[0] + J0000)
             assertEquals(from.year, it[1])
             assertEquals(from.month, it[2])
@@ -256,9 +256,9 @@ class ImportedTests {
     @Test
     fun `Matches with dotnet tests for Persian calendar`() = persianDates.forEach { line ->
         assertEquals(
-            line.toString(),
             PersianDate(line[0], line[1], line[2]).toJdn(),
-            CivilDate(line[3], line[4], line[5]).toJdn()
+            CivilDate(line[3], line[4], line[5]).toJdn(),
+            line.toString()
         )
     }
 
@@ -279,11 +279,11 @@ class ImportedTests {
                 .map { it.trimStart('0').toInt() }
             val nepaliDate = NepaliDate(v[0], v[1], v[2])
             val jdn = CivilDate(v[3], v[4], v[5]).toJdn()
-            assertEquals(line, nepaliDate.toJdn(), jdn)
+            assertEquals(nepaliDate.toJdn(), jdn, line)
             val date = NepaliDate(jdn)
-            assertEquals(line, v[0], date.year)
-            assertEquals(line, v[1], date.month)
-            assertEquals(line, v[2], date.dayOfMonth)
+            assertEquals(v[0], date.year, line)
+            assertEquals(v[1], date.month, line)
+            assertEquals(v[2], date.dayOfMonth, line)
         }
     }
 }

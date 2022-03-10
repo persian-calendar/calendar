@@ -1,7 +1,7 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class AllPersianCalendarLeapYears {
 
@@ -136,6 +136,6 @@ class AllPersianCalendarLeapYears {
     @Test
     fun `Conforms with dotnet Persian calendar leap years`() = (1..9377).forEach {
         val yearLength = PersianDate(it + 1, 1, 1).toJdn() - PersianDate(it, 1, 1).toJdn()
-        Assert.assertEquals(it.toString(), if (it in leapYears) 366 else 365, yearLength)
+        assertEquals(if (it in leapYears) 366 else 365, yearLength, it.toString())
     }
 }

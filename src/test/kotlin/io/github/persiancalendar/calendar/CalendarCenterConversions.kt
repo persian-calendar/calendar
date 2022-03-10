@@ -1,7 +1,7 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class CalendarCenterConversions {
 
@@ -1178,7 +1178,7 @@ class CalendarCenterConversions {
         val (persian, islamic, gregorian) = line.trim('[', ']').split(", ").map {
             it.split("/").map { part -> part.toInt() }
         }
-        Assert.assertEquals(
+        assertEquals(
             1, setOf(
                 PersianDate(persian[2], persian[1], persian[0]).toJdn(),
                 IslamicDate(islamic[2], islamic[1], islamic[0]).toJdn(),
