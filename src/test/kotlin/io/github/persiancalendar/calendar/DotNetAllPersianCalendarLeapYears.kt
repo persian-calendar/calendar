@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test
 class AllPersianCalendarLeapYears {
 
     // https://github.com/dotnet/runtime/blob/57bfe474/src/libraries/System.Globalization.Calendars/tests/System/Globalization/PersianCalendarTests.cs#L246
-    private val leapYears = String(
-        AllPersianCalendarLeapYears::class.java
-            .getResourceAsStream("/DotNetPersianCalendarLeapYearReference.txt")
-            ?.readBytes()!!
-    ).replace("\n", " ").split(", ").map { it.toInt() }
+    private val leapYears = AllPersianCalendarLeapYears::class.java
+        .getResourceAsStream("/DotNetPersianCalendarLeapYearReference.txt")
+        ?.readBytes()!!
+        .decodeToString()
+        .replace("\n", " ")
+        .split(", ")
+        .map { it.toInt() }
 
     @Test
     fun `Conforms with dotnet Persian calendar leap years`() = (1..9377).forEach {
