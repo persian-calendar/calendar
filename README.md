@@ -23,21 +23,22 @@ Calendar converter based on http://code.google.com/p/mobile-persian-calendar/ (G
   ```
 
 # Usage
-### Gradle
-Add it in your root build.gradle at the end of repositories:
-```groovy
+
+Add this in your root build.gradle at the end of repositories section:
+```kotlin
 allprojects {
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        maven("https://jitpack.io")
     }
 }
-```  
-Add the dependency
 ```
+
+Now actually add the dependency:
+```kotlin
 dependencies {
-    implementation 'com.github.persian-calendar:calendar:1.2.0'
+    implementation("com.github.persian-calendar:calendar:1.2.0")
 }
 ```
  
-for other build tools refer to [this](https://jitpack.io/#persian-calendar/calendar) documentation.
+For other build tools support have a look at [this](https://jitpack.io/#persian-calendar/calendar).
