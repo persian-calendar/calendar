@@ -1,9 +1,9 @@
 package io.github.persiancalendar.calendar
 
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class MainTests {
 
@@ -22,7 +22,7 @@ class MainTests {
             assertEquals(it[3], converted.dayOfMonth)
 
             assertEquals(it[0].toLong(), converted.toJdn())
-            assertTrue(reference == IslamicDate(reference.toJdn()))
+            assertEquals(reference, IslamicDate(reference.toJdn()))
         }
 
         listOf(
@@ -86,7 +86,7 @@ class MainTests {
             val islamicDate = IslamicDate(it[3], it[4], it[5])
 
             assertEquals(jdn, islamicDate.toJdn())
-            assertTrue(islamicDate == IslamicDate(jdn))
+            assertEquals(islamicDate, IslamicDate(jdn))
         }
 
         IslamicDate.useUmmAlQura = true
@@ -99,7 +99,7 @@ class MainTests {
             val islamicDate = IslamicDate(it[1][0], it[1][1], it[1][2])
 
             assertEquals(jdn, islamicDate.toJdn())
-            assertTrue(islamicDate == IslamicDate(jdn))
+            assertEquals(islamicDate, IslamicDate(jdn))
         }
         IslamicDate.useUmmAlQura = false
 

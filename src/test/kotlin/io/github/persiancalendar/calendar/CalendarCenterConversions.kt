@@ -1,8 +1,8 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
+import kotlin.test.assertEquals
 
 class CalendarCenterConversions {
     // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp

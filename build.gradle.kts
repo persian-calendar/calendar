@@ -17,6 +17,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junit5Version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
     testImplementation(kotlin("stdlib-jdk8"))
+    testImplementation(kotlin("test"))
 }
 
 tasks.test {
