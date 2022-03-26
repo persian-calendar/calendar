@@ -1,0 +1,29 @@
+name: Notify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify:
+    name: Notify via Telegram
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: |
+          TEMPLATE='.[] | "[\(.id[:8])](\(.url)) • [\(.author.username)](https://github.com/\(.author.username))
+          \(.message | gsub("(?<m>[_*\\[\\]()~>#+\\-=|{}.!`'"'"'])"; "\\\(.m)"))
+          "'
+          (
+            printf 'text='
+            printenv COMMITS | jq -r "$TEMPLATE"
+            printf '📅 @Persian\_Calendar \(persian\-calendar/calendar\)'
+          ) | \
+          curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+            -d disable_web_page_preview=true \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d parse_mode=MarkdownV2 \
+            --data-binary @-
