@@ -37,7 +37,7 @@ allprojects {
 Now actually add the dependency:
 ```kotlin
 dependencies {
-    implementation("com.github.persian-calendar:calendar:1.2.0")
+    implementation("com.github.persian-calendar:calendar:x.y.z")
 }
 ```
  
