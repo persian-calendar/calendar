@@ -229,7 +229,7 @@ class MainTests {
     fun `Supported Year Islamic Calendar Conversions`() {
         val dates = listOf(
             listOf(1401, 1, 14, 1443, 9, 1),
-            listOf(1401, 2, 12, 1443, 10, 1),
+            listOf(1401, 2, 13, 1443, 10, 1),
             listOf(1401, 3, 11, 1443, 11, 1),
             listOf(1401, 4, 10, 1443, 12, 1),
             listOf(1401, 5, 8, 1444, 1, 1),
