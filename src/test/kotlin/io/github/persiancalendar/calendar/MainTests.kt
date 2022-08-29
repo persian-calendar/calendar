@@ -189,10 +189,13 @@ class MainTests {
         }.ensureContinuity()
     }
 
-    private fun List<Int>.ensureContinuity() = this.reduce { previousDayOfMonth, dayOfMonth ->
-        assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
-        dayOfMonth
-    }.let {}
+    // This gets a list of day of months and ensures they are either in increasing order or are 1
+    private fun List<Int>.ensureContinuity() {
+        this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
+            assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
+            dayOfMonth
+        }
+    }
 
     @Test
     fun `Test month distance methods`() {
@@ -241,9 +244,13 @@ class MainTests {
             listOf(1401, 11, 3, 1444, 7, 1),
             listOf(1401, 12, 3, 1444, 8, 1),
         )
-        assertEquals(dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran }, 12)
+        assertEquals(
+            dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran }, 12
+        )
         dates.forEach {
-            assertEquals(PersianDate(it[0], it[1], it[2]).toJdn(), IslamicDate(it[3], it[4], it[5]).toJdn())
+            assertEquals(
+                PersianDate(it[0], it[1], it[2]).toJdn(), IslamicDate(it[3], it[4], it[5]).toJdn()
+            )
         }
     }
 
