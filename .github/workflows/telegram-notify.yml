@@ -1,5 +1,8 @@
 name: Notify
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -13,17 +16,22 @@ jobs:
       - name: Notify
         env:
           COMMITS: ${{ toJson(github.event.commits) }}
-        run: |
-          TEMPLATE='.[] | "[\(.id[:8])](\(.url)) • [\(.author.username)](https://github.com/\(.author.username))
-          \(.message | gsub("(?<m>[_*\\[\\]()~>#+\\-=|{}.!`'"'"'])"; "\\\(.m)"))
+          TEMPLATE: '.[] | "<a href=\"\(.url)\">\(.id[:8])</a> • <a href=\"https://github.com/\(.author.username | @html)\">\(.author.username | @html)</a>
+
+          \(.message | gsub("(?<a>[<>&\"])"; .a|@html))
+
           "'
+        run: |
           (
-            printf 'text='
             printenv COMMITS | jq -r "$TEMPLATE"
-            printf '📅 @Persian\_Calendar \(persian\-calendar/calendar\)'
+            printf '📅 @Persian_Calendar (persian-calendar/calendar)'
           ) | \
+          jq -R --slurp '{
+            text: .,
+            disable_web_page_preview: true,
+            chat_id: "${{ secrets.TELEGRAM_CHAT_ID }}",
+            parse_mode: "HTML"
+          }' | \
           curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
-            -d disable_web_page_preview=true \
-            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d parse_mode=MarkdownV2 \
+            -H 'Content-Type: application/json' \
             --data-binary @-
