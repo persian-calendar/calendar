@@ -15,7 +15,7 @@ jobs:
       - name: Update the text and notify if is changed
         run: |
           sudo apt install html2text
-          curl --fail https://calendar.ut.ac.ir/Fa/ | html2text | grep -E -v '\d+ نفر' > .github/follow-iran-calendar-data.txt
+          curl --fail https://calendar.ut.ac.ir/Fa/ | html2text | grep -v -E "[0-9]+ نفر" > .github/follow-iran-calendar-data.txt
           # If is empty, revert to what was there at least
           [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
