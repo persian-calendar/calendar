@@ -12,16 +12,17 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
-      - name: Update the runtime dependencies report
+      - name: Update the text and notify if is changed
         run: |
           sudo apt install html2text
           curl --fail https://calendar.ut.ac.ir/Fa/ | html2text > .github/follow-iran-calendar-data.txt
-          [ ! -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
+          # If is empty, revert what was there at least
+          [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.TELEGRAM_TO }} \
             -d parse_mode=HTML \
             -d "text=There is an update in https://calendar.ut.ac.ir"
-      - name: Add and commit the report
+      - name: Update the repo also
         uses: EndBug/add-and-commit@2d7c2e89fcb436f8e139cc80813bd030bdd40c4b
         with:
           default_author: github_actions
