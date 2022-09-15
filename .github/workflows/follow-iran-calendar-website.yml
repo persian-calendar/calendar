@@ -19,7 +19,7 @@ jobs:
           # If is empty, revert to what was there at least
           [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
-            -d chat_id=${{ secrets.TELEGRAM_TO }} \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
             -d parse_mode=HTML \
             -d "text=There is an update in https://calendar.ut.ac.ir"
       - name: Update the repo also
