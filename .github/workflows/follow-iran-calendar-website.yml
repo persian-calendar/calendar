@@ -21,7 +21,12 @@ jobs:
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
             -d parse_mode=HTML \
-            -d "text=There is an update in https://calendar.ut.ac.ir"
+            -d "text=There is an update in https://calendar.ut.ac.ir" | \
+            jq -r '"message_id=\(.result.message_id)"' | \
+            curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/pinChatMessage \
+              -d disable_notification=false \
+              -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+              --data-binary @-
       - name: Update the repo also
         uses: EndBug/add-and-commit@2d7c2e89fcb436f8e139cc80813bd030bdd40c4b
         with:
