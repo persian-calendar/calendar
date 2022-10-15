@@ -2,7 +2,7 @@ name: Follow Iran Calendar Center website
 
 on:
   schedule:
-    - cron: '15 * * * *' # check every hour for updates
+    - cron: '15 4 * * *' # check every day for updates
 
 jobs:
   build:
