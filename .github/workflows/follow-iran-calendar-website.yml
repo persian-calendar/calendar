@@ -42,4 +42,4 @@ jobs:
         with:
           default_author: github_actions
           message: 'ci: Update follow data'
-          add: .github/follow-iran-calendar-data.txt
+          add: '.github/*.txt'
