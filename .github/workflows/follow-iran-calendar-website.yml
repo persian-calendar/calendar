@@ -15,6 +15,7 @@ jobs:
       - name: Update the text and notify if is changed
         run: |
           sudo apt install html2text
+
           curl --fail https://calendar.ut.ac.ir/Fa/ | html2text | sed -E "s/ +[0-9]+ نفر/0 نفر/g" > .github/follow-iran-calendar-data.txt
           # If is empty, revert to what was there at least
           [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
@@ -27,9 +28,18 @@ jobs:
               -d disable_notification=false \
               -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
               --data-binary @-
+
+          curl --fail https://developer.android.com/jetpack/androidx/releases/compose-kotlin | html2text > .github/follow-compose-compiler-version.txt
+          # If is empty, revert to what was there at least
+          [ -s .github/follow-compose-compiler-version.txt ] || git checkout .github/follow-compose-compiler-version.txt
+          [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d parse_mode=HTML \
+            -d "text=There is an update in https://developer.android.com/jetpack/androidx/releases/compose-kotlin"
+
       - name: Update the repo also
         uses: EndBug/add-and-commit@2d7c2e89fcb436f8e139cc80813bd030bdd40c4b
         with:
           default_author: github_actions
-          message: 'ci: Update Iran Calendar Center data'
+          message: 'ci: Update follow data'
           add: .github/follow-iran-calendar-data.txt
