@@ -1,0 +1,357 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Android_Developers]
+   Platform   Android_Studio   Google_Play   Jetpack   Kotlin   Docs   Games
+[q                   ]
+
+    * English
+    * Bahasa Indonesia
+    * EspaÃ±ol â AmÃ©rica Latina
+    * FranÃ§ais
+    * PortuguÃªs â Brasil
+    * TiÃªÌng ViÃªÌ£t
+    * ä¸­æ â ç®ä½
+    * ä¸­æ â ç¹é«
+    * æ¥æ¬èª
+    * íêµ­ì´
+  Sign in
+    * Jetpack
+   Overview   Get_Started   Libraries   Compose   Community
+
+[                    ]
+
+[Android_Developers]
+    * _Platform_
+    * _Android_Studio_
+    * _Google_Play_
+    * _Jetpack_
+          o _Overview_
+          o _Get_Started___
+          o _Libraries___
+          o _Compose___
+          o _Community_
+    * _Kotlin_
+    * _Docs_
+    * _Games_
+    * Explore_the_libraries
+    * Library Releases
+          o Overview
+          o All_Channels
+          o Stable_Channel
+          o RC_Channel
+          o Beta_Channel
+          o Alpha_Channel
+    * Release Notes
+          o androidx.activity
+          o androidx.ads
+          o androidx.annotation
+          o androidx.appcompat
+          o androidx.appsearch
+          o androidx.arch.core
+          o androidx.asynclayoutinflater
+          o androidx.autofill
+          o androidx.benchmark
+          o androidx.biometric
+          o androidx.browser
+          o androidx.camera
+          o androidx.car
+          o androidx.car.app
+          o androidx.cardview
+          o androidx.collection
+          o androidx.compose
+          o androidx.compose.animation
+          o androidx.compose.compiler
+          o androidx.compose.foundation
+          o androidx.compose.material
+          o androidx.compose.material3
+          o androidx.compose.runtime
+          o androidx.compose.ui
+          o androidx.concurrent
+          o androidx.constraintlayout
+          o androidx.contentpager
+          o androidx.coordinatorlayout
+          o androidx.core
+          o androidx.core.uwb
+          o androidx.cursoradapter
+          o androidx.customview
+          o androidx.databinding
+          o androidx.datastore
+          o androidx.documentfile
+          o androidx.draganddrop
+          o androidx.drawerlayout
+          o androidx.dynamicanimation
+          o androidx.emoji
+          o androidx.emoji2
+          o androidx.enterprise
+          o androidx.exifinterface
+          o androidx.fragment
+          o androidx.games
+          o androidx.glance
+          o androidx.graphics
+          o androidx.gridlayout
+          o androidx.health
+          o androidx.health.connect
+          o androidx.heifwriter
+          o androidx.hilt
+          o androidx.input
+          o androidx.interpolator
+          o androidx.javascriptengine
+          o androidx.leanback
+          o androidx.legacy
+          o androidx.lifecycle
+          o androidx.loader
+          o androidx.localbroadcastmanager
+          o androidx.media
+          o androidx.media2
+          o androidx.media3
+          o androidx.mediarouter
+          o androidx.multidex
+          o androidx.metrics
+          o androidx.navigation
+          o androidx.paging
+          o androidx.palette
+          o androidx.percentlayout
+          o androidx.preference
+          o androidx.print
+          o androidx.privacysandbox.tools
+          o androidx.profileinstaller
+          o androidx.recommendation
+          o androidx.recyclerview
+          o androidx.remotecallback
+          o androidx.resourceinspection
+          o androidx.room
+          o androidx.savedstate
+          o androidx.security
+          o androidx.sharetarget
+          o androidx.slice
+          o androidx.slidingpanelayout
+          o androidx.sqlite
+          o androidx.startup
+          o androidx.swiperefreshlayout
+          o androidx.test
+          o androidx.test.uiautomator
+          o androidx.textclassifier
+          o androidx.tracing
+          o androidx.transition
+          o androidx.tv
+          o androidx.tvprovider
+          o androidx.vectordrawable
+          o androidx.versionedparcelable
+          o androidx.viewpager
+          o androidx.viewpager2
+          o androidx.wear
+          o androidx.wear.compose
+          o androidx.wear.tiles
+          o androidx.wear.watchface
+          o androidx.webkit
+          o androidx.window
+          o androidx.work
+          o tools.build.jetifier
+    * Release Note Archive
+          o Overview
+          o Test
+          o Architecture_Components
+          o AndroidX
+    * Jetpack_Compose_Roadmap
+    * Jetpack_Compose_Kotlin_Compatibility
+
+
+
+    * Android_Developers
+    * Jetpack
+    * Libraries
+
+****** Compose to Kotlin Compatibility Map ******
+  Stay organized with collections   Save and categorize content based on your
+preferences.
+***** Declaring dependencies *****
+To add a dependency on the Compose Compiler, you must add the Google Maven
+repository to your project. Read Google's_Maven_repository for more
+information.
+Add the dependencies for the artifacts you need in the build.gradle file for
+your app or module:
+**** Groovy ****
+android {
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.3.2"
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+**** Kotlin ****
+android {
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.3.2"
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+***** Pre-release Kotlin Compatibility *****
+For Compose Compiler versions that are compatible with pre-release versions of
+Kotlin, please check out https://androidx.dev/storage/compose-compiler/
+repository for more details.
+Compose Compiler Version Compatible Kotlin Version
+1.4.0-alpha02            1.7.21
+1.4.0-alpha01            1.7.20
+1.3.2                    1.7.20
+1.3.1                    1.7.10
+1.3.0                    1.7.10
+1.3.0-rc02               1.7.10
+1.3.0-rc01               1.7.10
+1.3.0-beta01             1.7.10
+1.2.0                    1.7.0
+1.2.0-rc02               1.6.21
+1.2.0-rc01               1.6.21
+1.2.0-beta03             1.6.21
+1.2.0-beta02             1.6.21
+1.2.0-beta01             1.6.21
+1.2.0-alpha08            1.6.20
+1.2.0-alpha07            1.6.10
+1.2.0-alpha06            1.6.10
+1.2.0-alpha05            1.6.10
+1.2.0-alpha04            1.6.10
+1.2.0-alpha03            1.6.10
+1.2.0-alpha02            1.6.10
+1.2.0-alpha01            1.6.10
+1.1.1                    1.6.10
+1.1.0                    1.6.10
+1.1.0-rc03               1.6.10
+1.1.0-rc02               1.6.10
+1.1.0-rc01               1.6.0
+1.1.0-beta04             1.6.0
+1.1.0-beta03             1.5.31
+1.1.0-beta02             1.5.31
+1.1.0-beta01             1.5.31
+1.1.0-alpha06            1.5.31
+1.1.0-alpha05            1.5.31
+1.0.5                    1.5.31
+1.0.4                    1.5.31
+1.1.0-alpha04            1.5.30
+1.1.0-alpha03            1.5.30
+1.0.3                    1.5.30
+1.1.0-alpha02            1.5.21
+1.1.0-alpha01            1.5.21
+1.0.2                    1.5.21
+1.0.1                    1.5.21
+1.0.0                    1.5.10
+1.0.0-rc02               1.5.10
+1.0.0-rc01               1.5.10
+
+Content and code samples on this page are subject to the licenses described in
+the Content_License. Java and OpenJDK are trademarks or registered trademarks
+of Oracle and/or its affiliates.
+Last updated 2022-11-17 UTC.
+
+ [{ "type": "thumb-down", "id": "missingTheInformationINeed", "label":"Missing
+the information I need" },{ "type": "thumb-down", "id":
+"tooComplicatedTooManySteps", "label":"Too complicated / too many steps" },
+{ "type": "thumb-down", "id": "outOfDate", "label":"Out of date" },{ "type":
+"thumb-down", "id": "samplesCodeIssue", "label":"Samples / code issue" },
+{ "type": "thumb-down", "id": "otherDown", "label":"Other" }]   [{ "type":
+"thumb-up", "id": "easyToUnderstand", "label":"Easy to understand" },{ "type":
+"thumb-up", "id": "solvedMyProblem", "label":"Solved my problem" },{ "type":
+"thumb-up", "id": "otherUp", "label":"Other" }]
+
+    * [Twitter]_Twitter
+      Follow @AndroidDev on Twitter
+    * [YouTube]_YouTube
+      Check out Android Developers on YouTube
+    * [LinkedIn]_LinkedIn
+      Connect with the Android Developers community on LinkedIn
+
+    * **** More Android ****
+          o Android
+          o Android_for_Enterprise
+          o Security
+          o Source
+          o News
+          o Blog
+          o Podcasts
+    * **** Discover ****
+          o Gaming
+          o Machine_Learning
+          o Privacy
+          o 5G
+    * **** Android Devices ****
+          o Large_screens
+          o Wear_OS
+          o Android_TV
+          o Android_for_cars
+          o Android_Things
+          o Chrome_OS_devices
+    * **** Releases ****
+          o Android_11
+          o Android_10
+          o Pie
+          o Oreo
+          o Nougat
+          o Marshmallow
+          o Lollipop
+          o KitKat
+    * **** Documentation and Downloads ****
+          o Android_Studio_guide
+          o Developers_guides
+          o API_reference
+          o Download_Studio
+          o Android_NDK
+    * **** Support ****
+          o Report_platform_bug
+          o Report_documentation_bug
+          o Google_Play_support
+          o Join_research_studies
+
+ __[Google_Developers]_
+    * Android
+    * Chrome
+    * Firebase
+    * Google_Cloud_Platform
+    * All_products
+
+    * Privacy
+    * License
+    * Brand_guidelines
+    * Get news and tips by email Subscribe
+    * English
+    * Bahasa Indonesia
+    * EspaÃ±ol â AmÃ©rica Latina
+    * FranÃ§ais
+    * PortuguÃªs â Brasil
+    * TiÃªÌng ViÃªÌ£t
+    * ä¸­æ â ç®ä½
+    * ä¸­æ â ç¹é«
+    * æ¥æ¬èª
+    * íêµ­ì´
+
+
+
+
