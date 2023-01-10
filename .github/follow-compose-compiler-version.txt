@@ -310,14 +310,13 @@ the information I need" },{ "type": "thumb-down", "id":
           o Android_Things
           o Chrome_OS_devices
     * **** Releases ****
+          o Android_13
+          o Android_12
           o Android_11
           o Android_10
           o Pie
           o Oreo
           o Nougat
-          o Marshmallow
-          o Lollipop
-          o KitKat
     * **** Documentation and Downloads ****
           o Android_Studio_guide
           o Developers_guides
