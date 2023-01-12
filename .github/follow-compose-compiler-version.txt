@@ -90,6 +90,7 @@
           o androidx.coordinatorlayout
           o androidx.core
           o androidx.core.uwb
+          o androidx.credentials
           o androidx.cursoradapter
           o androidx.customview
           o androidx.databinding
@@ -131,6 +132,8 @@
           o androidx.percentlayout
           o androidx.preference
           o androidx.print
+          o androidx.privacysandbox.ads
+          o androidx.privacysandbox.sdkruntime
           o androidx.privacysandbox.tools
           o androidx.profileinstaller
           o androidx.recommendation
@@ -159,6 +162,7 @@
           o androidx.viewpager2
           o androidx.wear
           o androidx.wear.compose
+          o androidx.wear.protolayout
           o androidx.wear.tiles
           o androidx.wear.watchface
           o androidx.webkit
