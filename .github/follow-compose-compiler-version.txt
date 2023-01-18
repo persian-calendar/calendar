@@ -199,7 +199,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.0"
     }
 
     kotlinOptions {
@@ -213,7 +213,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.0"
     }
 
     kotlinOptions {
@@ -225,6 +225,7 @@ For Compose Compiler versions that are compatible with pre-release versions of
 Kotlin, please check out https://androidx.dev/storage/compose-compiler/
 repository for more details.
 Compose Compiler Version Compatible Kotlin Version
+1.4.0                    1.8.0
 1.4.0-alpha02            1.7.21
 1.4.0-alpha01            1.7.20
 1.3.2                    1.7.20
@@ -274,7 +275,7 @@ Compose Compiler Version Compatible Kotlin Version
 Content and code samples on this page are subject to the licenses described in
 the Content_License. Java and OpenJDK are trademarks or registered trademarks
 of Oracle and/or its affiliates.
-Last updated 2022-11-17 UTC.
+Last updated 2023-01-17 UTC.
 
  [{ "type": "thumb-down", "id": "missingTheInformationINeed", "label":"Missing
 the information I need" },{ "type": "thumb-down", "id":
