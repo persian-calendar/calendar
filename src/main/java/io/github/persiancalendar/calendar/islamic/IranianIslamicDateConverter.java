@@ -8,7 +8,7 @@ package io.github.persiancalendar.calendar.islamic;
 public class IranianIslamicDateConverter {
 
     // This is a package public API used in the app
-    public final static int latestSupportedYearOfIran = 1402;
+    public final static int latestSupportedYearOfIran = 1403;
 
     private final static long jdSupportStart = 2425063; // CivilDate(1927, 7, 1).toJdn()
     private final static long jdSupportEnd;
@@ -119,7 +119,8 @@ public class IranianIslamicDateConverter {
                 /*1442*/29, 29, 30, 29, 30, 29, 30, 30, 29, 30, 30, 29,
                 /*1443*/29, 30, 30, 29, 29, 30, 29, 30, 30, 29, 30, 29,
                 /*1444*/30, 30, 29, 30, 29, 29, 30, 29, 30, 29, 30, 29,
-                /*1445*/30, 30, 30, 29, 30, 29, 29, 30/**/, 29, 30, 29, 29,
+                /*1445*/30, 30, 30, 29, 30, 29, 29, 30, 29, 30, 29, 29,
+                /*1446*/30, 30, 30, 29, 30, 30, 29, 30/**/, 29, 30, 29, 29,
         };
 
         supportedYears = hijriMonths.length / 12;

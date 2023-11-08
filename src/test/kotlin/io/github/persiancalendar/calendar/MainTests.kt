@@ -255,22 +255,21 @@ class MainTests {
     @Test
     fun `Supported Year Islamic Calendar Conversions`() {
         val dates = listOf(
-            listOf(1402, 1, 3, 1444, 9, 1),
-            listOf(1402, 2, 2, 1444, 10, 1),
-            listOf(1402, 2, 31, 1444, 11, 1),
-            listOf(1402, 3, 30, 1444, 12, 1),
-            listOf(1402, 4, 28, 1445, 1, 1),
-            listOf(1402, 5, 27, 1445, 2, 1),
-            listOf(1402, 6, 26, 1445, 3, 1),
-            listOf(1402, 7, 25, 1445, 4, 1),
-            listOf(1402, 8, 24, 1445, 5, 1),
-            listOf(1402, 9, 24, 1445, 6, 1),
-            listOf(1402, 10, 23, 1445, 7, 1),
-            listOf(1402, 11, 22, 1445, 8, 1),
-            listOf(1402, 12, 22, 1445, 9, 1),
+            listOf(1403, 1, 22, 1445, 10, 1),
+            listOf(1403, 2, 21, 1445, 11, 1),
+            listOf(1403, 3, 19, 1445, 12, 1),
+            listOf(1403, 4, 17, 1446, 1, 1),
+            listOf(1403, 5, 16, 1446, 2, 1),
+            listOf(1403, 6, 15, 1446, 3, 1),
+            listOf(1403, 7, 14, 1446, 4, 1),
+            listOf(1403, 8, 13, 1446, 5, 1),
+            listOf(1403, 9, 13, 1446, 6, 1),
+            listOf(1403, 10, 13, 1446, 7, 1),
+            listOf(1403, 11, 12, 1446, 8, 1),
+            listOf(1403, 12, 12, 1446, 9, 1),
         )
         assertEquals(
-            dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran }, 13
+            dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran }, 12
         )
         dates.forEach {
             assertEquals(
