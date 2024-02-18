@@ -59,9 +59,8 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
         )
     }
 
-    override fun monthsDistanceTo(date: CivilDate): Int {
-        return YearMonthDate.TwelveMonthsYear.monthsDistanceTo(this, date)
-    }
+    override fun monthsDistanceTo(date: CivilDate): Int =
+        YearMonthDate.TwelveMonthsYear.monthsDistanceTo(this, date)
 
     companion object {
         // TODO Is it correct to return a CivilDate as a JulianDate?

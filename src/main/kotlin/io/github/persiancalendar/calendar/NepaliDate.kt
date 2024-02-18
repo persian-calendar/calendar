@@ -7,9 +7,8 @@ import kotlin.math.floor
 
 // Also known as "Bikram Sambat" or https://en.wikipedia.org/wiki/Vikram_Samvat
 class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
-    private fun calculateEras(days: Int, eraLength: Int): Int {
-        return floor(days / eraLength.toFloat()).toInt()
-    }
+    private fun calculateEras(days: Int, eraLength: Int): Int =
+        floor(days / eraLength.toFloat()).toInt()
 
     override fun toJdn(): Long {
         var yearIndex = year - supportedYearsStart

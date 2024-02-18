@@ -29,6 +29,5 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
         return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    override fun monthsDistanceTo(date: PersianDate): Int =
-        monthsDistanceTo(this, date)
+    override fun monthsDistanceTo(date: PersianDate): Int = monthsDistanceTo(this, date)
 }

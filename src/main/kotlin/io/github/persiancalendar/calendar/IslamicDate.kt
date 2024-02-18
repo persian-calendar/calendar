@@ -49,8 +49,7 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
         return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    override fun monthsDistanceTo(date: IslamicDate): Int =
-        monthsDistanceTo(this, date)
+    override fun monthsDistanceTo(date: IslamicDate): Int = monthsDistanceTo(this, date)
 
     companion object {
         // Converters
