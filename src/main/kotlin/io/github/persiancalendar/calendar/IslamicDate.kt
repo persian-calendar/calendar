@@ -19,13 +19,13 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
         val year = year
         val month = month
         val day = dayOfMonth
-        val tableResult: Long = if (useUmmAlQura) UmmAlQuraConverter.toJdn(year, month, day)
-            .toLong() else IranianIslamicDateConverter.toJdn(year, month, day)
-        return if (tableResult != -1L) tableResult - islamicOffset else FallbackIslamicConverter.toJdn(
-            year,
-            month,
-            day
-        ) - islamicOffset
+
+        val tableResult: Long =
+            if (useUmmAlQura) UmmAlQuraConverter.toJdn(year, month, day).toLong()
+            else IranianIslamicDateConverter.toJdn(year, month, day)
+
+        return if (tableResult != -1L) tableResult - islamicOffset
+        else FallbackIslamicConverter.toJdn(year, month, day) - islamicOffset
     }
 
     override fun fromJdn(jdn: Long): IntArray {
@@ -49,7 +49,8 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
         return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    override fun monthsDistanceTo(date: IslamicDate): Int = monthsDistanceTo(this, date)
+    override fun monthsDistanceTo(date: IslamicDate): Int =
+        monthsDistanceTo(this, date)
 
     companion object {
         // Converters

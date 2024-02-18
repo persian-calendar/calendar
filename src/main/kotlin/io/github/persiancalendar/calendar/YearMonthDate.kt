@@ -16,7 +16,7 @@ internal interface YearMonthDate<T : AbstractDate> {
         ): T {
             var month =
                 monthsDistance + baseDate.month - 1 // make it zero based for easier calculations
-            var year = baseDate.year + month / 12
+            var year = baseDate.year + (month / 12)
             month %= 12
             if (month < 0) {
                 year -= 1
@@ -26,6 +26,6 @@ internal interface YearMonthDate<T : AbstractDate> {
         }
 
         fun <T : AbstractDate> monthsDistanceTo(baseDate: T, toDate: T): Int =
-            (toDate.year - baseDate.year) * 12 + toDate.month - baseDate.month
+            ((toDate.year - baseDate.year) * 12) + toDate.month - baseDate.month
     }
 }

@@ -35,7 +35,14 @@ internal object AlgorithmicConverter {
     private const val secondsPerMinute = 60
     private const val minutesPerDegree = 60
     private val coefficients1900to1987 = doubleArrayOf(
-        -0.00002, 0.000297, 0.025184, -0.181133, 0.553040, -0.861938, 0.677066, -0.212591
+        -0.00002,
+        0.000297,
+        0.025184,
+        -0.181133,
+        0.553040,
+        -0.861938,
+        0.677066,
+        -0.212591
     )
     private val coefficients1800to1899 = doubleArrayOf(
         -0.000009,
@@ -50,17 +57,49 @@ internal object AlgorithmicConverter {
         11.636204,
         2.043794
     )
-    private val coefficients1700to1799 =
-        doubleArrayOf(8.118780842, -0.005092142, 0.003336121, -0.0000266484)
-    private val coefficients1620to1699 = doubleArrayOf(196.58333, -4.0675, 0.0219167)
-    private val lambdaCoefficients = doubleArrayOf(280.46645, 36000.76983, 0.0003032)
-    private val anomalyCoefficients = doubleArrayOf(357.52910, 35999.05030, -0.0001559, -0.00000048)
-    private val eccentricityCoefficients = doubleArrayOf(0.016708617, -0.000042037, -0.0000001236)
-    private val coefficients = doubleArrayOf(
-        angle(23, 26, 21.448), angle(0, 0, -46.8150), angle(0, 0, -0.00059), angle(0, 0, 0.001813)
+    private val coefficients1700to1799 = doubleArrayOf(
+        8.118780842,
+        -0.005092142,
+        0.003336121,
+        -0.0000266484
     )
-    private val coefficientsA = doubleArrayOf(124.90, -1934.134, 0.002063)
-    private val coefficientsB = doubleArrayOf(201.11, 72001.5377, 0.00057)
+    private val coefficients1620to1699 = doubleArrayOf(
+        196.58333,
+        -4.0675,
+        0.0219167
+    )
+    private val lambdaCoefficients = doubleArrayOf(
+        280.46645,
+        36000.76983,
+        0.0003032
+    )
+    private val anomalyCoefficients = doubleArrayOf(
+        357.52910,
+        35999.05030,
+        -0.0001559,
+        -0.00000048
+    )
+    private val eccentricityCoefficients = doubleArrayOf(
+        0.016708617,
+        -0.000042037,
+        -0.0000001236
+    )
+    private val coefficients = doubleArrayOf(
+        angle(23, 26, 21.448),
+        angle(0, 0, -46.8150),
+        angle(0, 0, -0.00059),
+        angle(0, 0, 0.001813)
+    )
+    private val coefficientsA = doubleArrayOf(
+        124.90,
+        -1934.134,
+        0.002063
+    )
+    private val coefficientsB = doubleArrayOf(
+        201.11,
+        72001.5377,
+        0.00057
+    )
 
     // lowest year that starts algorithm, algorithm to use
     private val ephemerisCorrectionTable = listOf(
@@ -122,10 +161,9 @@ internal object AlgorithmicConverter {
 
     private fun compute(time: Double): Double {
         val julianCenturies = julianCenturies(time)
-        val lambda =
-            282.7771834 + 36000.76953744 * julianCenturies + 0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(
-                julianCenturies
-            )
+        val lambda = 282.7771834 +
+                (36000.76953744 * julianCenturies) +
+                (0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(julianCenturies))
         val longitude = lambda + aberration(julianCenturies) + nutation(julianCenturies)
         return initLongitude(longitude)
     }
@@ -147,62 +185,67 @@ internal object AlgorithmicConverter {
     }
 
     private fun aberration(julianCenturies: Double): Double =
-        0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians()) - 0.005575
+        (0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians())) - 0.005575
 
     private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double =
         x * sin((y + z * julianCenturies).toRadians())
 
     private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double {
+        val terms = listOf(
+            Triple(403406, 270.54861, 0.9287892),
+            Triple(195207, 340.19128, 35999.1376958),
+            Triple(119433, 63.91854, 35999.4089666),
+            Triple(112392, 331.2622, 35998.7287385),
+            Triple(3891, 317.843, 71998.20261),
+            Triple(2819, 86.631, 71998.4403),
+            Triple(1721, 240.052, 36000.35726),
+            Triple(660, 310.26, 71997.4812),
+            Triple(350, 247.23, 32964.4678),
+            Triple(334, 260.87, -19.441),
+            Triple(314, 297.82, 445267.1117),
+            Triple(268, 343.14, 45036.884),
+            Triple(242, 166.79, 3.1008),
+            Triple(234, 81.53, 22518.4434),
+            Triple(158, 3.5, -19.9739),
+            Triple(132, 132.75, 65928.9345),
+            Triple(129, 182.95, 9038.0293),
+            Triple(114, 162.03, 3034.7684),
+            Triple(99, 29.8, 33718.148),
+            Triple(93, 266.4, 3034.448),
+            Triple(86, 249.2, -2280.773),
+            Triple(78, 157.6, 29929.992),
+            Triple(72, 257.8, 31556.493),
+            Triple(68, 185.1, 149.588),
+            Triple(64, 69.9, 9037.75),
+            Triple(46, 8.0, 107997.405),
+            Triple(38, 197.1, -4444.176),
+            Triple(37, 250.4, 151.771),
+            Triple(32, 65.3, 67555.316),
+            Triple(29, 162.7, 31556.08),
+            Triple(28, 341.5, -4561.54),
+            Triple(27, 291.6, 107996.706),
+            Triple(27, 98.5, 1221.655),
+            Triple(25, 146.7, 62894.167),
+            Triple(24, 110.0, 31437.369),
+            Triple(21, 5.2, 14578.298),
+            Triple(21, 342.6, -31931.757),
+            Triple(20, 230.9, 34777.243),
+            Triple(18, 256.1, 1221.999),
+            Triple(17, 45.3, 62894.511),
+            Triple(14, 242.9, -4442.039),
+            Triple(13, 115.2, 107997.909),
+            Triple(13, 151.8, 119.066),
+            Triple(13, 285.3, 16859.071),
+            Triple(12, 53.3, -4.578),
+            Triple(10, 126.6, 26895.292),
+            Triple(10, 205.7, -39.127),
+            Triple(10, 85.9, 12297.536),
+            Triple(10, 146.1, 90073.778)
+        )
         var sum = .0
-        sum += periodicTerm(julianCenturies, 403406, 270.54861, 0.9287892)
-        sum += periodicTerm(julianCenturies, 195207, 340.19128, 35999.1376958)
-        sum += periodicTerm(julianCenturies, 119433, 63.91854, 35999.4089666)
-        sum += periodicTerm(julianCenturies, 112392, 331.2622, 35998.7287385)
-        sum += periodicTerm(julianCenturies, 3891, 317.843, 71998.20261)
-        sum += periodicTerm(julianCenturies, 2819, 86.631, 71998.4403)
-        sum += periodicTerm(julianCenturies, 1721, 240.052, 36000.35726)
-        sum += periodicTerm(julianCenturies, 660, 310.26, 71997.4812)
-        sum += periodicTerm(julianCenturies, 350, 247.23, 32964.4678)
-        sum += periodicTerm(julianCenturies, 334, 260.87, -19.441)
-        sum += periodicTerm(julianCenturies, 314, 297.82, 445267.1117)
-        sum += periodicTerm(julianCenturies, 268, 343.14, 45036.884)
-        sum += periodicTerm(julianCenturies, 242, 166.79, 3.1008)
-        sum += periodicTerm(julianCenturies, 234, 81.53, 22518.4434)
-        sum += periodicTerm(julianCenturies, 158, 3.5, -19.9739)
-        sum += periodicTerm(julianCenturies, 132, 132.75, 65928.9345)
-        sum += periodicTerm(julianCenturies, 129, 182.95, 9038.0293)
-        sum += periodicTerm(julianCenturies, 114, 162.03, 3034.7684)
-        sum += periodicTerm(julianCenturies, 99, 29.8, 33718.148)
-        sum += periodicTerm(julianCenturies, 93, 266.4, 3034.448)
-        sum += periodicTerm(julianCenturies, 86, 249.2, -2280.773)
-        sum += periodicTerm(julianCenturies, 78, 157.6, 29929.992)
-        sum += periodicTerm(julianCenturies, 72, 257.8, 31556.493)
-        sum += periodicTerm(julianCenturies, 68, 185.1, 149.588)
-        sum += periodicTerm(julianCenturies, 64, 69.9, 9037.75)
-        sum += periodicTerm(julianCenturies, 46, 8.0, 107997.405)
-        sum += periodicTerm(julianCenturies, 38, 197.1, -4444.176)
-        sum += periodicTerm(julianCenturies, 37, 250.4, 151.771)
-        sum += periodicTerm(julianCenturies, 32, 65.3, 67555.316)
-        sum += periodicTerm(julianCenturies, 29, 162.7, 31556.08)
-        sum += periodicTerm(julianCenturies, 28, 341.5, -4561.54)
-        sum += periodicTerm(julianCenturies, 27, 291.6, 107996.706)
-        sum += periodicTerm(julianCenturies, 27, 98.5, 1221.655)
-        sum += periodicTerm(julianCenturies, 25, 146.7, 62894.167)
-        sum += periodicTerm(julianCenturies, 24, 110.0, 31437.369)
-        sum += periodicTerm(julianCenturies, 21, 5.2, 14578.298)
-        sum += periodicTerm(julianCenturies, 21, 342.6, -31931.757)
-        sum += periodicTerm(julianCenturies, 20, 230.9, 34777.243)
-        sum += periodicTerm(julianCenturies, 18, 256.1, 1221.999)
-        sum += periodicTerm(julianCenturies, 17, 45.3, 62894.511)
-        sum += periodicTerm(julianCenturies, 14, 242.9, -4442.039)
-        sum += periodicTerm(julianCenturies, 13, 115.2, 107997.909)
-        sum += periodicTerm(julianCenturies, 13, 151.8, 119.066)
-        sum += periodicTerm(julianCenturies, 13, 285.3, 16859.071)
-        sum += periodicTerm(julianCenturies, 12, 53.3, -4.578)
-        sum += periodicTerm(julianCenturies, 10, 126.6, 26895.292)
-        sum += periodicTerm(julianCenturies, 10, 205.7, -39.127)
-        sum += periodicTerm(julianCenturies, 10, 85.9, 12297.536)
-        sum += periodicTerm(julianCenturies, 10, 146.1, 90073.778)
+        for ((a, b, c) in terms) {
+            sum += periodicTerm(julianCenturies, a, b, c)
+        }
         return sum
     }
 
@@ -300,11 +343,11 @@ internal object AlgorithmicConverter {
         val epsilon = obliquity(julianCenturies)
         val tanHalfEpsilon: Double = tan((epsilon / 2).toRadians())
         val y = tanHalfEpsilon * tanHalfEpsilon
-        val dividend: Double = y * sin((2 * lambda).toRadians()) -
-                2 * eccentricity * sin(anomaly.toRadians()) +
-                4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians()) -
-                .5 * y.pow(2.0) * sin((4 * lambda).toRadians()) -
-                1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians())
+        val dividend: Double = (y * sin((2 * lambda).toRadians())) -
+                (2 * eccentricity * sin(anomaly.toRadians())) +
+                (4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians())) -
+                (.5 * y.pow(2.0) * sin((4 * lambda).toRadians())) -
+                (1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians()))
         val divisor: Double = 2 * PI
         val equation = dividend / divisor
 
