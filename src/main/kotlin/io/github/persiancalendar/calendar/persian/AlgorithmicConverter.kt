@@ -34,8 +34,9 @@ internal object AlgorithmicConverter {
     private const val secondsPerDay = 24 * 60 * 60 // 24 hours * 60 minutes * 60 seconds
     private const val secondsPerMinute = 60
     private const val minutesPerDegree = 60
-    private val coefficients1900to1987 =
-        doubleArrayOf(-0.00002, 0.000297, 0.025184, -0.181133, 0.553040, -0.861938, 0.677066, -0.212591)
+    private val coefficients1900to1987 = doubleArrayOf(
+        -0.00002, 0.000297, 0.025184, -0.181133, 0.553040, -0.861938, 0.677066, -0.212591
+    )
     private val coefficients1800to1899 = doubleArrayOf(
         -0.000009,
         0.003844,
@@ -49,24 +50,31 @@ internal object AlgorithmicConverter {
         11.636204,
         2.043794
     )
-    private val coefficients1700to1799 = doubleArrayOf(8.118780842, -0.005092142, 0.003336121, -0.0000266484)
+    private val coefficients1700to1799 =
+        doubleArrayOf(8.118780842, -0.005092142, 0.003336121, -0.0000266484)
     private val coefficients1620to1699 = doubleArrayOf(196.58333, -4.0675, 0.0219167)
     private val lambdaCoefficients = doubleArrayOf(280.46645, 36000.76983, 0.0003032)
     private val anomalyCoefficients = doubleArrayOf(357.52910, 35999.05030, -0.0001559, -0.00000048)
     private val eccentricityCoefficients = doubleArrayOf(0.016708617, -0.000042037, -0.0000001236)
-    private val coefficients =
-        doubleArrayOf(angle(23, 26, 21.448), angle(0, 0, -46.8150), angle(0, 0, -0.00059), angle(0, 0, 0.001813))
+    private val coefficients = doubleArrayOf(
+        angle(23, 26, 21.448), angle(0, 0, -46.8150), angle(0, 0, -0.00059), angle(0, 0, 0.001813)
+    )
     private val coefficientsA = doubleArrayOf(124.90, -1934.134, 0.002063)
     private val coefficientsB = doubleArrayOf(201.11, 72001.5377, 0.00057)
-    private val ephemerisCorrectionTable = arrayOf( // lowest year that starts algorithm, algorithm to use
+
+    // lowest year that starts algorithm, algorithm to use
+    private val ephemerisCorrectionTable = listOf(
         EphemerisCorrectionAlgorithmMap(2020, CorrectionAlgorithm.Default),
         EphemerisCorrectionAlgorithmMap(1988, CorrectionAlgorithm.Year1988to2019),
         EphemerisCorrectionAlgorithmMap(1900, CorrectionAlgorithm.Year1900to1987),
         EphemerisCorrectionAlgorithmMap(1800, CorrectionAlgorithm.Year1800to1899),
         EphemerisCorrectionAlgorithmMap(1700, CorrectionAlgorithm.Year1700to1799),
         EphemerisCorrectionAlgorithmMap(1620, CorrectionAlgorithm.Year1620to1699),
-        EphemerisCorrectionAlgorithmMap(Int.MIN_VALUE, CorrectionAlgorithm.Default) // default must be last
+        EphemerisCorrectionAlgorithmMap(
+            Int.MIN_VALUE, CorrectionAlgorithm.Default
+        ) // default must be last
     )
+
     private const val longitudeSpring = .0
     fun toJdn(year: Int, month: Int, day: Int): Long {
         val approximateHalfYear = 180

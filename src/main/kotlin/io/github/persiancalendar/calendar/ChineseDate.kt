@@ -130,7 +130,9 @@ internal class ChineseDate(val year: Int, val month: Int, val leapMonth: Boolean
             val y = getBitInteger(gregorian11, 12, 9)
             val m = getBitInteger(gregorian11, 4, 5)
             val d = getBitInteger(gregorian11, 5, 0)
-            var offset = (CivilDate(gregYear, gregMonth, gregDay).toJdn() - CivilDate(y, m, d).toJdn()).toInt()
+            var offset =
+                (CivilDate(gregYear, gregMonth, gregDay).toJdn() - CivilDate(y, m, d).toJdn())
+                    .toInt()
             val days = lunar_month_days[index]
             val leap = getBitInteger(days, 4, 13)
             val lunarY = index + gregorian_1_1[0]

@@ -92,7 +92,8 @@ internal object FallbackIslamicConverter {
         var year = civil.year
         var month = civil.month
         var day = civil.dayOfMonth
-        var k = floor(.6 + (year + (if (month % 2 == 0) month else month - 1) / 12.0 + day / 365f - 1900) * 12.3685)
+        var k =
+            floor(.6 + (year + (if (month % 2 == 0) month else month - 1) / 12.0 + day / 365f - 1900) * 12.3685)
         var mjd: Double
         do {
             mjd = visibility(k)

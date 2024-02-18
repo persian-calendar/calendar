@@ -51,7 +51,11 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
                 CivilDate(year, month, dayOfMonth)
         }
 
-        return YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, createDate)
+        return YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance(
+            this,
+            monthsDistance,
+            createDate
+        )
     }
 
     override fun monthsDistanceTo(date: CivilDate): Int {
