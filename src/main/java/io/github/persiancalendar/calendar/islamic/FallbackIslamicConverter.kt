@@ -97,17 +97,17 @@ object FallbackIslamicConverter {
         var mjd: Double
         do {
             mjd = visibility(k)
-            k = k - 1
+            k -= 1
         } while (mjd > jd - .5)
-        k = k + 1
+        k += 1
         val hm = k - 1048
         year = 1405 + (hm / 12).toInt()
         month = (hm % 12).toInt() + 1
         if (hm != 0L && month <= 0) {
-            month = month + 12
-            year = year - 1
+            month += 12
+            year -= 1
         }
-        if (year <= 0) year = year - 1
+        if (year <= 0) year -= 1
         day = floor(jd - mjd + .5).toInt()
         return intArrayOf(year, month, day)
     }
