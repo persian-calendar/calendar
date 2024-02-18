@@ -130,15 +130,16 @@ object IranianIslamicDateConverter {
         jdSupportEnd = jd + jdSupportStart
     }
 
-    fun toJdn(year: Int, month: Int, day: Int): Long {
+    internal fun toJdn(year: Int, month: Int, day: Int): Long {
         val yearIndex = year - supportedYearsStart
         return if (yearIndex < 0 || yearIndex >= supportedYears) -1 else months[yearIndex * 12 + month - 1] + day + jdSupportStart - 1
     }
 
-    fun fromJdn(jd: Long): IntArray? {
+    internal fun fromJdn(jd: Long): IntArray? {
         if (jd < jdSupportStart || jd >= jdSupportEnd) return null
         val days = (jd - jdSupportStart).toInt()
-        var index = (days / 29.572).toInt() // It is an estimation of lunar month length which is 29.53059
+        var index =
+            (days / 29.572).toInt() // It is an estimation of lunar month length which is 29.53059
         while (index + 1 < months.size && months[index + 1] <= days) ++index
         val yearIndex = index / 12
         val month = index % 12

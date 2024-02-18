@@ -4,7 +4,7 @@ package io.github.persiancalendar.calendar.persian
 // https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
 // For a correct implementation accurate for ~9k years, have a look at AlgorithmicConverter
 // which matches also with the numbers we have here for IRST longitude.
-object LookupTableConverter {
+internal object LookupTableConverter {
     private const val startingYear = 1206
     private val yearsStartingJdn = LongArray(1498 - startingYear)
 

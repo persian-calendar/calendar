@@ -5,7 +5,7 @@ import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
 
-object FallbackIslamicConverter {
+internal object FallbackIslamicConverter {
     private const val NMONTHS = 1405 * 12 + 1
     private fun floor(d: Double): Long = kotlin.math.floor(d).toLong()
 

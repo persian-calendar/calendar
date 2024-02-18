@@ -16,8 +16,9 @@ import kotlin.math.sin
 import kotlin.math.tan
 import kotlin.math.withSign
 
-object AlgorithmicConverter {
-    private const val projectJdnOffset: Long = 1721426 // Offset from Jdn to jdn used in this converter
+internal object AlgorithmicConverter {
+    private const val projectJdnOffset: Long =
+        1721426 // Offset from Jdn to jdn used in this converter
     private const val persianEpoch: Long = 226895 // new DateTime(622, 3, 22).Ticks / TicksPerDay
     private const val meanTropicalYearInDays = 365.242189
     private const val fullCircleOfArc = 360.0

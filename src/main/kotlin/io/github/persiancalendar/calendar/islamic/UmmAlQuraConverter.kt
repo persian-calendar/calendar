@@ -27,7 +27,7 @@ package io.github.persiancalendar.calendar.islamic
 
 import kotlin.math.floor
 
-object UmmAlQuraConverter {
+internal object UmmAlQuraConverter {
     private val ummalquraData = intArrayOf(
         28607, 28636, 28665, 28695, 28724, 28754, 28783, 28813,
         28843, 28872, 28901, 28931, 28960, 28990, 29019, 29049, 29078, 29108, 29137, 29167,
