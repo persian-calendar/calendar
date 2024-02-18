@@ -39,8 +39,8 @@ object FallbackIslamicConverter {
 
         // Moon's argument of latitude
         val tf = (
-            2 * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3)
-        ).toRadians()
+                2 * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3)
+                ).toRadians()
         when (nph) {
             0, 2 -> xtra = ((.1734 - .000393 * T) * sin(sa) + .0021
                     * sin(sa * 2) - .4068 * sin(ma) + .0161

@@ -6,7 +6,15 @@ package io.github.persiancalendar.calendar.persian
 
 import io.github.persiancalendar.calendar.CivilDate
 import io.github.persiancalendar.calendar.util.toRadians
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.floor
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.tan
+import kotlin.math.withSign
 
 object AlgorithmicConverter {
     private const val projectJdnOffset: Long = 1721426 // Offset from Jdn to jdn used in this converter
