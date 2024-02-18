@@ -29,9 +29,9 @@ internal object LookupTableConverter {
     }
 
     fun toJdn(year: Int, month: Int, day: Int): Long {
-        return if (year < startingYear || year > startingYear + yearsStartingJdn.size - 1) -1 else yearsStartingJdn[year - startingYear] + daysInPreviousMonths(
-            month
-        ) + day - 1
+        return if (year < startingYear || year > startingYear + yearsStartingJdn.size - 1) -1 else {
+            yearsStartingJdn[year - startingYear] + daysInPreviousMonths(month) + day - 1
+        }
     }
 
     // First six months have length of 31, next 5 months are 30 and the last month is 29 and in leap years are 30
@@ -42,9 +42,7 @@ internal object LookupTableConverter {
         return index
     }
 
-    private fun daysInPreviousMonths(month: Int): Int {
-        return daysToMonth[month - 1]
-    }
+    private fun daysInPreviousMonths(month: Int): Int = daysToMonth[month - 1]
 
     fun fromJdn(jdn: Long): IntArray? {
         if (jdn < yearsStartingJdn[0] || jdn > yearsStartingJdn[yearsStartingJdn.size - 1]) return null
