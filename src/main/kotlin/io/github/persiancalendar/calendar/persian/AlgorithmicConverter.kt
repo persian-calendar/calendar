@@ -109,9 +109,8 @@ internal object AlgorithmicConverter {
         EphemerisCorrectionAlgorithmMap(1800, CorrectionAlgorithm.Year1800to1899),
         EphemerisCorrectionAlgorithmMap(1700, CorrectionAlgorithm.Year1700to1799),
         EphemerisCorrectionAlgorithmMap(1620, CorrectionAlgorithm.Year1620to1699),
-        EphemerisCorrectionAlgorithmMap(
-            Int.MIN_VALUE, CorrectionAlgorithm.Default
-        ) // default must be last
+        // default must be last
+        EphemerisCorrectionAlgorithmMap(Int.MIN_VALUE, CorrectionAlgorithm.Default)
     )
 
     private const val longitudeSpring = .0
@@ -359,13 +358,9 @@ internal object AlgorithmicConverter {
     private fun midday(date: Double, longitude: Double): Double =
         asLocalTime(date + twelveHours, longitude) - asDayFraction(longitude)
 
-    // midday-in-tehran
-    private fun middayAtPersianObservationSite(date: Double): Double {
-        return midday(
-            date,
-            initLongitude(52.5)
-        ) // 52.5 degrees east - longitude of UTC+3:30 which defines Iranian Standard Time
-    }
+    // midday-in-tehran 52.5 degrees east, longitude of UTC+3:30 which defines Iranian Standard Time
+    private fun middayAtPersianObservationSite(date: Double): Double =
+        midday(date, initLongitude(52.5))
 
     // persian-new-year-on-or-before
     //  number of days is the absolute date. The absolute date is the number of days from January 1st, 1 A.D.
