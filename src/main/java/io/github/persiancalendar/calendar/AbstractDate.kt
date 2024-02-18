@@ -1,17 +1,15 @@
-package io.github.persiancalendar.calendar;
+package io.github.persiancalendar.calendar
 
 /**
  * Abstract class representing a date.
  *
  * @author Amir
  */
-
-public abstract class AbstractDate {
-
+abstract class AbstractDate {
     // Concrete things
-    final private int year;
-    final private int month;
-    final private int dayOfMonth;
+    val year: Int
+    val month: Int
+    val dayOfMonth: Int
 
     /* What JDN (Julian Day Number) means?
      *
@@ -21,47 +19,28 @@ public abstract class AbstractDate {
      * easily calculating elapsed days between two events (e.g. food production
      * date and sell by date).
      */
-
-    public AbstractDate(int year, int month, int dayOfMonth) {
-        this.year = year;
-        this.month = month;
-        this.dayOfMonth = dayOfMonth;
+    constructor(year: Int, month: Int, dayOfMonth: Int) {
+        this.year = year
+        this.month = month
+        this.dayOfMonth = dayOfMonth
     }
 
-    public AbstractDate(long jdn) {
-        int[] result = fromJdn(jdn);
-        this.year = result[0];
-        this.month = result[1];
-        this.dayOfMonth = result[2];
+    constructor(jdn: Long) {
+        val result = fromJdn(jdn)
+        this.year = result[0]
+        this.month = result[1]
+        this.dayOfMonth = result[2]
     }
 
-    public AbstractDate(AbstractDate date) {
-        this(date.toJdn());
-    }
+    constructor(date: AbstractDate) : this(date.toJdn())
 
     // Things needed to be implemented by subclasses
-    public abstract long toJdn();
+    abstract fun toJdn(): Long
 
-    protected abstract int[] fromJdn(long jdn);
+    protected abstract fun fromJdn(jdn: Long): IntArray
 
-    public int getYear() {
-        return year;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public int getDayOfMonth() {
-        return dayOfMonth;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (getClass() != obj.getClass() || !(obj instanceof AbstractDate)) return false;
-        AbstractDate date = (AbstractDate) obj;
-        return getYear() == date.getYear() &&
-                getMonth() == date.getMonth() &&
-                getDayOfMonth() == date.getDayOfMonth();
+    override fun equals(obj: Any?): Boolean {
+        if (obj == null || this::class != obj::class || obj !is AbstractDate) return false
+        return year == obj.year && month == obj.month && dayOfMonth == obj.dayOfMonth
     }
 }

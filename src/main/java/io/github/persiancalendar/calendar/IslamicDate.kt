@@ -1,64 +1,58 @@
-package io.github.persiancalendar.calendar;
+package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.islamic.FallbackIslamicConverter;
-import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter;
-import io.github.persiancalendar.calendar.islamic.UmmAlQuraConverter;
+import io.github.persiancalendar.calendar.YearMonthDate.CreateDate
+import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance
+import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthsDistanceTo
+import io.github.persiancalendar.calendar.islamic.FallbackIslamicConverter
+import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
+import io.github.persiancalendar.calendar.islamic.UmmAlQuraConverter
 
 /**
  * @author Amir
  */
+class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
+    constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
+    constructor(jdn: Long) : super(jdn)
+    constructor(date: AbstractDate) : super(date)
 
-public class IslamicDate extends AbstractDate implements YearMonthDate<IslamicDate> {
-
-    // Converters
-    public static boolean useUmmAlQura = false;
-    public static int islamicOffset = 0;
-
-    public IslamicDate(int year, int month, int dayOfMonth) {
-        super(year, month, dayOfMonth);
+    override fun toJdn(): Long {
+        val year = year
+        val month = month
+        val day = dayOfMonth
+        val tableResult: Long = if (useUmmAlQura) UmmAlQuraConverter.toJdn(year, month, day)
+            .toLong() else IranianIslamicDateConverter.toJdn(year, month, day)
+        return if (tableResult != -1L) tableResult - islamicOffset else FallbackIslamicConverter.toJdn(
+            year,
+            month,
+            day
+        ) - islamicOffset
     }
 
-    public IslamicDate(long jdn) {
-        super(jdn);
+    override fun fromJdn(jdn: Long): IntArray {
+        var jdn = jdn
+        jdn += islamicOffset.toLong()
+        var result = if (useUmmAlQura) UmmAlQuraConverter.fromJdn(jdn) else IranianIslamicDateConverter.fromJdn(jdn)
+        if (result == null) result = FallbackIslamicConverter.fromJdn(jdn)
+        return result
     }
 
-    public IslamicDate(AbstractDate date) {
-        super(date);
+    override fun monthStartOfMonthsDistance(monthsDistance: Int): IslamicDate {
+        val createDate: CreateDate<IslamicDate> = object : CreateDate<IslamicDate> {
+            override fun createDate(year: Int, month: Int, dayOfMonth: Int): IslamicDate {
+                return IslamicDate(year, month, dayOfMonth)
+            }
+        }
+
+        return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    @Override
-    public long toJdn() {
-        int year = getYear(), month = getMonth(), day = getDayOfMonth();
-
-        long tableResult = useUmmAlQura
-                ? UmmAlQuraConverter.toJdn(year, month, day)
-                : IranianIslamicDateConverter.toJdn(year, month, day);
-
-        if (tableResult != -1)
-            return tableResult - islamicOffset;
-
-        return FallbackIslamicConverter.toJdn(year, month, day) - islamicOffset;
+    override fun monthsDistanceTo(date: IslamicDate): Int {
+        return monthsDistanceTo(this, date)
     }
 
-    @Override
-    protected int[] fromJdn(long jdn) {
-        jdn += islamicOffset;
-        int[] result = useUmmAlQura
-                ? UmmAlQuraConverter.fromJdn(jdn)
-                : IranianIslamicDateConverter.fromJdn(jdn);
-
-        if (result == null) result = FallbackIslamicConverter.fromJdn(jdn);
-
-        return result;
-    }
-
-    @Override
-    public IslamicDate monthStartOfMonthsDistance(int monthsDistance) {
-        return TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, IslamicDate::new);
-    }
-
-    @Override
-    public int monthsDistanceTo(IslamicDate date) {
-        return TwelveMonthsYear.monthsDistanceTo(this, date);
+    companion object {
+        // Converters
+        var useUmmAlQura = false
+        var islamicOffset = 0
     }
 }
