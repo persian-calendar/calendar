@@ -190,64 +190,60 @@ internal object AlgorithmicConverter {
     private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double =
         x * sin((y + z * julianCenturies).toRadians())
 
-    private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double {
-        val terms = listOf(
-            Triple(403406, 270.54861, 0.9287892),
-            Triple(195207, 340.19128, 35999.1376958),
-            Triple(119433, 63.91854, 35999.4089666),
-            Triple(112392, 331.2622, 35998.7287385),
-            Triple(3891, 317.843, 71998.20261),
-            Triple(2819, 86.631, 71998.4403),
-            Triple(1721, 240.052, 36000.35726),
-            Triple(660, 310.26, 71997.4812),
-            Triple(350, 247.23, 32964.4678),
-            Triple(334, 260.87, -19.441),
-            Triple(314, 297.82, 445267.1117),
-            Triple(268, 343.14, 45036.884),
-            Triple(242, 166.79, 3.1008),
-            Triple(234, 81.53, 22518.4434),
-            Triple(158, 3.5, -19.9739),
-            Triple(132, 132.75, 65928.9345),
-            Triple(129, 182.95, 9038.0293),
-            Triple(114, 162.03, 3034.7684),
-            Triple(99, 29.8, 33718.148),
-            Triple(93, 266.4, 3034.448),
-            Triple(86, 249.2, -2280.773),
-            Triple(78, 157.6, 29929.992),
-            Triple(72, 257.8, 31556.493),
-            Triple(68, 185.1, 149.588),
-            Triple(64, 69.9, 9037.75),
-            Triple(46, 8.0, 107997.405),
-            Triple(38, 197.1, -4444.176),
-            Triple(37, 250.4, 151.771),
-            Triple(32, 65.3, 67555.316),
-            Triple(29, 162.7, 31556.08),
-            Triple(28, 341.5, -4561.54),
-            Triple(27, 291.6, 107996.706),
-            Triple(27, 98.5, 1221.655),
-            Triple(25, 146.7, 62894.167),
-            Triple(24, 110.0, 31437.369),
-            Triple(21, 5.2, 14578.298),
-            Triple(21, 342.6, -31931.757),
-            Triple(20, 230.9, 34777.243),
-            Triple(18, 256.1, 1221.999),
-            Triple(17, 45.3, 62894.511),
-            Triple(14, 242.9, -4442.039),
-            Triple(13, 115.2, 107997.909),
-            Triple(13, 151.8, 119.066),
-            Triple(13, 285.3, 16859.071),
-            Triple(12, 53.3, -4.578),
-            Triple(10, 126.6, 26895.292),
-            Triple(10, 205.7, -39.127),
-            Triple(10, 85.9, 12297.536),
-            Triple(10, 146.1, 90073.778)
-        )
-        var sum = .0
-        for ((a, b, c) in terms) {
-            sum += periodicTerm(julianCenturies, a, b, c)
-        }
-        return sum
-    }
+    private val terms = listOf(
+        Triple(403406, 270.54861, 0.9287892),
+        Triple(195207, 340.19128, 35999.1376958),
+        Triple(119433, 63.91854, 35999.4089666),
+        Triple(112392, 331.2622, 35998.7287385),
+        Triple(3891, 317.843, 71998.20261),
+        Triple(2819, 86.631, 71998.4403),
+        Triple(1721, 240.052, 36000.35726),
+        Triple(660, 310.26, 71997.4812),
+        Triple(350, 247.23, 32964.4678),
+        Triple(334, 260.87, -19.441),
+        Triple(314, 297.82, 445267.1117),
+        Triple(268, 343.14, 45036.884),
+        Triple(242, 166.79, 3.1008),
+        Triple(234, 81.53, 22518.4434),
+        Triple(158, 3.5, -19.9739),
+        Triple(132, 132.75, 65928.9345),
+        Triple(129, 182.95, 9038.0293),
+        Triple(114, 162.03, 3034.7684),
+        Triple(99, 29.8, 33718.148),
+        Triple(93, 266.4, 3034.448),
+        Triple(86, 249.2, -2280.773),
+        Triple(78, 157.6, 29929.992),
+        Triple(72, 257.8, 31556.493),
+        Triple(68, 185.1, 149.588),
+        Triple(64, 69.9, 9037.75),
+        Triple(46, 8.0, 107997.405),
+        Triple(38, 197.1, -4444.176),
+        Triple(37, 250.4, 151.771),
+        Triple(32, 65.3, 67555.316),
+        Triple(29, 162.7, 31556.08),
+        Triple(28, 341.5, -4561.54),
+        Triple(27, 291.6, 107996.706),
+        Triple(27, 98.5, 1221.655),
+        Triple(25, 146.7, 62894.167),
+        Triple(24, 110.0, 31437.369),
+        Triple(21, 5.2, 14578.298),
+        Triple(21, 342.6, -31931.757),
+        Triple(20, 230.9, 34777.243),
+        Triple(18, 256.1, 1221.999),
+        Triple(17, 45.3, 62894.511),
+        Triple(14, 242.9, -4442.039),
+        Triple(13, 115.2, 107997.909),
+        Triple(13, 151.8, 119.066),
+        Triple(13, 285.3, 16859.071),
+        Triple(12, 53.3, -4.578),
+        Triple(10, 126.6, 26895.292),
+        Triple(10, 205.7, -39.127),
+        Triple(10, 85.9, 12297.536),
+        Triple(10, 146.1, 90073.778)
+    )
+
+    private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double =
+        terms.sumOf { (a, b, c) -> periodicTerm(julianCenturies, a, b, c) }
 
     private fun julianCenturies(moment: Double): Double {
         val dynamicalMoment = moment + ephemerisCorrection(moment)
