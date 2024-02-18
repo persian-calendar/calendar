@@ -1,6 +1,7 @@
 package io.github.persiancalendar.calendar.islamic
 
 import io.github.persiancalendar.calendar.CivilDate
+import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -28,18 +29,18 @@ object FallbackIslamicConverter {
         val t2 = T * T
         val t3 = t2 * T
         val jd = (2415020.75933 + 29.53058868 * k - .0001178 * t2 - .000000155 * t3 + .00033
-                * sin(Math.toRadians(166.56 + 132.87 * T - .009173 * t2)))
+                * sin((166.56 + 132.87 * T - .009173 * t2).toRadians()))
 
         // Sun's mean anomaly
-        val sa = Math.toRadians(359.2242 + 29.10535608 * k - .0000333 * t2 - .00000347 * t3)
+        val sa = (359.2242 + 29.10535608 * k - .0000333 * t2 - .00000347 * t3).toRadians()
 
         // Moon's mean anomaly
-        val ma = Math.toRadians(306.0253 + 385.81691806 * k + .0107306 * t2 + .00001236 * t3)
+        val ma = (306.0253 + 385.81691806 * k + .0107306 * t2 + .00001236 * t3).toRadians()
 
         // Moon's argument of latitude
-        val tf = Math.toRadians(
+        val tf = (
             2 * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3)
-        )
+        ).toRadians()
         when (nph) {
             0, 2 -> xtra = ((.1734 - .000393 * T) * sin(sa) + .0021
                     * sin(sa * 2) - .4068 * sin(ma) + .0161
