@@ -1,10 +1,9 @@
-package io.github.persiancalendar.calendar;
-
+package io.github.persiancalendar.calendar
 
 /**
  * Based on https://github.com/avexsoft/chinese-lunar-calendar/blob/master/src/Lunar.php
  *
- * Copyright 2015 <isee15@outlook.com>
+ * Copyright 2015 <isee15></isee15>@outlook.com>
  * Copyright 2017 Peter Kahl
  * Copyright 2021 Avexsoft
  *
@@ -12,7 +11,7 @@ package io.github.persiancalendar.calendar;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      <http://www.apache.org/licenses/LICENSE-2.0>
+ * <http:></http:>//www.apache.org/licenses/LICENSE-2.0>
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,21 +21,33 @@ package io.github.persiancalendar.calendar;
  *
  * It isn't exposed yet.
  */
-class ChineseDate {
-
-    final int year;
-    final int month;
-    final boolean leapMonth;
-    final int day;
-
-    public ChineseDate(int year, int month, boolean leapMonth, int day) {
-        this.year = year;
-        this.month = month;
-        this.leapMonth = leapMonth;
-        this.day = day;
+internal class ChineseDate(val year: Int, val month: Int, val leapMonth: Boolean, val day: Int) {
+    fun toJdn(): Long {
+        // ValidateYear(lunarYear); // if (year < MIN_YEAR || year > MAX_YEAR) {
+        val days = lunar_month_days[year - lunar_month_days[0]]
+        val leap = getBitInteger(days, 4, 13)
+        var offset = 0
+        var loopend = leap
+        if (!leapMonth) {
+            loopend = if (month <= leap || leap == 0) {
+                month - 1
+            } else {
+                month
+            }
+        }
+        for (i in 0 until loopend) {
+            offset += if (getBitInteger(days, 1, 12 - i) == 1) 30 else 29
+        }
+        offset += day
+        val gregorian11 = gregorian_1_1[year - gregorian_1_1[0]]
+        val y = getBitInteger(gregorian11, 12, 9)
+        val m = getBitInteger(gregorian11, 4, 5)
+        val d = getBitInteger(gregorian11, 5, 0)
+        return CivilDate(CivilDate(y, m, d).toJdn() + offset - 1).toJdn()
     }
 
-    private static int[] lunar_month_days = new int[]{
+    companion object {
+        private val lunar_month_days = intArrayOf(
             1887, 0x1694, 0x16aa, 0x4ad5, 0xab6, 0xc4b7, 0x4ae, 0xa56,
             0xb52a, 0x1d2a, 0xd54, 0x75aa, 0x156a, 0x1096d, 0x95c, 0x14ae,
             0xaa4d, 0x1a4c, 0x1b2a, 0x8d55, 0xad4, 0x135a, 0x495d, 0x95c,
@@ -66,8 +77,8 @@ class ChineseDate {
             0x95c, 0x949d, 0x149a, 0x1a2a, 0x5b25, 0x1aa4, 0xfb52, 0x16b4,
             0xaba, 0xa95b, 0x936, 0x1496, 0x9a4b, 0x154a, 0x136a5, 0xda4,
             0x15ac
-    };
-    private static int[] gregorian_1_1 = new int[]{
+        )
+        private val gregorian_1_1 = intArrayOf(
             1887, 0xec04c, 0xec23f, 0xec435, 0xec649, 0xec83e, 0xeca51, 0xecc46,
             0xece3a, 0xed04d, 0xed242, 0xed436, 0xed64a, 0xed83f, 0xeda53, 0xedc48,
             0xede3d, 0xee050, 0xee244, 0xee439, 0xee64d, 0xee842, 0xeea36, 0xeec4a,
@@ -97,91 +108,53 @@ class ChineseDate {
             0x105e45, 0x106039, 0x10624c, 0x106441, 0x106635, 0x106849, 0x106a3d, 0x106c51,
             0x106e47, 0x10703c, 0x10724f, 0x107444, 0x107638, 0x10784c, 0x107a3f, 0x107c53,
             0x107e48
-    };
-    private static int MIN_YEAR = 1900;
-    private static int MAX_YEAR = 2100;
+        )
+        private const val MIN_YEAR = 1900
+        private const val MAX_YEAR = 2100
+        private fun getBitInteger(data: Int, length: Int, shift: Int): Int {
+            return data and ((1 shl length) - 1 shl shift) shr shift
+        }
 
-    private static int getBitInteger(int data, int length, int shift) {
-        return (data & (((1 << length) - 1) << shift)) >> shift;
-    }
-
-    public long toJdn() {
-        // ValidateYear(lunarYear); // if (year < MIN_YEAR || year > MAX_YEAR) {
-
-        int days = lunar_month_days[year - lunar_month_days[0]];
-        int leap = getBitInteger(days, 4, 13);
-        int offset = 0;
-        int loopend = leap;
-
-        if (!leapMonth) {
-            if (month <= leap || leap == 0) {
-                loopend = month - 1;
-            } else {
-                loopend = month;
+        fun fromJdn(jdn: Long): ChineseDate {
+            val civilDate = CivilDate(jdn)
+            val gregYear = civilDate.year
+            // ValidateYear(gregYear); // if (year < MIN_YEAR || year > MAX_YEAR) {
+            val gregMonth = civilDate.month
+            val gregDay = civilDate.dayOfMonth
+            var index = gregYear - gregorian_1_1[0]
+            val data = gregYear shl 9 or (gregMonth shl 5) or gregDay
+            if (gregorian_1_1[index] > data) {
+                index--
             }
-        }
-
-        for (int i = 0; i < loopend; i++) {
-            offset += getBitInteger(days, 1, 12 - i) == 1 ? 30 : 29;
-        }
-
-        offset += day;
-        int gregorian11 = gregorian_1_1[year - gregorian_1_1[0]];
-
-        int y = getBitInteger(gregorian11, 12, 9);
-        int m = getBitInteger(gregorian11, 4, 5);
-        int d = getBitInteger(gregorian11, 5, 0);
-
-        return new CivilDate(new CivilDate(y, m, d).toJdn() + offset - 1).toJdn();
-    }
-
-    public static ChineseDate fromJdn(long jdn) {
-        CivilDate civilDate = new CivilDate(jdn);
-        int gregYear = civilDate.getYear();
-        // ValidateYear(gregYear); // if (year < MIN_YEAR || year > MAX_YEAR) {
-        int gregMonth = civilDate.getMonth();
-        int gregDay = civilDate.getDayOfMonth();
-
-        int index = gregYear - gregorian_1_1[0];
-        int data = (gregYear << 9) | (gregMonth << 5) | (gregDay);
-
-        if (gregorian_1_1[index] > data) {
-            index--;
-        }
-
-        int gregorian11 = gregorian_1_1[index];
-
-        int y = getBitInteger(gregorian11, 12, 9);
-        int m = getBitInteger(gregorian11, 4, 5);
-        int d = getBitInteger(gregorian11, 5, 0);
-
-        int offset = (int) (new CivilDate(gregYear, gregMonth, gregDay).toJdn() - new CivilDate(y, m, d).toJdn());
-        int days = lunar_month_days[index];
-        int leap = getBitInteger(days, 4, 13);
-        int lunarY = index + gregorian_1_1[0];
-        int lunarM = 1;
-        offset += 1;
-
-        for (int i = 0; i < 13; i++) {
-            int dm = getBitInteger(days, 1, 12 - i) == 1 ? 30 : 29;
-            if (offset > dm) {
-                lunarM++;
-                offset -= dm;
-            } else {
-                break;
+            val gregorian11 = gregorian_1_1[index]
+            val y = getBitInteger(gregorian11, 12, 9)
+            val m = getBitInteger(gregorian11, 4, 5)
+            val d = getBitInteger(gregorian11, 5, 0)
+            var offset = (CivilDate(gregYear, gregMonth, gregDay).toJdn() - CivilDate(y, m, d).toJdn()).toInt()
+            val days = lunar_month_days[index]
+            val leap = getBitInteger(days, 4, 13)
+            val lunarY = index + gregorian_1_1[0]
+            var lunarM = 1
+            offset += 1
+            for (i in 0..12) {
+                val dm = if (getBitInteger(days, 1, 12 - i) == 1) 30 else 29
+                offset -= if (offset > dm) {
+                    lunarM++
+                    dm
+                } else {
+                    break
+                }
             }
-        }
-
-        int lunarD = (offset);
-        boolean isLeap = false;
-
-        if (leap != 0 && lunarM > leap) {
-            int month = lunarM - 1;
-            if (lunarM == leap + 1) {
-                isLeap = true;
+            val lunarD = offset
+            var isLeap = false
+            if (leap != 0 && lunarM > leap) {
+                val month = lunarM - 1
+                if (lunarM == leap + 1) {
+                    isLeap = true
+                }
+                lunarM = month
             }
-            lunarM = month;
+            return ChineseDate(lunarY, lunarM, isLeap, lunarD)
         }
-        return new ChineseDate(lunarY, lunarM, isLeap, lunarD);
     }
 }
