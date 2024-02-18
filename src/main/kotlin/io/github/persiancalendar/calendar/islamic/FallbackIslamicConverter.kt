@@ -6,9 +6,7 @@ import kotlin.math.sin
 
 object FallbackIslamicConverter {
     private const val NMONTHS = 1405 * 12 + 1
-    private fun floor(d: Double): Long {
-        return kotlin.math.floor(d).toLong()
-    }
+    private fun floor(d: Double): Long = kotlin.math.floor(d).toLong()
 
     fun toJdn(year: Int, month: Int, day: Int): Long {
         // NMONTH is the number of months between julian day number 1 and
@@ -97,17 +95,17 @@ object FallbackIslamicConverter {
         var mjd: Double
         do {
             mjd = visibility(k)
-            k = k - 1
+            k -= 1
         } while (mjd > jd - .5)
-        k = k + 1
+        k += 1
         val hm = k - 1048
         year = 1405 + (hm / 12).toInt()
         month = (hm % 12).toInt() + 1
         if (hm != 0L && month <= 0) {
-            month = month + 12
-            year = year - 1
+            month += 12
+            year -= 1
         }
-        if (year <= 0) year = year - 1
+        if (year <= 0) year -= 1
         day = floor(jd - mjd + .5).toInt()
         return intArrayOf(year, month, day)
     }

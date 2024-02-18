@@ -38,17 +38,14 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): IslamicDate {
         val createDate: CreateDate<IslamicDate> = object : CreateDate<IslamicDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): IslamicDate {
-                return IslamicDate(year, month, dayOfMonth)
-            }
+            override fun createDate(year: Int, month: Int, dayOfMonth: Int): IslamicDate =
+                IslamicDate(year, month, dayOfMonth)
         }
 
         return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    override fun monthsDistanceTo(date: IslamicDate): Int {
-        return monthsDistanceTo(this, date)
-    }
+    override fun monthsDistanceTo(date: IslamicDate): Int = monthsDistanceTo(this, date)
 
     companion object {
         // Converters

@@ -17,22 +17,17 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
         return if (result == -1L) AlgorithmicConverter.toJdn(year, month, dayOfMonth) else result
     }
 
-    override fun fromJdn(jdn: Long): IntArray {
-        val result = LookupTableConverter.fromJdn(jdn)
-        return result ?: AlgorithmicConverter.fromJdn(jdn)
-    }
+    override fun fromJdn(jdn: Long): IntArray =
+        LookupTableConverter.fromJdn(jdn) ?: AlgorithmicConverter.fromJdn(jdn)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate {
         val createDate: CreateDate<PersianDate> = object : CreateDate<PersianDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): PersianDate {
-                return PersianDate(year, month, dayOfMonth)
-            }
+            override fun createDate(year: Int, month: Int, dayOfMonth: Int): PersianDate =
+                PersianDate(year, month, dayOfMonth)
         }
 
         return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    override fun monthsDistanceTo(date: PersianDate): Int {
-        return monthsDistanceTo(this, date)
-    }
+    override fun monthsDistanceTo(date: PersianDate): Int = monthsDistanceTo(this, date)
 }

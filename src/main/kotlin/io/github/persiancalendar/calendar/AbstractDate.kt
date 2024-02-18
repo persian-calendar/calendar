@@ -39,8 +39,15 @@ abstract class AbstractDate {
 
     protected abstract fun fromJdn(jdn: Long): IntArray
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj == null || this::class != obj::class || obj !is AbstractDate) return false
-        return year == obj.year && month == obj.month && dayOfMonth == obj.dayOfMonth
+    override fun equals(other: Any?): Boolean {
+        if (other == null || this::class != other::class || other !is AbstractDate) return false
+        return year == other.year && month == other.month && dayOfMonth == other.dayOfMonth
+    }
+
+    override fun hashCode(): Int {
+        var result = year
+        result = 31 * result + month
+        result = 31 * result + dayOfMonth
+        return result
     }
 }

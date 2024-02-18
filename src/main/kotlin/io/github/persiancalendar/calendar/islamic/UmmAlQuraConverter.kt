@@ -235,7 +235,7 @@ object UmmAlQuraConverter {
         var i = 0
         while (i < ummalquraData.size) {
             if (ummalquraData[i] > mjdn) return i
-            i = i + 1
+            i += 1
         }
         return -1
     }

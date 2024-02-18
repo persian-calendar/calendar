@@ -18,19 +18,19 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
         val lMonth = month.toLong()
         val lDay = dayOfMonth.toLong()
 
-        if ((lYear > 1582)
+        return if ((lYear > 1582)
             || ((lYear == 1582L) && (lMonth > 10))
             || ((lYear == 1582L) && (lMonth == 10L) && (lDay > 14))
         ) {
-            return (((1461 * (lYear + 4800 + ((lMonth - 14) / 12))) / 4)
+            (((1461 * (lYear + 4800 + ((lMonth - 14) / 12))) / 4)
                     + ((367 * (lMonth - 2 - 12 * (((lMonth - 14) / 12)))) / 12)
                     - ((3 * (((lYear + 4900 + ((lMonth - 14) / 12)) / 100))) / 4)
                     + lDay - 32075)
-        } else return julianToJdn(lYear, lMonth, lDay)
+        } else julianToJdn(lYear, lMonth, lDay)
     }
 
     override fun fromJdn(jdn: Long): IntArray {
-        if (jdn > 2299160) {
+        return if (jdn > 2299160) {
             var l = jdn + 68569
             val n = ((4 * l) / 146097)
             l -= ((146097 * n + 3) / 4)
@@ -41,15 +41,14 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
             l = (j / 11)
             val month = (j + 2 - 12 * l).toInt()
             val year = (100 * (n - 49) + i + l).toInt()
-            return intArrayOf(year, month, day)
-        } else return julianFromJdn(jdn)
+            intArrayOf(year, month, day)
+        } else julianFromJdn(jdn)
     }
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): CivilDate {
         val createDate: CreateDate<CivilDate> = object : CreateDate<CivilDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): CivilDate {
-                return CivilDate(year, month, dayOfMonth)
-            }
+            override fun createDate(year: Int, month: Int, dayOfMonth: Int): CivilDate =
+                CivilDate(year, month, dayOfMonth)
         }
 
         return YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, createDate)

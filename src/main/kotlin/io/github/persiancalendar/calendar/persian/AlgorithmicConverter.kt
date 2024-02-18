@@ -5,7 +5,14 @@
 package io.github.persiancalendar.calendar.persian
 
 import io.github.persiancalendar.calendar.CivilDate
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.floor
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.tan
+import kotlin.math.withSign
 
 object AlgorithmicConverter {
     private const val projectJdnOffset: Long = 1721426 // Offset from Jdn to jdn used in this converter
@@ -73,24 +80,21 @@ object AlgorithmicConverter {
         var jdn = jdn
         jdn++ // TODO: Investigate why this is needed
         val yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset)
-        val y: Int = kotlin.math.floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
+        val y: Int =
+            kotlin.math.floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
         val ordinalDay = (jdn - toJdn(y, 1, 1)).toInt()
         val m = monthFromOrdinalDay(ordinalDay)
         val d = ordinalDay - daysInPreviousMonths(m)
         return intArrayOf(y, m, d)
     }
 
-    private fun daysInPreviousMonths(month: Int): Int {
-        return daysToMonth[month - 1]
-    }
+    private fun daysInPreviousMonths(month: Int): Int = daysToMonth[month - 1]
 
-    private fun asSeason(longitude: Double): Double {
-        return if (longitude < 0) longitude + fullCircleOfArc else longitude
-    }
+    private fun asSeason(longitude: Double): Double =
+        if (longitude < 0) longitude + fullCircleOfArc else longitude
 
-    private fun initLongitude(longitude: Double): Double {
-        return normalizeLongitude(longitude + halfCircleOfArc) - halfCircleOfArc
-    }
+    private fun initLongitude(longitude: Double): Double =
+        normalizeLongitude(longitude + halfCircleOfArc) - halfCircleOfArc
 
     private fun normalizeLongitude(longitude: Double): Double {
         var longitude = longitude
@@ -100,7 +104,8 @@ object AlgorithmicConverter {
     }
 
     private fun estimatePrior(longitude: Double, time: Double): Double {
-        val timeSunLastAtLongitude = time - meanSpeedOfSun * asSeason(initLongitude(compute(time) - longitude))
+        val timeSunLastAtLongitude =
+            time - meanSpeedOfSun * asSeason(initLongitude(compute(time) - longitude))
         val longitudeErrorDelta = initLongitude(compute(timeSunLastAtLongitude) - longitude)
         return min(time, timeSunLastAtLongitude - meanSpeedOfSun * longitudeErrorDelta)
     }
@@ -131,13 +136,11 @@ object AlgorithmicConverter {
         return -0.004778 * sin(Math.toRadians(a)) - 0.0003667 * sin(Math.toRadians(b))
     }
 
-    private fun aberration(julianCenturies: Double): Double {
-        return 0.0000974 * cos(Math.toRadians(177.63 + 35999.01848 * julianCenturies)) - 0.005575
-    }
+    private fun aberration(julianCenturies: Double): Double =
+        0.0000974 * cos(Math.toRadians(177.63 + 35999.01848 * julianCenturies)) - 0.005575
 
-    private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double {
-        return x * sin(Math.toRadians(y + z * julianCenturies))
-    }
+    private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double =
+        x * sin(Math.toRadians(y + z * julianCenturies))
 
     private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double {
         var sum = .0
@@ -217,9 +220,8 @@ object AlgorithmicConverter {
         return (july1stOfYear - startOf1900Century).toDouble() / daysInUniformLengthCentury
     }
 
-    private fun angle(degrees: Int, minutes: Int, seconds: Double): Double {
-        return (seconds / secondsPerMinute + minutes) / minutesPerDegree + degrees
-    }
+    private fun angle(degrees: Int, minutes: Int, seconds: Double): Double =
+        (seconds / secondsPerMinute + minutes) / minutesPerDegree + degrees
 
     private fun ephemerisCorrection1900to1987(gregorianYear: Int): Double {
         // Contract.Assert(1900 <= gregorianYear && gregorianYear <= 1987);
@@ -245,9 +247,8 @@ object AlgorithmicConverter {
         return polynomialSum(coefficients1620to1699, yearsSince1600) / secondsPerDay
     }
 
-    private fun getGregorianYear(numberOfDays: Double): Int {
-        return CivilDate(kotlin.math.floor(numberOfDays).toLong() + projectJdnOffset).year
-    }
+    private fun getGregorianYear(numberOfDays: Double): Int =
+        CivilDate(floor(numberOfDays).toLong() + projectJdnOffset).year
 
     // ephemeris-correction: correction to account for the slowing down of the rotation of the earth
     private fun ephemerisCorrection(time: Double): Double {
@@ -270,13 +271,10 @@ object AlgorithmicConverter {
         return defaultEphemerisCorrection(year)
     }
 
-    private fun asDayFraction(longitude: Double): Double {
-        return longitude / fullCircleOfArc
-    }
+    private fun asDayFraction(longitude: Double): Double = longitude / fullCircleOfArc
 
-    private fun obliquity(julianCenturies: Double): Double {
-        return polynomialSum(coefficients, julianCenturies)
-    }
+    private fun obliquity(julianCenturies: Double): Double =
+        polynomialSum(coefficients, julianCenturies)
 
     // equation-of-time; approximate the difference between apparent solar time and mean solar time
     // formal definition is EOT = GHA - GMHA
@@ -312,9 +310,8 @@ object AlgorithmicConverter {
     }
 
     // midday
-    private fun midday(date: Double, longitude: Double): Double {
-        return asLocalTime(date + twelveHours, longitude) - asDayFraction(longitude)
-    }
+    private fun midday(date: Double, longitude: Double): Double =
+        asLocalTime(date + twelveHours, longitude) - asDayFraction(longitude)
 
     // midday-in-tehran
     private fun middayAtPersianObservationSite(date: Double): Double {
@@ -359,7 +356,7 @@ object AlgorithmicConverter {
         Year1620to1699
     }
 
-    private class EphemerisCorrectionAlgorithmMap internal constructor(
+    private data class EphemerisCorrectionAlgorithmMap(
         val lowestYear: Int,
         val algorithm: CorrectionAlgorithm
     )

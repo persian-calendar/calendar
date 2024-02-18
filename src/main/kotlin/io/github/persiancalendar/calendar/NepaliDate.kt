@@ -35,21 +35,18 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
 
     constructor(jdn: Long) : super(jdn)
 
-    constructor(date: AbstractDate?) : super(date!!)
+    constructor(date: AbstractDate) : super(date)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): NepaliDate {
         val createDate: CreateDate<NepaliDate> = object : CreateDate<NepaliDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): NepaliDate {
-                return NepaliDate(year, month, dayOfMonth)
-            }
+            override fun createDate(year: Int, month: Int, dayOfMonth: Int): NepaliDate =
+                NepaliDate(year, month, dayOfMonth)
         }
 
         return monthStartOfMonthsDistance(this, monthsDistance, createDate)
     }
 
-    override fun monthsDistanceTo(date: NepaliDate): Int {
-        return monthsDistanceTo(this, date)
-    }
+    override fun monthsDistanceTo(date: NepaliDate): Int = monthsDistanceTo(this, date)
 
     companion object {
         private const val jdSupportStart: Long = 2422793 // CivilDate(1927, 7, 1).toJdn()
