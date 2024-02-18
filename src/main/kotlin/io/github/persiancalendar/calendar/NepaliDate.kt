@@ -28,7 +28,11 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
         var index = (days / 31.01).toInt()
         while (index + 1 < months.size && months[index + 1] <= days) ++index
 
-        return intArrayOf(index / 12 + eraStartYear, index % 12 + 1, days - months[index] + 1)
+        return intArrayOf(
+            (index / 12) + eraStartYear,
+            (index % 12) + 1,
+            days - months[index] + 1
+        )
     }
 
     constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)

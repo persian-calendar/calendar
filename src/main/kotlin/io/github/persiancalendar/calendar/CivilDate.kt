@@ -18,7 +18,8 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
         val lMonth = month.toLong()
         val lDay = dayOfMonth.toLong()
 
-        return if ((lYear > 1582)
+        return if (
+            (lYear > 1582)
             || ((lYear == 1582L) && (lMonth > 10))
             || ((lYear == 1582L) && (lMonth == 10L) && (lDay > 14))
         ) {
@@ -80,7 +81,10 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
         }
 
         private fun julianToJdn(lYear: Long, lMonth: Long, lDay: Long): Long {
-            return 367 * lYear - ((7 * (lYear + 5001 + ((lMonth - 9) / 7))) / 4) + ((275 * lMonth) / 9) + lDay + 1729777
+            return (367 * lYear) -
+                    ((7 * (lYear + 5001 + ((lMonth - 9) / 7))) / 4) +
+                    ((275 * lMonth) / 9) +
+                    lDay + 1729777
         }
     }
 }

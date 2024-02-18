@@ -35,7 +35,14 @@ internal object AlgorithmicConverter {
     private const val secondsPerMinute = 60
     private const val minutesPerDegree = 60
     private val coefficients1900to1987 = doubleArrayOf(
-        -0.00002, 0.000297, 0.025184, -0.181133, 0.553040, -0.861938, 0.677066, -0.212591
+        -0.00002,
+        0.000297,
+        0.025184,
+        -0.181133,
+        0.553040,
+        -0.861938,
+        0.677066,
+        -0.212591
     )
     private val coefficients1800to1899 = doubleArrayOf(
         -0.000009,
@@ -50,17 +57,49 @@ internal object AlgorithmicConverter {
         11.636204,
         2.043794
     )
-    private val coefficients1700to1799 =
-        doubleArrayOf(8.118780842, -0.005092142, 0.003336121, -0.0000266484)
-    private val coefficients1620to1699 = doubleArrayOf(196.58333, -4.0675, 0.0219167)
-    private val lambdaCoefficients = doubleArrayOf(280.46645, 36000.76983, 0.0003032)
-    private val anomalyCoefficients = doubleArrayOf(357.52910, 35999.05030, -0.0001559, -0.00000048)
-    private val eccentricityCoefficients = doubleArrayOf(0.016708617, -0.000042037, -0.0000001236)
-    private val coefficients = doubleArrayOf(
-        angle(23, 26, 21.448), angle(0, 0, -46.8150), angle(0, 0, -0.00059), angle(0, 0, 0.001813)
+    private val coefficients1700to1799 = doubleArrayOf(
+        8.118780842,
+        -0.005092142,
+        0.003336121,
+        -0.0000266484
     )
-    private val coefficientsA = doubleArrayOf(124.90, -1934.134, 0.002063)
-    private val coefficientsB = doubleArrayOf(201.11, 72001.5377, 0.00057)
+    private val coefficients1620to1699 = doubleArrayOf(
+        196.58333,
+        -4.0675,
+        0.0219167
+    )
+    private val lambdaCoefficients = doubleArrayOf(
+        280.46645,
+        36000.76983,
+        0.0003032
+    )
+    private val anomalyCoefficients = doubleArrayOf(
+        357.52910,
+        35999.05030,
+        -0.0001559,
+        -0.00000048
+    )
+    private val eccentricityCoefficients = doubleArrayOf(
+        0.016708617,
+        -0.000042037,
+        -0.0000001236
+    )
+    private val coefficients = doubleArrayOf(
+        angle(23, 26, 21.448),
+        angle(0, 0, -46.8150),
+        angle(0, 0, -0.00059),
+        angle(0, 0, 0.001813)
+    )
+    private val coefficientsA = doubleArrayOf(
+        124.90,
+        -1934.134,
+        0.002063
+    )
+    private val coefficientsB = doubleArrayOf(
+        201.11,
+        72001.5377,
+        0.00057
+    )
 
     // lowest year that starts algorithm, algorithm to use
     private val ephemerisCorrectionTable = listOf(
@@ -122,10 +161,9 @@ internal object AlgorithmicConverter {
 
     private fun compute(time: Double): Double {
         val julianCenturies = julianCenturies(time)
-        val lambda =
-            282.7771834 + 36000.76953744 * julianCenturies + 0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(
-                julianCenturies
-            )
+        val lambda = 282.7771834 +
+                (36000.76953744 * julianCenturies) +
+                (0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(julianCenturies))
         val longitude = lambda + aberration(julianCenturies) + nutation(julianCenturies)
         return initLongitude(longitude)
     }
@@ -147,7 +185,7 @@ internal object AlgorithmicConverter {
     }
 
     private fun aberration(julianCenturies: Double): Double =
-        0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians()) - 0.005575
+        (0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians())) - 0.005575
 
     private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double =
         x * sin((y + z * julianCenturies).toRadians())
@@ -305,11 +343,11 @@ internal object AlgorithmicConverter {
         val epsilon = obliquity(julianCenturies)
         val tanHalfEpsilon: Double = tan((epsilon / 2).toRadians())
         val y = tanHalfEpsilon * tanHalfEpsilon
-        val dividend: Double = y * sin((2 * lambda).toRadians()) -
-                2 * eccentricity * sin(anomaly.toRadians()) +
-                4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians()) -
-                .5 * y.pow(2.0) * sin((4 * lambda).toRadians()) -
-                1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians())
+        val dividend: Double = (y * sin((2 * lambda).toRadians())) -
+                (2 * eccentricity * sin(anomaly.toRadians())) +
+                (4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians())) -
+                (.5 * y.pow(2.0) * sin((4 * lambda).toRadians())) -
+                (1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians()))
         val divisor: Double = 2 * PI
         val equation = dividend / divisor
 

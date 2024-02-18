@@ -6,7 +6,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 internal object FallbackIslamicConverter {
-    private const val NMONTHS = 1405 * 12 + 1
+    private const val NMONTHS = (1405 * 12) + 1
     private fun floor(d: Double): Long = kotlin.math.floor(d).toLong()
 
     fun toJdn(year: Int, month: Int, day: Int): Long {
@@ -40,31 +40,47 @@ internal object FallbackIslamicConverter {
                 2 * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3)
                 ).toRadians()
         when (nph) {
-            0, 2 -> xtra = ((.1734 - .000393 * T) * sin(sa) + .0021
-                    * sin(sa * 2) - .4068 * sin(ma) + .0161
-                    * sin(2 * ma) - .0004 * sin(3 * ma) + .0104
-                    * sin(tf)) - .0051 * sin(sa + ma) - (.0074
-                    * sin(sa - ma)) + .0004 * sin(tf + sa) - (.0004
-                    * sin(tf - sa)) - .0006 * sin(tf + ma) + (.001
-                    * sin(tf - ma)) + .0005 * sin(sa + 2 * ma)
+            0, 2 -> xtra = (
+                    ((.1734 - .000393 * T) * sin(sa)) +
+                            (.0021 * sin(sa * 2)) -
+                            (.4068 * sin(ma)) +
+                            (.0161 * sin(2 * ma)) -
+                            (.0004 * sin(3 * ma)) +
+                            (.0104 * sin(tf))
+                    ) - (.0051 * sin(sa + ma)) -
+                    (.0074 * sin(sa - ma)) +
+                    (.0004 * sin(tf + sa)) -
+                    (.0004 * sin(tf - sa)) -
+                    (.0006 * sin(tf + ma)) +
+                    (.001 * sin(tf - ma)) +
+                    (.0005 * sin(sa + 2 * ma))
 
             1, 3 -> {
-                xtra = (((.1721 - .0004 * T) * sin(sa) + .0021
-                        * sin(sa * 2) - .628 * sin(ma) + .0089
-                        * sin(2 * ma) - .0004 * sin(3 * ma) + .0079
-                        * sin(tf)) - .0119 * sin(sa + ma) - (.0047
-                        * sin(sa - ma)) + .0003 * sin(tf + sa) - (.0004
-                        * sin(tf - sa)) - .0006 * sin(tf + ma) + (.0021
-                        * sin(tf - ma)) + .0003 * sin(sa + 2 * ma) + .0004 * sin(sa - 2 * ma) - .0003
-                        * sin(2 * sa + ma))
-                if (nph == 1) xtra = xtra + .0028 - .0004 * cos(sa) + .0003 * cos(ma)
-                else xtra = xtra - .0028 + .0004 * cos(sa) - .0003 * cos(ma)
+                xtra = (
+                        ((.1721 - .0004 * T) * sin(sa)) +
+                                (.0021 * sin(sa * 2)) -
+                                (.628 * sin(ma)) +
+                                (.0089 * sin(2 * ma)) -
+                                (.0004 * sin(3 * ma)) +
+                                (.0079 * sin(tf))
+                        ) -
+                        (.0119 * sin(sa + ma)) -
+                        (.0047 * sin(sa - ma)) +
+                        (.0003 * sin(tf + sa)) -
+                        (.0004 * sin(tf - sa)) -
+                        (.0006 * sin(tf + ma)) +
+                        (.0021 * sin(tf - ma)) +
+                        (.0003 * sin(sa + 2 * ma)) +
+                        (.0004 * sin(sa - 2 * ma)) -
+                        (.0003 * sin(2 * sa + ma))
+                if (nph == 1) xtra = xtra + .0028 - (.0004 * cos(sa)) + (.0003 * cos(ma))
+                else xtra = xtra - .0028 + (.0004 * cos(sa)) - (.0003 * cos(ma))
             }
 
             else -> return 0.0
         }
         // convert from Ephemeris Time (ET) to (approximate)Universal Time (UT)
-        return jd + xtra - (.41 + 1.2053 * T + .4992 * t2) / 1440
+        return jd + xtra - (.41 + (1.2053 * T) + (.4992 * t2)) / 1440
     }
 
     private fun visibility(n: Long): Double {
