@@ -187,9 +187,6 @@ internal object AlgorithmicConverter {
     private fun aberration(julianCenturies: Double): Double =
         (0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians())) - 0.005575
 
-    private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double =
-        x * sin((y + z * julianCenturies).toRadians())
-
     private val terms = listOf(
         Triple(403406, 270.54861, 0.9287892),
         Triple(195207, 340.19128, 35999.1376958),
@@ -243,7 +240,7 @@ internal object AlgorithmicConverter {
     )
 
     private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double =
-        terms.sumOf { (a, b, c) -> periodicTerm(julianCenturies, a, b, c) }
+        terms.sumOf { (x, y, z) -> x * sin((y + z * julianCenturies).toRadians()) }
 
     private fun julianCenturies(moment: Double): Double {
         val dynamicalMoment = moment + ephemerisCorrection(moment)
