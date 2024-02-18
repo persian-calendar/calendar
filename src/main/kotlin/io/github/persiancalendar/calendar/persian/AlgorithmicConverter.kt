@@ -5,6 +5,8 @@
 package io.github.persiancalendar.calendar.persian
 
 import io.github.persiancalendar.calendar.CivilDate
+import io.github.persiancalendar.calendar.util.toRadians
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
@@ -80,8 +82,7 @@ object AlgorithmicConverter {
         var jdn = jdn
         jdn++ // TODO: Investigate why this is needed
         val yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset)
-        val y: Int =
-            kotlin.math.floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
+        val y: Int = floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
         val ordinalDay = (jdn - toJdn(y, 1, 1)).toInt()
         val m = monthFromOrdinalDay(ordinalDay)
         val d = ordinalDay - daysInPreviousMonths(m)
@@ -133,14 +134,14 @@ object AlgorithmicConverter {
     private fun nutation(julianCenturies: Double): Double {
         val a = polynomialSum(coefficientsA, julianCenturies)
         val b = polynomialSum(coefficientsB, julianCenturies)
-        return -0.004778 * sin(Math.toRadians(a)) - 0.0003667 * sin(Math.toRadians(b))
+        return -0.004778 * sin(a.toRadians()) - 0.0003667 * sin(b.toRadians())
     }
 
     private fun aberration(julianCenturies: Double): Double =
-        0.0000974 * cos(Math.toRadians(177.63 + 35999.01848 * julianCenturies)) - 0.005575
+        0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians()) - 0.005575
 
     private fun periodicTerm(julianCenturies: Double, x: Int, y: Double, z: Double): Double =
-        x * sin(Math.toRadians(y + z * julianCenturies))
+        x * sin((y + z * julianCenturies).toRadians())
 
     private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double {
         var sum = .0
@@ -288,14 +289,14 @@ object AlgorithmicConverter {
         val anomaly = polynomialSum(anomalyCoefficients, julianCenturies)
         val eccentricity = polynomialSum(eccentricityCoefficients, julianCenturies)
         val epsilon = obliquity(julianCenturies)
-        val tanHalfEpsilon: Double = tan(Math.toRadians(epsilon / 2))
+        val tanHalfEpsilon: Double = tan((epsilon / 2).toRadians())
         val y = tanHalfEpsilon * tanHalfEpsilon
-        val dividend: Double = y * sin(Math.toRadians(2 * lambda)) -
-                2 * eccentricity * sin(Math.toRadians(anomaly)) +
-                4 * eccentricity * y * sin(Math.toRadians(anomaly)) * cos(Math.toRadians(2 * lambda)) -
-                .5 * y.pow(2.0) * sin(Math.toRadians(4 * lambda)) -
-                1.25 * eccentricity.pow(2.0) * sin(Math.toRadians(2 * anomaly))
-        val divisor: Double = 2 * kotlin.math.PI
+        val dividend: Double = y * sin((2 * lambda).toRadians()) -
+                2 * eccentricity * sin(anomaly.toRadians()) +
+                4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians()) -
+                .5 * y.pow(2.0) * sin((4 * lambda).toRadians()) -
+                1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians())
+        val divisor: Double = 2 * PI
         val equation = dividend / divisor
 
         // approximation of equation of time is not valid for dates that are many millennia in the past or future
