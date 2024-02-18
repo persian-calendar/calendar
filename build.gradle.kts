@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     java
     kotlin("jvm") version "1.9.22"
@@ -24,8 +26,15 @@ tasks.test {
     useJUnitPlatform()
 }
 
+val javaVersion = JavaVersion.VERSION_17
+
 configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = javaVersion
+}
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = javaVersion.majorVersion
 }
 
 publishing {
