@@ -74,7 +74,7 @@ object AlgorithmicConverter {
         var jdn = jdn
         jdn++ // TODO: Investigate why this is needed
         val yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset)
-        val y: Int = kotlin.math.floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
+        val y: Int = floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
         val ordinalDay = (jdn - toJdn(y, 1, 1)).toInt()
         val m = monthFromOrdinalDay(ordinalDay)
         val d = ordinalDay - daysInPreviousMonths(m)
@@ -247,7 +247,7 @@ object AlgorithmicConverter {
     }
 
     private fun getGregorianYear(numberOfDays: Double): Int {
-        return CivilDate(kotlin.math.floor(numberOfDays).toLong() + projectJdnOffset).year
+        return CivilDate(floor(numberOfDays).toLong() + projectJdnOffset).year
     }
 
     // ephemeris-correction: correction to account for the slowing down of the rotation of the earth
@@ -298,7 +298,7 @@ object AlgorithmicConverter {
                 4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians()) -
                 .5 * y.pow(2.0) * sin((4 * lambda).toRadians()) -
                 1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians())
-        val divisor: Double = 2 * kotlin.math.PI
+        val divisor: Double = 2 * PI
         val equation = dividend / divisor
 
         // approximation of equation of time is not valid for dates that are many millennia in the past or future
