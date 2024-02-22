@@ -42,7 +42,7 @@ internal object AlgorithmicConverter {
         0.553040,
         -0.861938,
         0.677066,
-        -0.212591
+        -0.212591,
     )
     private val coefficients1800to1899 = doubleArrayOf(
         -0.000009,
@@ -55,62 +55,50 @@ internal object AlgorithmicConverter {
         38.291999,
         28.316289,
         11.636204,
-        2.043794
+        2.043794,
     )
     private val coefficients1700to1799 = doubleArrayOf(
         8.118780842,
         -0.005092142,
         0.003336121,
-        -0.0000266484
+        -0.0000266484,
     )
     private val coefficients1620to1699 = doubleArrayOf(
         196.58333,
         -4.0675,
-        0.0219167
+        0.0219167,
     )
     private val lambdaCoefficients = doubleArrayOf(
         280.46645,
         36000.76983,
-        0.0003032
+        0.0003032,
     )
     private val anomalyCoefficients = doubleArrayOf(
         357.52910,
         35999.05030,
         -0.0001559,
-        -0.00000048
+        -0.00000048,
     )
     private val eccentricityCoefficients = doubleArrayOf(
         0.016708617,
         -0.000042037,
-        -0.0000001236
+        -0.0000001236,
     )
     private val coefficients = doubleArrayOf(
         angle(23, 26, 21.448),
         angle(0, 0, -46.8150),
         angle(0, 0, -0.00059),
-        angle(0, 0, 0.001813)
+        angle(0, 0, 0.001813),
     )
     private val coefficientsA = doubleArrayOf(
         124.90,
         -1934.134,
-        0.002063
+        0.002063,
     )
     private val coefficientsB = doubleArrayOf(
         201.11,
         72001.5377,
-        0.00057
-    )
-
-    // lowest year that starts algorithm, algorithm to use
-    private val ephemerisCorrectionTable = listOf(
-        EphemerisCorrectionAlgorithmMap(2020, CorrectionAlgorithm.Default),
-        EphemerisCorrectionAlgorithmMap(1988, CorrectionAlgorithm.Year1988to2019),
-        EphemerisCorrectionAlgorithmMap(1900, CorrectionAlgorithm.Year1900to1987),
-        EphemerisCorrectionAlgorithmMap(1800, CorrectionAlgorithm.Year1800to1899),
-        EphemerisCorrectionAlgorithmMap(1700, CorrectionAlgorithm.Year1700to1799),
-        EphemerisCorrectionAlgorithmMap(1620, CorrectionAlgorithm.Year1620to1699),
-        // default must be last
-        EphemerisCorrectionAlgorithmMap(Int.MIN_VALUE, CorrectionAlgorithm.Default)
+        0.00057,
     )
 
     private const val longitudeSpring = .0
@@ -246,20 +234,6 @@ internal object AlgorithmicConverter {
         return (dynamicalMoment - noon2000Jan01) / daysInUniformLengthCentury
     }
 
-    // the following formulas defines a polynomial function which gives us the amount that the earth is slowing down for specific year ranges
-    private fun defaultEphemerisCorrection(gregorianYear: Int): Double {
-        // Contract.Assert(gregorianYear < 1620 || 2020 <= gregorianYear);
-        val january1stOfYear: Long = CivilDate(gregorianYear, 1, 1).toJdn() - projectJdnOffset
-        val daysSinceStartOf1810 = (january1stOfYear - startOf1810).toDouble()
-        val x = twelveHours + daysSinceStartOf1810
-        return (x.pow(2.0) / 41048480 - 15) / secondsPerDay
-    }
-
-    private fun ephemerisCorrection1988to2019(gregorianYear: Int): Double {
-        // Contract.Assert(1988 <= gregorianYear && gregorianYear <= 2019);
-        return (gregorianYear - 1933.0) / secondsPerDay
-    }
-
     private fun centuriesFrom1900(gregorianYear: Int): Double {
         val july1stOfYear: Long = CivilDate(gregorianYear, 7, 1).toJdn() - projectJdnOffset
         return (july1stOfYear - startOf1900Century).toDouble() / daysInUniformLengthCentury
@@ -268,52 +242,14 @@ internal object AlgorithmicConverter {
     private fun angle(degrees: Int, minutes: Int, seconds: Double): Double =
         (seconds / secondsPerMinute + minutes) / minutesPerDegree + degrees
 
-    private fun ephemerisCorrection1900to1987(gregorianYear: Int): Double {
-        // Contract.Assert(1900 <= gregorianYear && gregorianYear <= 1987);
-        val centuriesFrom1900 = centuriesFrom1900(gregorianYear)
-        return polynomialSum(coefficients1900to1987, centuriesFrom1900)
-    }
-
-    private fun ephemerisCorrection1800to1899(gregorianYear: Int): Double {
-        // Contract.Assert(1800 <= gregorianYear && gregorianYear <= 1899);
-        val centuriesFrom1900 = centuriesFrom1900(gregorianYear)
-        return polynomialSum(coefficients1800to1899, centuriesFrom1900)
-    }
-
-    private fun ephemerisCorrection1700to1799(gregorianYear: Int): Double {
-        // Contract.Assert(1700 <= gregorianYear && gregorianYear <= 1799);
-        val yearsSince1700 = gregorianYear - 1700.0
-        return polynomialSum(coefficients1700to1799, yearsSince1700) / secondsPerDay
-    }
-
-    private fun ephemerisCorrection1620to1699(gregorianYear: Int): Double {
-        // Contract.Assert(1620 <= gregorianYear && gregorianYear <= 1699);
-        val yearsSince1600 = gregorianYear - 1600.0
-        return polynomialSum(coefficients1620to1699, yearsSince1600) / secondsPerDay
-    }
-
     private fun getGregorianYear(numberOfDays: Double): Int =
         CivilDate(floor(numberOfDays).toLong() + projectJdnOffset).year
 
     // ephemeris-correction: correction to account for the slowing down of the rotation of the earth
     private fun ephemerisCorrection(time: Double): Double {
         val year = getGregorianYear(time)
-        for (map in ephemerisCorrectionTable) {
-            if (map.lowestYear <= year) {
-                return when (map.algorithm) {
-                    CorrectionAlgorithm.Default -> defaultEphemerisCorrection(year)
-                    CorrectionAlgorithm.Year1988to2019 -> ephemerisCorrection1988to2019(year)
-                    CorrectionAlgorithm.Year1900to1987 -> ephemerisCorrection1900to1987(year)
-                    CorrectionAlgorithm.Year1800to1899 -> ephemerisCorrection1800to1899(year)
-                    CorrectionAlgorithm.Year1700to1799 -> ephemerisCorrection1700to1799(year)
-                    CorrectionAlgorithm.Year1620to1699 -> ephemerisCorrection1620to1699(year)
-                }
-                break // break the loop and assert eventually
-            }
-        }
-
-        // Contract.Assert(false, "Not expected to come here");
-        return defaultEphemerisCorrection(year)
+        return (CorrectionAlgorithm.entries.firstOrNull { it.lowestYear <= year }
+            ?: CorrectionAlgorithm.Default).ephemerisCorrection(year)
     }
 
     private fun asDayFraction(longitude: Double): Double = longitude / fullCircleOfArc
@@ -388,17 +324,50 @@ internal object AlgorithmicConverter {
         return index
     }
 
-    private enum class CorrectionAlgorithm {
-        Default,
-        Year1988to2019,
-        Year1900to1987,
-        Year1800to1899,
-        Year1700to1799,
-        Year1620to1699
-    }
-
-    private data class EphemerisCorrectionAlgorithmMap(
+    private enum class CorrectionAlgorithm(
         val lowestYear: Int,
-        val algorithm: CorrectionAlgorithm
-    )
+        val ephemerisCorrection: (Int) -> Double,
+    ) {
+        // the following formulas defines a polynomial function which gives us the amount that the
+        // earth is slowing down for specific year ranges
+        Default(
+            lowestYear = 2020,
+            ephemerisCorrection = {
+                val january1stOfYear: Long = CivilDate(it, 1, 1).toJdn() - projectJdnOffset
+                val daysSinceStartOf1810 = (january1stOfYear - startOf1810).toDouble()
+                val x = twelveHours + daysSinceStartOf1810
+                (x.pow(2.0) / 41048480 - 15) / secondsPerDay
+            },
+        ),
+        Year1988to2019(
+            lowestYear = 1988,
+            ephemerisCorrection = {
+                (it - 1933.0) / secondsPerDay
+            },
+        ),
+        Year1900to1987(
+            lowestYear = 1900,
+            ephemerisCorrection = {
+                polynomialSum(coefficients1900to1987, centuriesFrom1900(it))
+            },
+        ),
+        Year1800to1899(
+            lowestYear = 1800,
+            ephemerisCorrection = {
+                polynomialSum(coefficients1800to1899, centuriesFrom1900(it))
+            },
+        ),
+        Year1700to1799(
+            lowestYear = 1700,
+            ephemerisCorrection = {
+                polynomialSum(coefficients1700to1799, it - 1700.0) / secondsPerDay
+            },
+        ),
+        Year1620to1699(
+            lowestYear = 1620,
+            ephemerisCorrection = {
+                polynomialSum(coefficients1620to1699, it - 1600.0) / secondsPerDay
+            },
+        ),
+    }
 }
