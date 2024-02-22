@@ -216,7 +216,7 @@ internal object UmmAlQuraConverter {
         val mjdn = jdn - 2400000
         val i = getNewMoonMJDNIndexByJDN(mjdn)
         val totalMonths = i + 16260
-        val cYears = floor(((totalMonths - 1) / 12).toDouble()).toInt()
+        val cYears = floor((totalMonths - 1) / 12.0).toInt()
         val hy = cYears + 1
         val hm = totalMonths - 12 * cYears
         val lookupResult = ummalquraData(i - 1)

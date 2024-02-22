@@ -257,7 +257,7 @@ internal object AlgorithmicConverter {
 
     private fun ephemerisCorrection1988to2019(gregorianYear: Int): Double {
         // Contract.Assert(1988 <= gregorianYear && gregorianYear <= 2019);
-        return (gregorianYear - 1933).toDouble() / secondsPerDay
+        return (gregorianYear - 1933.0) / secondsPerDay
     }
 
     private fun centuriesFrom1900(gregorianYear: Int): Double {
@@ -282,13 +282,13 @@ internal object AlgorithmicConverter {
 
     private fun ephemerisCorrection1700to1799(gregorianYear: Int): Double {
         // Contract.Assert(1700 <= gregorianYear && gregorianYear <= 1799);
-        val yearsSince1700 = (gregorianYear - 1700).toDouble()
+        val yearsSince1700 = gregorianYear - 1700.0
         return polynomialSum(coefficients1700to1799, yearsSince1700) / secondsPerDay
     }
 
     private fun ephemerisCorrection1620to1699(gregorianYear: Int): Double {
         // Contract.Assert(1620 <= gregorianYear && gregorianYear <= 1699);
-        val yearsSince1600 = (gregorianYear - 1600).toDouble()
+        val yearsSince1600 = gregorianYear - 1600.0
         return polynomialSum(coefficients1620to1699, yearsSince1600) / secondsPerDay
     }
 
