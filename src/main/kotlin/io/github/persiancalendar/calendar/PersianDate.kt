@@ -1,6 +1,5 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.YearMonthDate.CreateDate
 import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance
 import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthsDistanceTo
 import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
@@ -20,14 +19,8 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
     override fun fromJdn(jdn: Long): IntArray =
         LookupTableConverter.fromJdn(jdn) ?: AlgorithmicConverter.fromJdn(jdn)
 
-    override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate {
-        val createDate: CreateDate<PersianDate> = object : CreateDate<PersianDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): PersianDate =
-                PersianDate(year, month, dayOfMonth)
-        }
-
-        return monthStartOfMonthsDistance(this, monthsDistance, createDate)
-    }
+    override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate =
+        monthStartOfMonthsDistance(this, monthsDistance, ::PersianDate)
 
     override fun monthsDistanceTo(date: PersianDate): Int = monthsDistanceTo(this, date)
 }

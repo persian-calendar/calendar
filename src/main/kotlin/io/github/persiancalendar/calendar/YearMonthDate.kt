@@ -6,13 +6,11 @@ internal interface YearMonthDate<T : AbstractDate> {
 
     fun monthsDistanceTo(date: T): Int
 
-    interface CreateDate<T : AbstractDate> {
-        fun createDate(year: Int, month: Int, dayOfMonth: Int): T
-    }
-
     object TwelveMonthsYear {
         fun <T : AbstractDate> monthStartOfMonthsDistance(
-            baseDate: T, monthsDistance: Int, createDate: CreateDate<T>
+            baseDate: T,
+            monthsDistance: Int,
+            createDate: (year: Int, month: Int, dayOfMonth: Int) -> T,
         ): T {
             var month =
                 monthsDistance + baseDate.month - 1 // make it zero based for easier calculations
@@ -22,7 +20,7 @@ internal interface YearMonthDate<T : AbstractDate> {
                 year -= 1
                 month += 12
             }
-            return createDate.createDate(year, month + 1, 1)
+            return createDate(year, month + 1, 1)
         }
 
         fun <T : AbstractDate> monthsDistanceTo(baseDate: T, toDate: T): Int =

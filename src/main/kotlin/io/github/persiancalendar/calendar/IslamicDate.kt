@@ -1,6 +1,5 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.YearMonthDate.CreateDate
 import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance
 import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthsDistanceTo
 import io.github.persiancalendar.calendar.islamic.FallbackIslamicConverter
@@ -38,14 +37,8 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
         }) ?: FallbackIslamicConverter.fromJdn(jdn)
     }
 
-    override fun monthStartOfMonthsDistance(monthsDistance: Int): IslamicDate {
-        val createDate: CreateDate<IslamicDate> = object : CreateDate<IslamicDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): IslamicDate =
-                IslamicDate(year, month, dayOfMonth)
-        }
-
-        return monthStartOfMonthsDistance(this, monthsDistance, createDate)
-    }
+    override fun monthStartOfMonthsDistance(monthsDistance: Int): IslamicDate =
+        monthStartOfMonthsDistance(this, monthsDistance, ::IslamicDate)
 
     override fun monthsDistanceTo(date: IslamicDate): Int = monthsDistanceTo(this, date)
 

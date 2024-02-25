@@ -1,7 +1,5 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.YearMonthDate.CreateDate
-
 /**
  * @author Amir
  */
@@ -46,18 +44,8 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
         } else julianFromJdn(jdn)
     }
 
-    override fun monthStartOfMonthsDistance(monthsDistance: Int): CivilDate {
-        val createDate: CreateDate<CivilDate> = object : CreateDate<CivilDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): CivilDate =
-                CivilDate(year, month, dayOfMonth)
-        }
-
-        return YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance(
-            this,
-            monthsDistance,
-            createDate
-        )
-    }
+    override fun monthStartOfMonthsDistance(monthsDistance: Int): CivilDate =
+        YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, ::CivilDate)
 
     override fun monthsDistanceTo(date: CivilDate): Int =
         YearMonthDate.TwelveMonthsYear.monthsDistanceTo(this, date)

@@ -1,6 +1,5 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.YearMonthDate.CreateDate
 import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance
 import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthsDistanceTo
 import kotlin.math.floor
@@ -40,14 +39,8 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
 
     constructor(date: AbstractDate) : super(date)
 
-    override fun monthStartOfMonthsDistance(monthsDistance: Int): NepaliDate {
-        val createDate: CreateDate<NepaliDate> = object : CreateDate<NepaliDate> {
-            override fun createDate(year: Int, month: Int, dayOfMonth: Int): NepaliDate =
-                NepaliDate(year, month, dayOfMonth)
-        }
-
-        return monthStartOfMonthsDistance(this, monthsDistance, createDate)
-    }
+    override fun monthStartOfMonthsDistance(monthsDistance: Int): NepaliDate =
+        monthStartOfMonthsDistance(this, monthsDistance, ::NepaliDate)
 
     override fun monthsDistanceTo(date: NepaliDate): Int = monthsDistanceTo(this, date)
 
