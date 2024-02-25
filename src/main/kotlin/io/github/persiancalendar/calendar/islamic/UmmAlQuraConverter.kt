@@ -214,7 +214,7 @@ internal object UmmAlQuraConverter {
 
     fun fromJdn(jdn: Long): IntArray? {
         val mjdn = jdn - 2400000
-        val i = getNewMoonMJDNIndexByJDN(mjdn)
+        val i = ummalquraData.indexOfFirst { it > mjdn }
         val totalMonths = i + 16260
         val cYears = floor((totalMonths - 1) / 12.0).toInt()
         val hy = cYears + 1
@@ -229,15 +229,6 @@ internal object UmmAlQuraConverter {
         val cYears = hy - 1
         val totalMonths = cYears * 12 + 1 + (hm - 1)
         return totalMonths - 16260
-    }
-
-    private fun getNewMoonMJDNIndexByJDN(mjdn: Long): Int {
-        var i = 0
-        while (i < ummalquraData.size) {
-            if (ummalquraData[i] > mjdn) return i
-            i += 1
-        }
-        return -1
     }
 
     private fun ummalquraData(index: Int): Int {
