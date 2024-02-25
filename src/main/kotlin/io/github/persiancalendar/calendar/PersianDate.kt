@@ -7,8 +7,8 @@ import io.github.persiancalendar.calendar.persian.LookupTableConverter
 
 class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
     constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
-    constructor(jdn: Long) : super(jdn)
     constructor(date: AbstractDate) : super(date)
+    constructor(jdn: Long) : super(jdn)
 
     // Converters
     override fun toJdn(): Long {

@@ -6,6 +6,10 @@ import kotlin.math.floor
 
 // Also known as "Bikram Sambat" or https://en.wikipedia.org/wiki/Vikram_Samvat
 class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
+    constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
+    constructor(jdn: Long) : super(jdn)
+    constructor(date: AbstractDate) : super(date)
+
     private fun calculateEras(days: Int, eraLength: Int): Int =
         floor(days / eraLength.toFloat()).toInt()
 
@@ -32,12 +36,6 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
             days - months[index] + 1
         )
     }
-
-    constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
-
-    constructor(jdn: Long) : super(jdn)
-
-    constructor(date: AbstractDate) : super(date)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): NepaliDate =
         monthStartOfMonthsDistance(this, monthsDistance, ::NepaliDate)

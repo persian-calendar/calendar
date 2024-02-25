@@ -11,8 +11,8 @@ import io.github.persiancalendar.calendar.islamic.UmmAlQuraConverter
  */
 class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
     constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
-    constructor(jdn: Long) : super(jdn)
     constructor(date: AbstractDate) : super(date)
+    constructor(jdn: Long) : super(jdn)
 
     override fun toJdn(): Long {
         val year = year
