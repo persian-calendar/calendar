@@ -31,13 +31,11 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
     override fun fromJdn(jdn: Long): IntArray {
         var jdn = jdn
         jdn += islamicOffset.toLong()
-        var result = if (useUmmAlQura) {
+        return (if (useUmmAlQura) {
             UmmAlQuraConverter.fromJdn(jdn)
         } else {
             IranianIslamicDateConverter.fromJdn(jdn)
-        }
-        if (result == null) result = FallbackIslamicConverter.fromJdn(jdn)
-        return result
+        }) ?: FallbackIslamicConverter.fromJdn(jdn)
     }
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): IslamicDate {
