@@ -5,6 +5,8 @@
 package io.github.persiancalendar.calendar.persian
 
 import io.github.persiancalendar.calendar.CivilDate
+import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
+import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
 import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.PI
 import kotlin.math.abs
@@ -25,7 +27,6 @@ internal object AlgorithmicConverter {
     private const val meanSpeedOfSun = meanTropicalYearInDays / fullCircleOfArc
     private const val halfCircleOfArc = 180
     private const val twoDegreesAfterSpring = 2.0
-    private val daysToMonth = intArrayOf(0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366)
     private const val noon2000Jan01 = 730120.5
     private const val daysInUniformLengthCentury = 36525
     private val startOf1810: Long = CivilDate(1810, 1, 1).toJdn() - projectJdnOffset
@@ -119,12 +120,10 @@ internal object AlgorithmicConverter {
         val yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset)
         val y: Int = floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
         val ordinalDay = (jdn - toJdn(y, 1, 1)).toInt()
-        val m = monthFromOrdinalDay(ordinalDay)
+        val m = monthFromDaysCount(ordinalDay)
         val d = ordinalDay - daysInPreviousMonths(m)
         return intArrayOf(y, m, d)
     }
-
-    private fun daysInPreviousMonths(month: Int): Int = daysToMonth[month - 1]
 
     private fun asSeason(longitude: Double): Double =
         if (longitude < 0) longitude + fullCircleOfArc else longitude
@@ -316,12 +315,6 @@ internal object AlgorithmicConverter {
         }
         // Contract.Assert(day != upperBoundNewYearDay);
         return day - 1
-    }
-
-    private fun monthFromOrdinalDay(ordinalDay: Int): Int {
-        var index = 0
-        while (ordinalDay > daysToMonth[index]) index++
-        return index
     }
 
     private enum class CorrectionAlgorithm(

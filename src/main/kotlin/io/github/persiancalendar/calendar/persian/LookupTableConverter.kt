@@ -1,5 +1,8 @@
 package io.github.persiancalendar.calendar.persian
 
+import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
+import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
+
 // A simple and quick implementation just to be compatible with
 // https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
 // For a correct implementation accurate for ~9k years, have a look at AlgorithmicConverter
@@ -34,16 +37,6 @@ internal object LookupTableConverter {
         }
     }
 
-    // First six months have length of 31, next 5 months are 30 and the last month is 29 and in leap years are 30
-    private val daysToMonth = intArrayOf(0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366)
-    private fun monthFromOrdinalDay(ordinalDay: Int): Int {
-        var index = ordinalDay / 31
-        while (ordinalDay > daysToMonth[index]) index++
-        return index
-    }
-
-    private fun daysInPreviousMonths(month: Int): Int = daysToMonth[month - 1]
-
     fun fromJdn(jdn: Long): IntArray? {
         if (jdn < yearsStartingJdn[0] || jdn > yearsStartingJdn[yearsStartingJdn.size - 1]) return null
         var year = (jdn - yearsStartingJdn[0]).toInt() / 366
@@ -54,7 +47,7 @@ internal object LookupTableConverter {
         val startOfYearJdn = yearsStartingJdn[year]
         year += startingYear
         val dayOfYear = (jdn - startOfYearJdn).toInt() + 1
-        val month = monthFromOrdinalDay(dayOfYear)
+        val month = monthFromDaysCount(dayOfYear)
         val day = dayOfYear - daysInPreviousMonths(month)
         return intArrayOf(year, month, day)
     }
