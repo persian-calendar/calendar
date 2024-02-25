@@ -11,6 +11,10 @@ abstract class AbstractDate {
     val month: Int
     val dayOfMonth: Int
 
+    operator fun component1(): Int = year
+    operator fun component2(): Int = month
+    operator fun component3(): Int = dayOfMonth
+
     /* What JDN (Julian Day Number) means?
      *
      * From https://en.wikipedia.org/wiki/Julian_day:
