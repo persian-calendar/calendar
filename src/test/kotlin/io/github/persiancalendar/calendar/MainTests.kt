@@ -278,6 +278,14 @@ class MainTests {
         }
     }
 
+    @Test
+    fun `Use constructor for date conversion`() {
+        assertEquals(
+            PersianDate(NepaliDate(CivilDate(IslamicDate(PersianDate(1400, 1, 1))))),
+            PersianDate(1400, 1, 1)
+        )
+    }
+
 //    @Test
 //    fun `Test Chinese calendar`() {
 //        val inputJdn = CivilDate(2022, 3, 3).toJdn()
