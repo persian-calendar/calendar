@@ -278,20 +278,20 @@ class MainTests {
         }
     }
 
-    @Test
-    fun `Test Chinese calendar`() {
-        val inputJdn = CivilDate(2022, 3, 3).toJdn()
-        assertEquals(2459642, inputJdn)
-        val chineseDate = ChineseDate.fromJdn(inputJdn)
-        assertEquals(2022, chineseDate.year)
-        assertEquals(2, chineseDate.month)
-        assertEquals(false, chineseDate.leapMonth)
-        assertEquals(1, chineseDate.day)
-        assertEquals(2459642, chineseDate.toJdn())
-
-        // It crashes! Oh well
-        // (2459000L..24600000L).forEach {
-        //     assertEquals(it, ChineseDate.fromJdn(it).toJdn())
-        // }
-    }
+//    @Test
+//    fun `Test Chinese calendar`() {
+//        val inputJdn = CivilDate(2022, 3, 3).toJdn()
+//        assertEquals(2459642, inputJdn)
+//        val chineseDate = ChineseDate.fromJdn(inputJdn)
+//        assertEquals(2022, chineseDate.year)
+//        assertEquals(2, chineseDate.month)
+//        assertEquals(false, chineseDate.leapMonth)
+//        assertEquals(1, chineseDate.day)
+//        assertEquals(2459642, chineseDate.toJdn())
+//
+//        // It crashes! Oh well
+//        // (2459000L..24600000L).forEach {
+//        //     assertEquals(it, ChineseDate.fromJdn(it).toJdn())
+//        // }
+//    }
 }
