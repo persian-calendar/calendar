@@ -1,7 +1,7 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance
-import io.github.persiancalendar.calendar.YearMonthDate.TwelveMonthsYear.monthsDistanceTo
+import io.github.persiancalendar.calendar.util.TwelveMonthsYear.monthStartOfMonthsDistance
+import io.github.persiancalendar.calendar.util.TwelveMonthsYear.monthsDistanceTo
 import io.github.persiancalendar.calendar.islamic.FallbackIslamicConverter
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import io.github.persiancalendar.calendar.islamic.UmmAlQuraConverter

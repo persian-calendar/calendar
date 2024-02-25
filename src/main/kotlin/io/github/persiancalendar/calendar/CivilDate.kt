@@ -1,5 +1,7 @@
 package io.github.persiancalendar.calendar
 
+import io.github.persiancalendar.calendar.util.TwelveMonthsYear
+
 /**
  * @author Amir
  */
@@ -45,10 +47,10 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
     }
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): CivilDate =
-        YearMonthDate.TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, ::CivilDate)
+        TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, ::CivilDate)
 
     override fun monthsDistanceTo(date: CivilDate): Int =
-        YearMonthDate.TwelveMonthsYear.monthsDistanceTo(this, date)
+        TwelveMonthsYear.monthsDistanceTo(this, date)
 
     companion object {
         // TODO Is it correct to return a CivilDate as a JulianDate?
