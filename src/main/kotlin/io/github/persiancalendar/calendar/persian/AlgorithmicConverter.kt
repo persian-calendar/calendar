@@ -7,6 +7,7 @@ package io.github.persiancalendar.calendar.persian
 import io.github.persiancalendar.calendar.CivilDate
 import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
 import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
+import io.github.persiancalendar.calendar.util.sinOfDegree
 import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.PI
 import kotlin.math.abs
@@ -167,7 +168,7 @@ internal object AlgorithmicConverter {
     private fun nutation(julianCenturies: Double): Double {
         val a = polynomialSum(coefficientsA, julianCenturies)
         val b = polynomialSum(coefficientsB, julianCenturies)
-        return -0.004778 * sin(a.toRadians()) - 0.0003667 * sin(b.toRadians())
+        return -0.004778 * sinOfDegree(a) - 0.0003667 * sinOfDegree(b)
     }
 
     private fun aberration(julianCenturies: Double): Double =
@@ -226,7 +227,7 @@ internal object AlgorithmicConverter {
     )
 
     private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double =
-        terms.sumOf { (x, y, z) -> x * sin((y + z * julianCenturies).toRadians()) }
+        terms.sumOf { (x, y, z) -> x * sinOfDegree(y + z * julianCenturies) }
 
     private fun julianCenturies(moment: Double): Double {
         val dynamicalMoment = moment + ephemerisCorrection(moment)
@@ -270,11 +271,11 @@ internal object AlgorithmicConverter {
         val epsilon = obliquity(julianCenturies)
         val tanHalfEpsilon: Double = tan((epsilon / 2).toRadians())
         val y = tanHalfEpsilon * tanHalfEpsilon
-        val dividend: Double = (y * sin((2 * lambda).toRadians())) -
-                (2 * eccentricity * sin(anomaly.toRadians())) +
-                (4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians())) -
-                (.5 * y.pow(2.0) * sin((4 * lambda).toRadians())) -
-                (1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians()))
+        val dividend: Double = (y * sinOfDegree(2 * lambda)) -
+                (2 * eccentricity * sinOfDegree(anomaly)) +
+                (4 * eccentricity * y * sinOfDegree(anomaly) * cos((2 * lambda).toRadians())) -
+                (.5 * y.pow(2.0) * sinOfDegree(4 * lambda)) -
+                (1.25 * eccentricity.pow(2.0) * sinOfDegree(2 * anomaly))
         val divisor: Double = 2 * PI
         val equation = dividend / divisor
 
