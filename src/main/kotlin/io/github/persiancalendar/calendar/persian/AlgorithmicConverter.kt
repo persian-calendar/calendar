@@ -9,15 +9,12 @@ import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMo
 import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
 import io.github.persiancalendar.calendar.util.cosOfDegree
 import io.github.persiancalendar.calendar.util.sinOfDegree
-import io.github.persiancalendar.calendar.util.toRadians
+import io.github.persiancalendar.calendar.util.tanOfDegree
 import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.tan
 import kotlin.math.withSign
 
 internal object AlgorithmicConverter {
@@ -270,7 +267,7 @@ internal object AlgorithmicConverter {
         val anomaly = polynomialSum(anomalyCoefficients, julianCenturies)
         val eccentricity = polynomialSum(eccentricityCoefficients, julianCenturies)
         val epsilon = obliquity(julianCenturies)
-        val tanHalfEpsilon: Double = tan((epsilon / 2).toRadians())
+        val tanHalfEpsilon: Double = tanOfDegree(epsilon / 2)
         val y = tanHalfEpsilon * tanHalfEpsilon
         val dividend: Double = (y * sinOfDegree(2 * lambda)) -
                 (2 * eccentricity * sinOfDegree(anomaly)) +
