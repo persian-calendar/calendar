@@ -1,6 +1,7 @@
 package io.github.persiancalendar.calendar.islamic
 
 import io.github.persiancalendar.calendar.CivilDate
+import io.github.persiancalendar.calendar.util.sinOfDegree
 import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.cos
 import kotlin.math.sin
@@ -27,7 +28,7 @@ internal object FallbackIslamicConverter {
         val t2 = T * T
         val t3 = t2 * T
         val jd = (2415020.75933 + 29.53058868 * k - .0001178 * t2 - .000000155 * t3 + .00033
-                * sin((166.56 + 132.87 * T - .009173 * t2).toRadians()))
+                * sinOfDegree(166.56 + 132.87 * T - .009173 * t2))
 
         // Sun's mean anomaly
         val sa = (359.2242 + 29.10535608 * k - .0000333 * t2 - .00000347 * t3).toRadians()

@@ -7,15 +7,14 @@ package io.github.persiancalendar.calendar.persian
 import io.github.persiancalendar.calendar.CivilDate
 import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
 import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
-import io.github.persiancalendar.calendar.util.toRadians
+import io.github.persiancalendar.calendar.util.cosOfDegree
+import io.github.persiancalendar.calendar.util.sinOfDegree
+import io.github.persiancalendar.calendar.util.tanOfDegree
 import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.tan
 import kotlin.math.withSign
 
 internal object AlgorithmicConverter {
@@ -167,11 +166,11 @@ internal object AlgorithmicConverter {
     private fun nutation(julianCenturies: Double): Double {
         val a = polynomialSum(coefficientsA, julianCenturies)
         val b = polynomialSum(coefficientsB, julianCenturies)
-        return -0.004778 * sin(a.toRadians()) - 0.0003667 * sin(b.toRadians())
+        return -0.004778 * sinOfDegree(a) - 0.0003667 * sinOfDegree(b)
     }
 
     private fun aberration(julianCenturies: Double): Double =
-        (0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians())) - 0.005575
+        (0.0000974 * cosOfDegree(177.63 + 35999.01848 * julianCenturies)) - 0.005575
 
     private val terms = listOf(
         Triple(403406, 270.54861, 0.9287892),
@@ -226,7 +225,7 @@ internal object AlgorithmicConverter {
     )
 
     private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double =
-        terms.sumOf { (x, y, z) -> x * sin((y + z * julianCenturies).toRadians()) }
+        terms.sumOf { (x, y, z) -> x * sinOfDegree(y + z * julianCenturies) }
 
     private fun julianCenturies(moment: Double): Double {
         val dynamicalMoment = moment + ephemerisCorrection(moment)
@@ -268,13 +267,13 @@ internal object AlgorithmicConverter {
         val anomaly = polynomialSum(anomalyCoefficients, julianCenturies)
         val eccentricity = polynomialSum(eccentricityCoefficients, julianCenturies)
         val epsilon = obliquity(julianCenturies)
-        val tanHalfEpsilon: Double = tan((epsilon / 2).toRadians())
+        val tanHalfEpsilon: Double = tanOfDegree(epsilon / 2)
         val y = tanHalfEpsilon * tanHalfEpsilon
-        val dividend: Double = (y * sin((2 * lambda).toRadians())) -
-                (2 * eccentricity * sin(anomaly.toRadians())) +
-                (4 * eccentricity * y * sin(anomaly.toRadians()) * cos((2 * lambda).toRadians())) -
-                (.5 * y.pow(2.0) * sin((4 * lambda).toRadians())) -
-                (1.25 * eccentricity.pow(2.0) * sin((2 * anomaly).toRadians()))
+        val dividend: Double = (y * sinOfDegree(2 * lambda)) -
+                (2 * eccentricity * sinOfDegree(anomaly)) +
+                (4 * eccentricity * y * sinOfDegree(anomaly) * cosOfDegree(2 * lambda)) -
+                (.5 * y.pow(2.0) * sinOfDegree(4 * lambda)) -
+                (1.25 * eccentricity.pow(2.0) * sinOfDegree(2 * anomaly))
         val divisor: Double = 2 * PI
         val equation = dividend / divisor
 
