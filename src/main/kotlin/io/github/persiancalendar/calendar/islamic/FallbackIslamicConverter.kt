@@ -22,7 +22,6 @@ internal object FallbackIslamicConverter {
     }
 
     private fun tmoonphase(n: Long, nph: Int): Double {
-        var xtra: Double
         val k = n + nph / 4.0
         val T = k / 1236.85
         val t2 = T * T
@@ -40,8 +39,8 @@ internal object FallbackIslamicConverter {
         val tf = (
                 2 * (21.2964 + 390.67050646 * k - .0016528 * t2 - .00000239 * t3)
                 ).toRadians()
-        when (nph) {
-            0, 2 -> xtra = (
+        val xtra = when (nph) {
+            0, 2 -> (
                     ((.1734 - .000393 * T) * sin(sa)) +
                             (.0021 * sin(sa * 2)) -
                             (.4068 * sin(ma)) +
@@ -57,7 +56,7 @@ internal object FallbackIslamicConverter {
                     (.0005 * sin(sa + 2 * ma))
 
             1, 3 -> {
-                xtra = (
+                (
                         ((.1721 - .0004 * T) * sin(sa)) +
                                 (.0021 * sin(sa * 2)) -
                                 (.628 * sin(ma)) +
@@ -73,9 +72,9 @@ internal object FallbackIslamicConverter {
                         (.0021 * sin(tf - ma)) +
                         (.0003 * sin(sa + 2 * ma)) +
                         (.0004 * sin(sa - 2 * ma)) -
-                        (.0003 * sin(2 * sa + ma))
-                if (nph == 1) xtra = xtra + .0028 - (.0004 * cos(sa)) + (.0003 * cos(ma))
-                else xtra = xtra - .0028 + (.0004 * cos(sa)) - (.0003 * cos(ma))
+                        (.0003 * sin(2 * sa + ma)) +
+                        (if (nph == 1) .0028 - (.0004 * cos(sa)) + (.0003 * cos(ma))
+                        else -.0028 + (.0004 * cos(sa)) - (.0003 * cos(ma)))
             }
 
             else -> return 0.0
