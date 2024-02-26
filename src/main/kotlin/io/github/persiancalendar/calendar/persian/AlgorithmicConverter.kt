@@ -7,6 +7,7 @@ package io.github.persiancalendar.calendar.persian
 import io.github.persiancalendar.calendar.CivilDate
 import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
 import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
+import io.github.persiancalendar.calendar.util.cosOfDegree
 import io.github.persiancalendar.calendar.util.sinOfDegree
 import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.PI
@@ -172,7 +173,7 @@ internal object AlgorithmicConverter {
     }
 
     private fun aberration(julianCenturies: Double): Double =
-        (0.0000974 * cos((177.63 + 35999.01848 * julianCenturies).toRadians())) - 0.005575
+        (0.0000974 * cosOfDegree(177.63 + 35999.01848 * julianCenturies)) - 0.005575
 
     private val terms = listOf(
         Triple(403406, 270.54861, 0.9287892),
@@ -273,7 +274,7 @@ internal object AlgorithmicConverter {
         val y = tanHalfEpsilon * tanHalfEpsilon
         val dividend: Double = (y * sinOfDegree(2 * lambda)) -
                 (2 * eccentricity * sinOfDegree(anomaly)) +
-                (4 * eccentricity * y * sinOfDegree(anomaly) * cos((2 * lambda).toRadians())) -
+                (4 * eccentricity * y * sinOfDegree(anomaly) * cosOfDegree(2 * lambda)) -
                 (.5 * y.pow(2.0) * sinOfDegree(4 * lambda)) -
                 (1.25 * eccentricity.pow(2.0) * sinOfDegree(2 * anomaly))
         val divisor: Double = 2 * PI
