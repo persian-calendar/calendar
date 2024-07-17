@@ -264,9 +264,6 @@ class ImportedTests {
 
     @Test
     fun `Test Nepali calendar implementation`() {
-        println(CivilDate(2421697L).year)
-        println(CivilDate(2421697L).month)
-        println(CivilDate(2421697L).dayOfMonth)
         // https://github.com/techgaun/ad-bs-converter/blob/master/test/unit/converter.js
         """2072/4/3 to 2015/7/19
         2072/4/16 to 2015/8/1
