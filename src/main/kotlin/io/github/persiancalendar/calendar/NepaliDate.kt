@@ -27,7 +27,7 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
         days -= eras * supportedDays
         val eraStartYear = supportedYearsStart + eras * supportedYears
 
-        var index = (days / 31.26).toInt()
+        var index = (days / 31.26).toInt() // this is average months length in this calendar
         while (index + 1 < months.size && months[index + 1] <= days) ++index
 
         return intArrayOf(
