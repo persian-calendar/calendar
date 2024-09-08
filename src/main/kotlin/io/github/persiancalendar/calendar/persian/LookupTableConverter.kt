@@ -32,9 +32,8 @@ internal object LookupTableConverter {
     }
 
     fun toJdn(year: Int, month: Int, day: Int): Long {
-        return if (year < startingYear || year > startingYear + yearsStartingJdn.size - 1) -1 else {
-            yearsStartingJdn[year - startingYear] + daysInPreviousMonths(month) + day - 1
-        }
+        if (year < startingYear || year > startingYear + yearsStartingJdn.size - 1) return -1
+        return yearsStartingJdn[year - startingYear] + daysInPreviousMonths(month) + day - 1
     }
 
     fun fromJdn(jdn: Long): IntArray? {
