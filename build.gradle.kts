@@ -26,7 +26,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-val javaVersion = JavaVersion.VERSION_17
+val javaVersion = JavaVersion.VERSION_21
 
 configure<JavaPluginExtension> {
     sourceCompatibility = javaVersion
