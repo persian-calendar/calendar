@@ -5,7 +5,7 @@ Calendar converter based on http://code.google.com/p/mobile-persian-calendar/ (G
 
   ```
   Copyright (C) 2006  Amir Khosroshahi (amir.khosroshahi)
-  Copyright (C) 2012-2021  Android Persian Calendar
+  Copyright (C) 2012-2025  Android Persian Calendar
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
