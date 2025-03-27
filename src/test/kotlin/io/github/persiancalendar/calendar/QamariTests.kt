@@ -2,7 +2,6 @@ package io.github.persiancalendar.calendar
 
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import org.junit.jupiter.api.assertAll
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -11,7 +10,6 @@ class QamariTests {
     @Test
     fun `Conforms with calendar center data`() = assertAll(prepareRunners("calendar-center.txt"))
 
-    @Ignore
     @Test
     fun `Conforms with ettelaat data`() = assertAll(prepareRunners("ettelaat.txt"))
 
