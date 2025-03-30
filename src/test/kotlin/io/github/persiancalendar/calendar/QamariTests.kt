@@ -4,6 +4,7 @@ import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class QamariTests {
 
@@ -12,6 +13,12 @@ class QamariTests {
 
     @Test
     fun `Conforms with ettelaat data`() = assertAll(prepareRunners("ettelaat.txt"))
+
+    @Test
+    fun `Conforms with payam data`() = assertAll(prepareRunners("payam.txt"))
+
+    @Test
+    fun `Conforms with azhang data`() = assertAll(prepareRunners("azhang.txt"))
 
     private fun prepareRunners(testFileName: String): List<() -> Unit> {
         return IranianIslamicDateConverter::class.java
@@ -33,7 +40,7 @@ class QamariTests {
                             .trimStart('*').trim()
                             .replace(Regex("[ /-]"), ",")
                             .split(',')
-                            .map { it.toInt() })
+                            .map { it.toIntOrNull() ?: fail(testFileName + "\n" + line) })
                 {
                     assertEquals(
                         listOf(year, month, day),
