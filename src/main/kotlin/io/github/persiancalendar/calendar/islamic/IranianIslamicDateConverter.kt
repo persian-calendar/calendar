@@ -138,6 +138,11 @@ object IranianIslamicDateConverter {
     }
 
     internal fun fromJdn(jd: Long): IntArray? {
+        // FIXME: This is just to make it compatible with FallbackIslamicConverter, to be removed when
+        if (jd == 2424708L) {
+            assert(supportedYearsStart == 1345)
+            return intArrayOf(1344, 12, 30)
+        }
         if (jd < jdSupportStart || jd >= jdSupportEnd) return null
         val days = (jd - jdSupportStart).toInt()
         var index =

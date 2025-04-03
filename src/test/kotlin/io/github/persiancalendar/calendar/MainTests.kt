@@ -147,7 +147,11 @@ class MainTests {
         val endJdn = CivilDate(2020, 1, 1).toJdn()
         (startJdn..endJdn).map {
             val date = IslamicDate(it)
-            assertEquals(it, date.toJdn())
+            assertEquals(
+                it,
+                date.toJdn(),
+                "$it: ${date.year}/${date.month}/${date.dayOfMonth}"
+            )
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..30)
             date.dayOfMonth
