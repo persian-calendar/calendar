@@ -8,7 +8,7 @@ package io.github.persiancalendar.calendar.islamic
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
-    private const val jdSupportStart: Long = 2_424_709 // CivilDate(1927, 7, 1).toJdn()
+    private const val jdSupportStart: Long = 2_424_709 // CivilDate(1926, 7, 12).toJdn()
     private var jdSupportEnd: Long = 0
     private val months: IntArray
     private var supportedYears = 0
