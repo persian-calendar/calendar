@@ -138,13 +138,14 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30)
             date.dayOfMonth
-        }.ensureContinuity()
+        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30, 31))
     }
 
     @Test
     fun `Practice Islamic converting back and forth`() {
         val startJdn = CivilDate(1920, 1, 1).toJdn()
-        val endJdn = CivilDate(2020, 1, 1).toJdn()
+        // FIXME: Why it stops here?
+        val endJdn = CivilDate(2026, 6, 16).toJdn()
         (startJdn..endJdn).map {
             val date = IslamicDate(it)
             assertEquals(
@@ -155,11 +156,13 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..30)
             date.dayOfMonth
-        }.ensureContinuity()
+        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30))
     }
 
     @Test
     fun `Practice UmmAlqara converting back and forth`() {
+        val startJdn = CivilDate(1950, 1, 1).toJdn()
+        val endJdn = CivilDate(2150, 1, 1).toJdn()
         IslamicDate.useUmmAlQura = true
         (startJdn..endJdn).map {
             val date = IslamicDate(it)
@@ -167,7 +170,7 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..30)
             date.dayOfMonth
-        }.ensureContinuity()
+        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30))
         IslamicDate.useUmmAlQura = false
     }
 
@@ -179,7 +182,7 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..31)
             if (date.year == 1582 && date.month == 10) null else date.dayOfMonth
-        }.ensureContinuity()
+        }.ensureContinuity().ensureValidMonthLengths(listOf(28, 29, 30, 31))
     }
 
     @Test
@@ -190,15 +193,28 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..32)
             date.dayOfMonth
-        }.ensureContinuity()
+        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30, 31, 32))
     }
 
     // This gets a list of day of months and ensures they are either in increasing order or are 1
-    private fun List<Int>.ensureContinuity() {
+    private fun List<Int>.ensureContinuity(): List<Int> {
         this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
             assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
             dayOfMonth
         }
+        return this
+    }
+
+    // This gets a list of day of months and ensures they are either in increasing order or are 1
+    private fun List<Int>.ensureValidMonthLengths(validMonthLengths: List<Int>): List<Int> {
+        this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
+            if (dayOfMonth == 1) assertTrue(
+                previousDayOfMonth in validMonthLengths,
+                "$previousDayOfMonth"
+            )
+            dayOfMonth
+        }
+        return this
     }
 
     @Test
