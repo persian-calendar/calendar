@@ -29,6 +29,12 @@ class QamariTests {
     @Test
     fun `Conforms with neda-ye-haq data`() = assertAll(prepareRunners("neda-ye-haq.txt"))
 
+    @Test
+    fun `Conforms with mehr-e-iran data`() = assertAll(prepareRunners("mehr-e-iran.txt"))
+
+    @Test
+    fun `Conforms with tamasha data`() = assertAll(prepareRunners("tamasha.txt"))
+
     private fun prepareRunners(testFileName: String): List<() -> Unit> {
         return IranianIslamicDateConverter::class.java
             .getResourceAsStream("/qamari/$testFileName")
