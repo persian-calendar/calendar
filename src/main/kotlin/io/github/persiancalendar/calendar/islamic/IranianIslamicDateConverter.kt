@@ -8,16 +8,17 @@ package io.github.persiancalendar.calendar.islamic
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
-    private const val jdSupportStart: Long = 2425063 // CivilDate(1927, 7, 1).toJdn()
+    private const val jdSupportStart: Long = 2_424_709 // CivilDate(1927, 7, 1).toJdn()
     private var jdSupportEnd: Long = 0
     private val months: IntArray
     private var supportedYears = 0
-    private const val supportedYearsStart = 1346
+    private const val supportedYearsStart = 1345
 
     init {
         // https://calendar.ut.ac.ir/Fa/News/Data/Doc/Calendar%201401-Full.pdf
         // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp
         val hijriMonths = intArrayOf(
+            /*1345*/ 29, 30, 30, 29, 30, 30, 29, 29, 30, 29, 29, 30,
             /*1346*/ 29, 30, 30, 29, 30, 30, 30, 29, 29, 30, 29, 29,
             /*1347*/ 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30, 29,
             /*1348*/ 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30,
