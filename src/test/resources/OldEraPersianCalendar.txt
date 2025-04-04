@@ -1,0 +1,10 @@
+# These are copied from https://github.com/roozbehp/persiancalendar/tree/4fc570c2b8896637f67199b242580a9099f0639c/data
+
+# عصر حدید
+1300/12 1922-02-20 # Implied from issue of 20 Hoot 1300, being a Saturday.
+
+# فولاد
+1303/4 1924-06-22 # Issue of 1 Saratan 1303=1342/11/18 AH=1924-06-22. Confirmed by issue of 26 Saratan 1303=1342/12/14 AH=1924-07-17
+
+# نجات وطن
+1303/4 1924-06-22 # Implied from issue of Wed 18 Saratan 1303=1342/12/6 AH

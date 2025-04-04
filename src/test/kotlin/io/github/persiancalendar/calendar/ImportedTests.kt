@@ -1,7 +1,10 @@
 package io.github.persiancalendar.calendar
 
+import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class ImportedTests {
 
@@ -284,5 +287,40 @@ class ImportedTests {
             assertEquals(v[1], date.month, line)
             assertEquals(v[2], date.dayOfMonth, line)
         }
+    }
+
+    @Test
+    fun `old era persian calendar passes`() {
+        val tests = IranianIslamicDateConverter::class.java
+            .getResourceAsStream("/OldEraPersianCalendar.txt")
+            ?.readBytes()!!
+            .decodeToString()
+            .split("\n")
+            .map { it.split("#")[0] }
+            .filter { it.isNotBlank() }
+            .map { line ->
+                val (persianYear, persianMonth, year, month, day) = (
+                        line
+                            .trimStart('*').trim()
+                            .replace(Regex("[ /-]"), ",")
+                            .split(',')
+                            .map { it.toIntOrNull() ?: fail(line) })
+                {
+                    assertEquals(
+                        expected = listOf(year, month, day),
+                        actual = CivilDate(
+                            PersianDate(
+                                persianYear,
+                                persianMonth,
+                                1
+                            )
+                        ).let { date ->
+                            listOf(date.year, date.month, date.dayOfMonth)
+                        },
+                        message = line.split(" ")[0]
+                    )
+                }
+            }
+        assertAll(tests)
     }
 }
