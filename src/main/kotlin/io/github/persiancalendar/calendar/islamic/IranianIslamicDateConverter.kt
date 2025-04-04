@@ -8,16 +8,17 @@ package io.github.persiancalendar.calendar.islamic
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
-    private const val jdSupportStart: Long = 2_424_709 // CivilDate(1926, 7, 12).toJdn()
+    private const val jdSupportStart: Long = 2_424_355 // CivilDate(1925, 7, 23).toJdn()
     private var jdSupportEnd: Long = 0
     private val months: IntArray
     private var supportedYears = 0
-    private const val supportedYearsStart = 1345
+    private const val supportedYearsStart = 1344
 
     init {
         // https://calendar.ut.ac.ir/Fa/News/Data/Doc/Calendar%201401-Full.pdf
         // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp
         val hijriMonths = intArrayOf(
+            /*1344*/ 29, 30, 30, 29, 29, 30, 29, 30, 29, 30, 29, 30,
             /*1345*/ 29, 30, 30, 29, 30, 30, 29, 29, 30, 29, 29, 30,
             /*1346*/ 29, 30, 30, 29, 30, 30, 30, 29, 29, 30, 29, 29,
             /*1347*/ 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30, 29,
@@ -138,10 +139,10 @@ object IranianIslamicDateConverter {
     }
 
     internal fun fromJdn(jd: Long): IntArray? {
-        // FIXME: This is just to make it compatible with FallbackIslamicConverter, to be removed when
-        if (jd == 2424708L) {
-            assert(supportedYearsStart == 1345)
-            return intArrayOf(1344, 12, 30)
+        // This is just to make it compatible with FallbackIslamicConverter, hopefully would not be needed eventually
+        if (jd == 2424354L) {
+            assert(supportedYearsStart == 1344)
+            return intArrayOf(1343, 12, 30)
         }
         if (jd < jdSupportStart || jd >= jdSupportEnd) return null
         val days = (jd - jdSupportStart).toInt()

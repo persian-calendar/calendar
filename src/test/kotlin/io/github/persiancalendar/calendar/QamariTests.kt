@@ -35,15 +35,15 @@ class QamariTests {
     @Test
     fun `Conforms with tamasha data`() = assertAll(prepareRunners("tamasha.txt"))
 
-//    @Test
-//    fun `Conforms with eqdam data`() = assertAll(prepareRunners("eqdam.txt"))
+    @Test
+    fun `Conforms with eqdam data`() = assertAll(prepareRunners("eqdam.txt"))
 //
 //    @Test
 //    fun `Conforms with iran data`() = assertAll(prepareRunners("iran.txt"))
-//
-//    @Test
-//    fun `Conforms with iranshahr data`() = assertAll(prepareRunners("iranshahr.txt"))
-//
+
+    @Test
+    fun `Conforms with iranshahr data`() = assertAll(prepareRunners("iranshahr.txt"))
+
 //    @Test
 //    fun `Conforms with ordibehesht data`() = assertAll(prepareRunners("ordibehesht.txt"))
 
@@ -66,9 +66,9 @@ class QamariTests {
     @Test
     fun `Conforms with nejat-e-vatan data`() = assertAll(prepareRunners("nejat-e-vatan.txt"))
 
-//    @Test
-//    fun `Conforms with shafaq-e-sorkh data`() = assertAll(prepareRunners("shafaq-e-sorkh.txt"))
-//
+    @Test
+    fun `Conforms with shafaq-e-sorkh data`() = assertAll(prepareRunners("shafaq-e-sorkh.txt"))
+
 //    @Test
 //    fun `Conforms with kooshesh data`() = assertAll(prepareRunners("kooshesh.txt"))
 
