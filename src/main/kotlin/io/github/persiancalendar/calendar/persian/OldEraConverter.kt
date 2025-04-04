@@ -103,7 +103,7 @@ internal object OldEraConverter {
     internal fun fromJdn(jd: Long): IntArray? {
         if (jd < jdSupportStart || jd >= jdSupportEnd) return null
         val days = (jd - jdSupportStart).toInt()
-        var index = (days / 35).toInt() // It is an estimation of months lengths
+        var index = days / 32 // It is just the upper bound of months lengths
         while (index + 1 < months.size && months[index + 1] <= days) ++index
         val yearIndex = index / 12
         val month = index % 12
