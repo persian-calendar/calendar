@@ -47,6 +47,37 @@ class QamariTests {
 //    @Test
 //    fun `Conforms with ordibehesht data`() = assertAll(prepareRunners("ordibehesht.txt"))
 
+
+    @Test
+    fun `Conforms with anqa data`() = assertAll(prepareRunners("anqa.txt"))
+
+//    @Test
+//    fun `Conforms with foolad data`() = assertAll(prepareRunners("foolad.txt"))
+
+    @Test
+    fun `Conforms with golshan data`() = assertAll(prepareRunners("golshan.txt"))
+
+//    @Test
+//    fun `Conforms with habl-ol-matin data`() = assertAll(prepareRunners("habl-ol-matin.txt"))
+
+    @Test
+    fun `Conforms with khalq data`() = assertAll(prepareRunners("khalq.txt"))
+
+    @Test
+    fun `Conforms with nejat-e-vatan data`() = assertAll(prepareRunners("nejat-e-vatan.txt"))
+
+//    @Test
+//    fun `Conforms with shafaq-e-sorkh data`() = assertAll(prepareRunners("shafaq-e-sorkh.txt"))
+//
+//    @Test
+//    fun `Conforms with kooshesh data`() = assertAll(prepareRunners("kooshesh.txt"))
+
+    @Test
+    fun `Conforms with qanoon data`() = assertAll(prepareRunners("qanoon.txt"))
+
+    @Test
+    fun `Conforms with setare-ye-iran data`() = assertAll(prepareRunners("setare-ye-iran.txt"))
+
     private fun prepareRunners(testFileName: String): List<() -> Unit> {
         return IranianIslamicDateConverter::class.java
             .getResourceAsStream("/qamari/$testFileName")
