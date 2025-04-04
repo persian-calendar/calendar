@@ -102,16 +102,21 @@ internal object AlgorithmicConverter {
 
     fun toJdn(year: Int, month: Int, day: Int, oldEra: Boolean): Long {
         val approximateHalfYear = 180
-        val ordinalDay =
-            daysInPreviousMonths(month) + day - 1 // day is one based, make 0 based since this will be the number of days we add to beginning of year below
         val approximateDaysFromEpochForYearStart = (meanTropicalYearInDays * (year - 1)).toInt()
-        var yearStart = persianNewYearOnOrBefore(
-            numberOfDays = persianEpoch + approximateDaysFromEpochForYearStart + approximateHalfYear,
-            month = 1,
-            oldEra = oldEra,
-        )
-        yearStart += ordinalDay.toLong()
-        return yearStart + projectJdnOffset
+        return if (oldEra) {
+            persianNewYearOnOrBefore(
+                numberOfDays = persianEpoch + approximateDaysFromEpochForYearStart + (month - 1) * 30,
+                month = month,
+                oldEra = true,
+            )
+        } else {
+            persianNewYearOnOrBefore(
+                numberOfDays = persianEpoch + approximateDaysFromEpochForYearStart + approximateHalfYear,
+                month = 1,
+                oldEra = false,
+            ) + daysInPreviousMonths(month)
+        } + day - 1 + // day is one based, make 0 based since this will be the number of days we add to beginning of year below
+                projectJdnOffset
     }
 
     fun fromJdn(jdn: Long, oldEra: Boolean): IntArray {

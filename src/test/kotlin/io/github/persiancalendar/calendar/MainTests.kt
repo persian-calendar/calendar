@@ -1,6 +1,7 @@
 package io.github.persiancalendar.calendar
 
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
+import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -305,6 +306,29 @@ class MainTests {
             PersianDate(NepaliDate(CivilDate(IslamicDate(PersianDate(1400, 1, 1))))),
             PersianDate(1400, 1, 1)
         )
+    }
+
+    @Test
+    fun `Old era`() {
+        var previousMonth = 0L
+        (1288..1304).forEach { year ->
+            val result = mutableMapOf<Pair<Int, Int>, Long>()
+            (1..12).forEach { month ->
+                (1..31).forEach { dayOfMonth ->
+                    result[month to dayOfMonth] =
+                        AlgorithmicConverter.toJdn(year, month, dayOfMonth, true)
+                }
+            }
+            println("$year ${result
+                .filter { it.key.second == 1 }
+                .map {
+                    val length = it.value - previousMonth
+                    previousMonth = it.value
+                    length
+                }
+                .joinToString(", ")
+            }")
+        }
     }
 
 //    @Test
