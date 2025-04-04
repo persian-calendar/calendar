@@ -9,9 +9,9 @@ object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
     private const val jdSupportStart: Long = 2_424_355 // CivilDate(1925, 7, 23).toJdn()
-    private var jdSupportEnd: Long = 0
+    private val jdSupportEnd: Long
     private val months: IntArray
-    private var supportedYears = 0
+    private val supportedYears: Int
     private const val supportedYearsStart = 1344
 
     init {

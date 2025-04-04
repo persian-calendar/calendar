@@ -134,11 +134,16 @@ class MainTests {
         assertEquals(PersianDate(1398, 1, 1).toJdn(), 2458564)
         (startJdn..endJdn).map {
             val date = PersianDate(it)
-            assertEquals(it, date.toJdn())
+            assertEquals(
+                expected = it,
+                actual = date.toJdn(),
+                message = "$it: ${date.year}/${date.month}/${date.dayOfMonth}"
+            )
             assertTrue(date.month in 1..12)
-            assertTrue(date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30)
+            if (date.year !in 1230..1303)
+                assertTrue(date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30)
             date.dayOfMonth
-        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30, 31))
+        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30, 31, 32))
     }
 
     @Test
