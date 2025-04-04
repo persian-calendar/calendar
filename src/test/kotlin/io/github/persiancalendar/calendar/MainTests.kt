@@ -143,7 +143,7 @@ class MainTests {
             if (date.year !in 1230..1303)
                 assertTrue(date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30)
             date.dayOfMonth
-        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30, 31, 32))
+        }.ensureContinuity().ensureValidMonthLengths(29..32)
     }
 
     @Test
@@ -161,7 +161,7 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..30)
             date.dayOfMonth
-        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30))
+        }.ensureContinuity().ensureValidMonthLengths(29..30)
     }
 
     @Test
@@ -175,7 +175,7 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..30)
             date.dayOfMonth
-        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30))
+        }.ensureContinuity().ensureValidMonthLengths(29..30)
         IslamicDate.useUmmAlQura = false
     }
 
@@ -187,7 +187,7 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..31)
             if (date.year == 1582 && date.month == 10) null else date.dayOfMonth
-        }.ensureContinuity().ensureValidMonthLengths(listOf(28, 29, 30, 31))
+        }.ensureContinuity().ensureValidMonthLengths(28..31)
     }
 
     @Test
@@ -198,7 +198,7 @@ class MainTests {
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..32)
             date.dayOfMonth
-        }.ensureContinuity().ensureValidMonthLengths(listOf(29, 30, 31, 32))
+        }.ensureContinuity().ensureValidMonthLengths(29..32)
     }
 
     // This gets a list of day of months and ensures they are either in increasing order or are 1
@@ -211,10 +211,10 @@ class MainTests {
     }
 
     // This gets a list of day of months and ensures they are either in increasing order or are 1
-    private fun List<Int>.ensureValidMonthLengths(validMonthLengths: List<Int>): List<Int> {
+    private fun List<Int>.ensureValidMonthLengths(validMonthLengthRange: IntRange): List<Int> {
         this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
             if (dayOfMonth == 1) assertTrue(
-                previousDayOfMonth in validMonthLengths,
+                previousDayOfMonth in validMonthLengthRange,
                 "$previousDayOfMonth"
             )
             dayOfMonth
