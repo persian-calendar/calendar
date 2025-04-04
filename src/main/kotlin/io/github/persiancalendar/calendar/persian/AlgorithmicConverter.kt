@@ -25,7 +25,6 @@ internal object AlgorithmicConverter {
     private const val fullCircleOfArc = 360.0
     private const val meanSpeedOfSun = meanTropicalYearInDays / fullCircleOfArc
     private const val halfCircleOfArc = 180
-    private const val twoDegreesAfterSpring = 2.0
     private const val noon2000Jan01 = 730120.5
     private const val daysInUniformLengthCentury = 36525
     private val startOf1810: Long = CivilDate(1810, 1, 1).toJdn() - projectJdnOffset
@@ -101,24 +100,30 @@ internal object AlgorithmicConverter {
         0.00057,
     )
 
-    private const val longitudeSpring = .0
-    fun toJdn(year: Int, month: Int, day: Int): Long {
+    fun toJdn(year: Int, month: Int, day: Int, oldEra: Boolean): Long {
         val approximateHalfYear = 180
         val ordinalDay =
             daysInPreviousMonths(month) + day - 1 // day is one based, make 0 based since this will be the number of days we add to beginning of year below
         val approximateDaysFromEpochForYearStart = (meanTropicalYearInDays * (year - 1)).toInt()
-        var yearStart =
-            persianNewYearOnOrBefore(persianEpoch + approximateDaysFromEpochForYearStart + approximateHalfYear)
+        var yearStart = persianNewYearOnOrBefore(
+            numberOfDays = persianEpoch + approximateDaysFromEpochForYearStart + approximateHalfYear,
+            month = 1,
+            oldEra = oldEra,
+        )
         yearStart += ordinalDay.toLong()
         return yearStart + projectJdnOffset
     }
 
-    fun fromJdn(jdn: Long): IntArray {
+    fun fromJdn(jdn: Long, oldEra: Boolean): IntArray {
         var jdn = jdn
         jdn++ // TODO: Investigate why this is needed
-        val yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset)
+        val yearStart = persianNewYearOnOrBefore(
+            numberOfDays = jdn - projectJdnOffset,
+            month = 1,
+            oldEra = oldEra,
+        )
         val y: Int = floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
-        val ordinalDay = (jdn - toJdn(y, 1, 1)).toInt()
+        val ordinalDay = (jdn - toJdn(y, 1, 1, oldEra)).toInt()
         val m = monthFromDaysCount(ordinalDay)
         val d = ordinalDay - daysInPreviousMonths(m)
         return intArrayOf(y, m, d)
@@ -293,23 +298,26 @@ internal object AlgorithmicConverter {
         asLocalTime(date + twelveHours, longitude) - asDayFraction(longitude)
 
     // midday-in-tehran 52.5 degrees east, longitude of UTC+3:30 which defines Iranian Standard Time
-    private fun middayAtPersianObservationSite(date: Double): Double =
-        midday(date, initLongitude(52.5))
+    private fun middayAtPersianObservationSite(date: Double, oldEra: Boolean): Double =
+        midday(date, initLongitude(if (oldEra) 51.423056 else 52.5))
+
+    // https://github.com/catull/calendariale/blob/b281b7bdb37aa6cb575637033d0da72b319dbe55/src/Const.ts#L178
 
     // persian-new-year-on-or-before
     //  number of days is the absolute date. The absolute date is the number of days from January 1st, 1 A.D.
     //  1/1/0001 is absolute date 1.
-    private fun persianNewYearOnOrBefore(numberOfDays: Long): Long {
+    private fun persianNewYearOnOrBefore(numberOfDays: Long, month: Int, oldEra: Boolean): Long {
         val date = numberOfDays.toDouble()
-        val approx = estimatePrior(longitudeSpring, middayAtPersianObservationSite(date))
+        val monthLongitude = (month - 1) * 30.0
+        val approx = estimatePrior(monthLongitude, middayAtPersianObservationSite(date, oldEra))
         val lowerBoundNewYearDay: Long = floor(approx).toLong() - 1
         val upperBoundNewYearDay =
             lowerBoundNewYearDay + 3 // estimate is generally within a day of the actual occurrance (at the limits, the error expands, since the calculations rely on the mean tropical year which changes...)
         var day = lowerBoundNewYearDay
         while (day != upperBoundNewYearDay) {
-            val midday = middayAtPersianObservationSite(day.toDouble())
+            val midday = middayAtPersianObservationSite(day.toDouble(), oldEra)
             val l = compute(midday)
-            if (l in longitudeSpring..twoDegreesAfterSpring) break
+            if (l in monthLongitude..monthLongitude + 2) break
             ++day
         }
         // Contract.Assert(day != upperBoundNewYearDay);

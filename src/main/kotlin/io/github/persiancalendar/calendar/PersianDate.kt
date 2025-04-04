@@ -13,11 +13,11 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
     // Converters
     override fun toJdn(): Long {
         val result = LookupTableConverter.toJdn(year, month, dayOfMonth)
-        return if (result == -1L) AlgorithmicConverter.toJdn(year, month, dayOfMonth) else result
+        return if (result == -1L) AlgorithmicConverter.toJdn(year, month, dayOfMonth, false) else result
     }
 
     override fun fromJdn(jdn: Long): IntArray =
-        LookupTableConverter.fromJdn(jdn) ?: AlgorithmicConverter.fromJdn(jdn)
+        LookupTableConverter.fromJdn(jdn) ?: AlgorithmicConverter.fromJdn(jdn, false)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate =
         monthStartOfMonthsDistance(this, monthsDistance, ::PersianDate)
