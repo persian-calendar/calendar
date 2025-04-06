@@ -11,7 +11,7 @@ class CalendarCenterConversions {
     fun `Matches with Calendar Center converter Hijri months`(
         persianDay: Int, persianMonth: Int, persianYear: Int,
         islamicDay: Int, islamicMonth: Int, islamicYear: Int,
-        civilDay: Int, civilMonth: Int, civilYear: Int
+        civilDay: Int, civilMonth: Int, civilYear: Int,
     ) {
         assertEquals(
             1, setOf(

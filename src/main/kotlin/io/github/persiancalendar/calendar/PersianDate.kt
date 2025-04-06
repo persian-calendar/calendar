@@ -13,8 +13,7 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
 
     // Converters
     override fun toJdn(): Long {
-        var result = -1L
-        result = OldEraConverter.toJdn(year, month, dayOfMonth)
+        var result = OldEraConverter.toJdn(year, month, dayOfMonth)
         if (result == -1L) result = LookupTableConverter.toJdn(year, month, dayOfMonth)
         if (result == -1L) result = AlgorithmicConverter.toJdn(year, month, dayOfMonth)
         return result

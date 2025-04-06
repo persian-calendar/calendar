@@ -141,7 +141,10 @@ class MainTests {
             )
             assertTrue(date.month in 1..12)
             if (date.year !in 1230..1303)
-                assertTrue(date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30)
+                assertTrue(
+                    date.dayOfMonth in 1..if (date.month in 1..6) 31 else 30,
+                    date.year.toString()
+                )
             date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(29..32)
     }
