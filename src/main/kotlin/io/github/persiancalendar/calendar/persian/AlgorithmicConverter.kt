@@ -1,365 +1,542 @@
 // Ported from
-// https://github.com/dotnet/runtime/blob/4f4af6b5/src/libraries/System.Private.CoreLib/src/System/Globalization/PersianCalendar.cs
-// https://github.com/dotnet/runtime/blob/4f4af6b5/src/libraries/System.Private.CoreLib/src/System/Globalization/CalendricalCalculationsHelper.cs#L8
-// Which is released under The MIT License (MIT)
+// https://github.com/roozbehp/persiancalendar/blob/daf8fb2b46466a324cee98833c19c36aa5d97f39/persiancalendar.py
+// Which is released under Apache 2.0 license
 package io.github.persiancalendar.calendar.persian
 
-import io.github.persiancalendar.calendar.CivilDate
-import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
-import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
-import io.github.persiancalendar.calendar.util.cosOfDegree
-import io.github.persiancalendar.calendar.util.sinOfDegree
-import io.github.persiancalendar.calendar.util.tanOfDegree
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.withSign
+import kotlin.math.round
+import kotlin.math.sign
+import kotlin.math.sin
+import kotlin.math.tan
 
 internal object AlgorithmicConverter {
-    private const val projectJdnOffset: Long =
-        1721426 // Offset from Jdn to jdn used in this converter
-    private const val persianEpoch: Long = 226895 // new DateTime(622, 3, 22).Ticks / TicksPerDay
-    private const val meanTropicalYearInDays = 365.242189
-    private const val fullCircleOfArc = 360.0
-    private const val meanSpeedOfSun = meanTropicalYearInDays / fullCircleOfArc
-    private const val halfCircleOfArc = 180
-    private const val twoDegreesAfterSpring = 2.0
-    private const val noon2000Jan01 = 730120.5
-    private const val daysInUniformLengthCentury = 36525
-    private val startOf1810: Long = CivilDate(1810, 1, 1).toJdn() - projectJdnOffset
-    private val startOf1900Century: Long = CivilDate(1900, 1, 1).toJdn() - projectJdnOffset
-    private const val twelveHours = .5 // half a day
-    private const val secondsPerDay = 24 * 60 * 60 // 24 hours * 60 minutes * 60 seconds
-    private const val secondsPerMinute = 60
-    private const val minutesPerDegree = 60
-    private val coefficients1900to1987 = doubleArrayOf(
-        -0.00002,
-        0.000297,
-        0.025184,
-        -0.181133,
-        0.553040,
-        -0.861938,
-        0.677066,
-        -0.212591,
-    )
-    private val coefficients1800to1899 = doubleArrayOf(
-        -0.000009,
-        0.003844,
-        0.083563,
-        0.865736,
-        4.867575,
-        15.845535,
-        31.332267,
-        38.291999,
-        28.316289,
-        11.636204,
-        2.043794,
-    )
-    private val coefficients1700to1799 = doubleArrayOf(
-        8.118780842,
-        -0.005092142,
-        0.003336121,
-        -0.0000266484,
-    )
-    private val coefficients1620to1699 = doubleArrayOf(
-        196.58333,
-        -4.0675,
-        0.0219167,
-    )
-    private val lambdaCoefficients = doubleArrayOf(
-        280.46645,
-        36000.76983,
-        0.0003032,
-    )
-    private val anomalyCoefficients = doubleArrayOf(
-        357.52910,
-        35999.05030,
-        -0.0001559,
-        -0.00000048,
-    )
-    private val eccentricityCoefficients = doubleArrayOf(
-        0.016708617,
-        -0.000042037,
-        -0.0000001236,
-    )
-    private val coefficients = doubleArrayOf(
-        angle(23, 26, 21.448),
-        angle(0, 0, -46.8150),
-        angle(0, 0, -0.00059),
-        angle(0, 0, 0.001813),
-    )
-    private val coefficientsA = doubleArrayOf(
-        124.90,
-        -1934.134,
-        0.002063,
-    )
-    private val coefficientsB = doubleArrayOf(
-        201.11,
-        72001.5377,
-        0.00057,
-    )
+    /** The value of x shifted into the range [a..b). Returns x if a=b. */
+    private fun mod3(x: Double, a: Int, b: Int): Double =
+        if (a == b) x else a + (x - a) % (b - a)
 
-    private const val longitudeSpring = .0
-    fun toJdn(year: Int, month: Int, day: Int): Long {
-        val approximateHalfYear = 180
-        val ordinalDay =
-            daysInPreviousMonths(month) + day - 1 // day is one based, make 0 based since this will be the number of days we add to beginning of year below
-        val approximateDaysFromEpochForYearStart = (meanTropicalYearInDays * (year - 1)).toInt()
-        var yearStart =
-            persianNewYearOnOrBefore(persianEpoch + approximateDaysFromEpochForYearStart + approximateHalfYear)
-        yearStart += ordinalDay.toLong()
-        return yearStart + projectJdnOffset
+    /** Sum powers of x with coefficients (from order 0 up) in list a. */
+    private fun poly(x: Double, a: List<Double>): Double =
+        if (a.isEmpty()) 0.0 else a[0] + x * poly(x, a.drop(1))
+
+    /**
+     * Identity function for fixed dates/moments. If internal
+     * timekeeping is shifted, change epoch to be RD date of
+     * origin of internal count. epoch should be an integer.
+     */
+    private fun rd(tee: Int): Int {
+        val epoch = 0
+        return tee - epoch
     }
 
-    fun fromJdn(jdn: Long): IntArray {
-        var jdn = jdn
-        jdn++ // TODO: Investigate why this is needed
-        val yearStart = persianNewYearOnOrBefore(jdn - projectJdnOffset)
-        val y: Int = floor((yearStart - persianEpoch) / meanTropicalYearInDays + 0.5).toInt() + 1
-        val ordinalDay = (jdn - toJdn(y, 1, 1)).toInt()
-        val m = monthFromDaysCount(ordinalDay)
-        val d = ordinalDay - daysInPreviousMonths(m)
-        return intArrayOf(y, m, d)
+    // Fixed date of start of the (proleptic) Gregorian calendar.
+    private val GREGORIAN_EPOCH = rd(1)
+
+    /**
+     * True if g_year is a leap year on the Gregorian calendar.
+     */
+    private fun gregorianLeapYear(gYear: Int): Boolean =
+        gYear % 4 == 0 && (gYear % 400) !in listOf(100, 200, 300)
+
+    /**
+     * Fixed date equivalent to the Gregorian date g_date.
+     */
+    private fun fixedFromGregorian(gDate: Triple<Int, Int, Int>): Int {
+        val (year, month, day) = gDate
+        return (GREGORIAN_EPOCH - 1  // Days before start of calendar
+                + 365 * (year - 1)  // Ordinary days since epoch
+                + (year - 1) / 4   // Julian leap days since epoch...
+                - (year - 1) / 100  // ...minus century years since epoch...
+                + (year - 1) / 400  // plus years since epoch divisible by 400.
+                // Days in prior months this year assuming 30-day Feb
+                + (367 * month - 362) / 12
+                // Correct for 28- or 29-day Feb
+                + (if (month <= 2) 0 else if (gregorianLeapYear(year)) -1 else -2)
+                + day)  // Days so far this month.
     }
 
-    private fun asSeason(longitude: Double): Double =
-        if (longitude < 0) longitude + fullCircleOfArc else longitude
-
-    private fun initLongitude(longitude: Double): Double =
-        normalizeLongitude(longitude + halfCircleOfArc) - halfCircleOfArc
-
-    private fun normalizeLongitude(longitude: Double): Double {
-        var longitude = longitude
-        longitude %= fullCircleOfArc
-        if (longitude < 0) longitude += fullCircleOfArc
-        return longitude
-    }
-
-    private fun estimatePrior(longitude: Double, time: Double): Double {
-        val timeSunLastAtLongitude =
-            time - meanSpeedOfSun * asSeason(initLongitude(compute(time) - longitude))
-        val longitudeErrorDelta = initLongitude(compute(timeSunLastAtLongitude) - longitude)
-        return min(time, timeSunLastAtLongitude - meanSpeedOfSun * longitudeErrorDelta)
-    }
-
-    private fun compute(time: Double): Double {
-        val julianCenturies = julianCenturies(time)
-        val lambda = 282.7771834 +
-                (36000.76953744 * julianCenturies) +
-                (0.000005729577951308232 * sumLongSequenceOfPeriodicTerms(julianCenturies))
-        val longitude = lambda + aberration(julianCenturies) + nutation(julianCenturies)
-        return initLongitude(longitude)
-    }
-
-    private fun polynomialSum(coefficients: DoubleArray, indeterminate: Double): Double {
-        var sum = coefficients[0]
-        var indeterminateRaised = 1.0
-        for (i in 1 until coefficients.size) {
-            indeterminateRaised *= indeterminate
-            sum += coefficients[i] * indeterminateRaised
+    /**
+     * Gregorian year corresponding to the fixed date.
+     */
+    private fun gregorianYearFromFixed(date: Int): Int {
+        val d0 = date - GREGORIAN_EPOCH  // Prior days.
+        val n400 = d0 / 146097  // Completed 400-year cycles.
+        val d1 = d0 % 146097  // Prior days not in n400.
+        val n100 = d1 / 36524  // 100-year cycles not in n400.
+        val d2 = d1 % 36524  // Prior days not in n400 or n100.
+        val n4 = d2 / 1461  // 4-year cycles not in n400 or n100.
+        val d3 = d2 % 1461  // Prior days not in n400, n100, or n4.
+        val n1 = d3 / 365  // Years not in n400, n100, or n4.
+        val year = 400 * n400 + 100 * n100 + 4 * n4 + n1
+        return if (n100 == 4 || n1 == 4) {
+            year  // Date is day 366 in a leap year.
+        } else {
+            year + 1  // Date is ordinal day (d % 365 + 1) in (year + 1).
         }
-        return sum
     }
 
-    private fun nutation(julianCenturies: Double): Double {
-        val a = polynomialSum(coefficientsA, julianCenturies)
-        val b = polynomialSum(coefficientsB, julianCenturies)
-        return -0.004778 * sinOfDegree(a) - 0.0003667 * sinOfDegree(b)
-    }
+    /**
+     * Fixed date of January 1 in g_year.
+     */
+    private fun gregorianNewYear(gYear: Int): Int =
+        fixedFromGregorian(Triple(gYear, 1, 1))
 
-    private fun aberration(julianCenturies: Double): Double =
-        (0.0000974 * cosOfDegree(177.63 + 35999.01848 * julianCenturies)) - 0.005575
-
-    private val terms = listOf(
-        Triple(403406, 270.54861, 0.9287892),
-        Triple(195207, 340.19128, 35999.1376958),
-        Triple(119433, 63.91854, 35999.4089666),
-        Triple(112392, 331.2622, 35998.7287385),
-        Triple(3891, 317.843, 71998.20261),
-        Triple(2819, 86.631, 71998.4403),
-        Triple(1721, 240.052, 36000.35726),
-        Triple(660, 310.26, 71997.4812),
-        Triple(350, 247.23, 32964.4678),
-        Triple(334, 260.87, -19.441),
-        Triple(314, 297.82, 445267.1117),
-        Triple(268, 343.14, 45036.884),
-        Triple(242, 166.79, 3.1008),
-        Triple(234, 81.53, 22518.4434),
-        Triple(158, 3.5, -19.9739),
-        Triple(132, 132.75, 65928.9345),
-        Triple(129, 182.95, 9038.0293),
-        Triple(114, 162.03, 3034.7684),
-        Triple(99, 29.8, 33718.148),
-        Triple(93, 266.4, 3034.448),
-        Triple(86, 249.2, -2280.773),
-        Triple(78, 157.6, 29929.992),
-        Triple(72, 257.8, 31556.493),
-        Triple(68, 185.1, 149.588),
-        Triple(64, 69.9, 9037.75),
-        Triple(46, 8.0, 107997.405),
-        Triple(38, 197.1, -4444.176),
-        Triple(37, 250.4, 151.771),
-        Triple(32, 65.3, 67555.316),
-        Triple(29, 162.7, 31556.08),
-        Triple(28, 341.5, -4561.54),
-        Triple(27, 291.6, 107996.706),
-        Triple(27, 98.5, 1221.655),
-        Triple(25, 146.7, 62894.167),
-        Triple(24, 110.0, 31437.369),
-        Triple(21, 5.2, 14578.298),
-        Triple(21, 342.6, -31931.757),
-        Triple(20, 230.9, 34777.243),
-        Triple(18, 256.1, 1221.999),
-        Triple(17, 45.3, 62894.511),
-        Triple(14, 242.9, -4442.039),
-        Triple(13, 115.2, 107997.909),
-        Triple(13, 151.8, 119.066),
-        Triple(13, 285.3, 16859.071),
-        Triple(12, 53.3, -4.578),
-        Triple(10, 126.6, 26895.292),
-        Triple(10, 205.7, -39.127),
-        Triple(10, 85.9, 12297.536),
-        Triple(10, 146.1, 90073.778)
-    )
-
-    private fun sumLongSequenceOfPeriodicTerms(julianCenturies: Double): Double =
-        terms.sumOf { (x, y, z) -> x * sinOfDegree(y + z * julianCenturies) }
-
-    private fun julianCenturies(moment: Double): Double {
-        val dynamicalMoment = moment + ephemerisCorrection(moment)
-        return (dynamicalMoment - noon2000Jan01) / daysInUniformLengthCentury
-    }
-
-    private fun centuriesFrom1900(gregorianYear: Int): Double {
-        val july1stOfYear: Long = CivilDate(gregorianYear, 7, 1).toJdn() - projectJdnOffset
-        return (july1stOfYear - startOf1900Century).toDouble() / daysInUniformLengthCentury
-    }
-
-    private fun angle(degrees: Int, minutes: Int, seconds: Double): Double =
-        (seconds / secondsPerMinute + minutes) / minutesPerDegree + degrees
-
-    private fun getGregorianYear(numberOfDays: Double): Int =
-        CivilDate(floor(numberOfDays).toLong() + projectJdnOffset).year
-
-    // ephemeris-correction: correction to account for the slowing down of the rotation of the earth
-    private fun ephemerisCorrection(time: Double): Double {
-        val year = getGregorianYear(time)
-        return (CorrectionAlgorithm.entries.firstOrNull { it.lowestYear <= year }
-            ?: CorrectionAlgorithm.Default).ephemerisCorrection(year)
-    }
-
-    private fun asDayFraction(longitude: Double): Double = longitude / fullCircleOfArc
-
-    private fun obliquity(julianCenturies: Double): Double =
-        polynomialSum(coefficients, julianCenturies)
-
-    // equation-of-time; approximate the difference between apparent solar time and mean solar time
-    // formal definition is EOT = GHA - GMHA
-    // GHA is the Greenwich Hour Angle of the apparent (actual) Sun
-    // GMHA is the Greenwich Mean Hour Angle of the mean (fictitious) Sun
-    // http://www.esrl.noaa.gov/gmd/grad/solcalc/
-    // http://en.wikipedia.org/wiki/Equation_of_time
-    private fun equationOfTime(time: Double): Double {
-        val julianCenturies = julianCenturies(time)
-        val lambda = polynomialSum(lambdaCoefficients, julianCenturies)
-        val anomaly = polynomialSum(anomalyCoefficients, julianCenturies)
-        val eccentricity = polynomialSum(eccentricityCoefficients, julianCenturies)
-        val epsilon = obliquity(julianCenturies)
-        val tanHalfEpsilon: Double = tanOfDegree(epsilon / 2)
-        val y = tanHalfEpsilon * tanHalfEpsilon
-        val dividend: Double = (y * sinOfDegree(2 * lambda)) -
-                (2 * eccentricity * sinOfDegree(anomaly)) +
-                (4 * eccentricity * y * sinOfDegree(anomaly) * cosOfDegree(2 * lambda)) -
-                (.5 * y.pow(2.0) * sinOfDegree(4 * lambda)) -
-                (1.25 * eccentricity.pow(2.0) * sinOfDegree(2 * anomaly))
-        val divisor: Double = 2 * PI
-        val equation = dividend / divisor
-
-        // approximation of equation of time is not valid for dates that are many millennia in the past or future
-        // thus limited to a half day
-        return min(abs(equation).withSign(twelveHours), equation)
-    }
-
-    private fun asLocalTime(apparentMidday: Double, longitude: Double): Double {
-        // slightly inaccurate since equation of time takes mean time not apparent time as its argument, but the difference is negligible
-        val universalTime = apparentMidday - asDayFraction(longitude)
-        return apparentMidday - equationOfTime(universalTime)
-    }
-
-    // midday
-    private fun midday(date: Double, longitude: Double): Double =
-        asLocalTime(date + twelveHours, longitude) - asDayFraction(longitude)
-
-    // midday-in-tehran 52.5 degrees east, longitude of UTC+3:30 which defines Iranian Standard Time
-    private fun middayAtPersianObservationSite(date: Double): Double =
-        midday(date, initLongitude(52.5))
-
-    // persian-new-year-on-or-before
-    //  number of days is the absolute date. The absolute date is the number of days from January 1st, 1 A.D.
-    //  1/1/0001 is absolute date 1.
-    private fun persianNewYearOnOrBefore(numberOfDays: Long): Long {
-        val date = numberOfDays.toDouble()
-        val approx = estimatePrior(longitudeSpring, middayAtPersianObservationSite(date))
-        val lowerBoundNewYearDay: Long = floor(approx).toLong() - 1
-        val upperBoundNewYearDay =
-            lowerBoundNewYearDay + 3 // estimate is generally within a day of the actual occurrance (at the limits, the error expands, since the calculations rely on the mean tropical year which changes...)
-        var day = lowerBoundNewYearDay
-        while (day != upperBoundNewYearDay) {
-            val midday = middayAtPersianObservationSite(day.toDouble())
-            val l = compute(midday)
-            if (l in longitudeSpring..twoDegreesAfterSpring) break
-            ++day
+    /**
+     * Gregorian (year, month, day) corresponding to fixed date.
+     */
+    private fun gregorianFromFixed(date: Int): Triple<Int, Int, Int> {
+        val year = gregorianYearFromFixed(date)
+        val priorDays = date - gregorianNewYear(year)  // This year
+        // To simulate a 30-day Feb
+        val correction = when {
+            date < fixedFromGregorian(Triple(year, 3, 1)) -> 0
+            gregorianLeapYear(year) -> 1
+            else -> 2
         }
-        // Contract.Assert(day != upperBoundNewYearDay);
-        return day - 1
+        val month = (12 * (priorDays + correction) + 373) / 367  // Assuming a 30-day Feb
+        // Calculate the day by subtraction.
+        val day = date - fixedFromGregorian(Triple(year, month, 1)) + 1
+        return Triple(year, month, day)
     }
 
-    private enum class CorrectionAlgorithm(
-        val lowestYear: Int,
-        val ephemerisCorrection: (Int) -> Double,
-    ) {
-        // the following formulas defines a polynomial function which gives us the amount that the
-        // earth is slowing down for specific year ranges
-        Default(
-            lowestYear = 2020,
-            ephemerisCorrection = {
-                val january1stOfYear: Long = CivilDate(it, 1, 1).toJdn() - projectJdnOffset
-                val daysSinceStartOf1810 = (january1stOfYear - startOf1810).toDouble()
-                val x = twelveHours + daysSinceStartOf1810
-                (x.pow(2.0) / 41048480 - 15) / secondsPerDay
-            },
-        ),
-        Year1988to2019(
-            lowestYear = 1988,
-            ephemerisCorrection = {
-                (it - 1933.0) / secondsPerDay
-            },
-        ),
-        Year1900to1987(
-            lowestYear = 1900,
-            ephemerisCorrection = {
-                polynomialSum(coefficients1900to1987, centuriesFrom1900(it))
-            },
-        ),
-        Year1800to1899(
-            lowestYear = 1800,
-            ephemerisCorrection = {
-                polynomialSum(coefficients1800to1899, centuriesFrom1900(it))
-            },
-        ),
-        Year1700to1799(
-            lowestYear = 1700,
-            ephemerisCorrection = {
-                polynomialSum(coefficients1700to1799, it - 1700.0) / secondsPerDay
-            },
-        ),
-        Year1620to1699(
-            lowestYear = 1620,
-            ephemerisCorrection = {
-                polynomialSum(coefficients1620to1699, it - 1600.0) / secondsPerDay
-            },
-        ),
+    /**
+     * Number of days from Gregorian date g_date1 until g_date2.
+     */
+    private fun gregorianDateDifference(
+        gDate1: Triple<Int, Int, Int>,
+        gDate2: Triple<Int, Int, Int>
+    ): Int = fixedFromGregorian(gDate2) - fixedFromGregorian(gDate1)
+
+    // Fixed date of start of the Julian calendar.
+    private val JULIAN_EPOCH = fixedFromGregorian(Triple(0, 12, 30))
+
+    /** True if j_year is a leap year on the Julian calendar. */
+    private fun julianLeapYear(jYear: Int): Boolean = (jYear % 4) == (if (jYear > 0) 0 else 3)
+
+    /** Fixed date equivalent to the Julian date. */
+    private fun fixedFromJulian(year: Int, month: Int, day: Int): Int {
+        val y = if (year < 0) year + 1 else year  // No year zero
+        return (JULIAN_EPOCH - 1  // Days before start of calendar
+                + 365 * (y - 1)  // Ordinary days since epoch.
+                + (y - 1) / 4   // Leap days since epoch...
+                // Days in prior months this year...
+                + ((367 * month - 362) / 12)  // ...assuming 30-day Feb
+                // Correct for 28- or 29-day Feb
+                + (if (month <= 2) 0 else if (julianLeapYear(year)) -1 else -2)
+                + day)           // Days so far this month.
     }
+
+    /** x hours. */
+    private fun hr(x: Int): Double = x / 24.0
+
+    /** d degrees, m arcminutes, s arcseconds. */
+    private fun angle(d: Int, m: Int, s: Double): Double = d + (m + s / 60) / 60.0
+
+    /** Convert angle theta from degrees to radians. */
+    private fun radiansFromDegrees(theta: Double): Double = (theta % 360) * PI / 180
+
+    /** Sine of theta (given in degrees). */
+    private fun sinDegrees(theta: Double): Double = sin(radiansFromDegrees(theta))
+
+    /** Cosine of theta (given in degrees). */
+    private fun cosDegrees(theta: Double): Double = cos(radiansFromDegrees(theta))
+
+    /** Tangent of theta (given in degrees). */
+    private fun tanDegrees(theta: Double): Double = tan(radiansFromDegrees(theta))
+
+    private fun longitude(location: List<Double>): Double = location[1]
+
+    /**
+     * Difference between UT and local mean time at longitude
+     * phi as a fraction of a day.
+     */
+    private fun zoneFromLongitude(phi: Double): Double = phi / 360
+
+    /** Universal time from local tee_ell at location */
+    private fun universalFromLocal(teeEll: Double, location: List<Double>): Double =
+        teeEll - zoneFromLongitude(longitude(location))
+
+    /** Local time from sundial time tee at location. */
+    private fun localFromApparent(tee: Double, location: List<Double>): Double =
+        tee - equationOfTime(universalFromLocal(tee, location))
+
+    /** Universal time from sundial time tee at location */
+    private fun universalFromApparent(tee: Double, location: List<Double>): Double =
+        universalFromLocal(localFromApparent(tee, location), location)
+
+    /** Universal time on fixed date of midday at location */
+    private fun midday(date: Int, location: List<Double>): Double =
+        universalFromApparent(date + hr(12), location)
+
+    /** Julian centuries since 2000 at moment tee. */
+    private fun julianCenturies(tee: Double): Double =
+        (dynamicalFromUniversal(tee) - J2000) / 36525
+
+    /** Obliquity of ecliptic at moment tee. */
+    private fun obliquity(tee: Double): Double {
+        val c = julianCenturies(tee)
+        return angle(23, 26, 21.448) + poly(
+            c, listOf(
+                0.0,
+                angle(0, 0, -46.8150),
+                angle(0, 0, -0.00059),
+                angle(0, 0, 0.001813)
+            )
+        )
+    }
+
+    /** Dynamical time at Universal moment tee_rom_u. */
+    private fun dynamicalFromUniversal(teeRomU: Double): Double =
+        teeRomU + ephemerisCorrection(teeRomU)
+
+    // Noon at start of Gregorian year 2000.
+    private val J2000 = hr(12) + gregorianNewYear(2000)
+
+    private const val MEAN_TROPICAL_YEAR = 365.242189
+
+    /**
+     * Dynamical Time minus Universal Time (in days) for moment tee.
+     *
+     * Adapted from "Astronomical Algorithms"
+     * by Jean Meeus, Willmann-Bell (1991) for years
+     * 1600-1986 and from polynomials on the NASA
+     * Eclipse web site for other years.
+     */
+    private fun ephemerisCorrection(tee: Double): Double {
+        val year = gregorianYearFromFixed(floor(tee).toInt())
+        val c = gregorianDateDifference(Triple(1900, 1, 1), Triple(year, 7, 1)) / 36525.0
+        val c2051 = (-20 + 32 * ((year - 1820) / 100.0).pow(2)
+                + 0.5628 * (2150 - year)) / 86400
+        val y2000 = year - 2000
+        val c2006 = poly(y2000.toDouble(), listOf(62.92, 0.32217, 0.005589)) / 86400
+        val c1987 = poly(
+            y2000.toDouble(), listOf(
+                63.86, 0.3345, -0.060374,
+                0.0017275,
+                0.000651814, 0.00002373599
+            )
+        ) / 86400
+        val c1900 = poly(
+            c, listOf(
+                -0.00002, 0.000297, 0.025184,
+                -0.181133, 0.553040, -0.861938,
+                0.677066, -0.212591
+            )
+        )
+        val c1800 = poly(
+            c, listOf(
+                -0.000009, 0.003844, 0.083563,
+                0.865736,
+                4.867575, 15.845535, 31.332267,
+                38.291999, 28.316289, 11.636204,
+                2.043794
+            )
+        )
+        val y1700 = year - 1700
+        val c1700 = poly(
+            y1700.toDouble(), listOf(
+                8.118780842, -0.005092142,
+                0.003336121, -0.0000266484
+            )
+        ) / 86400
+        val y1600 = year - 1600
+        val c1600 = poly(
+            y1600.toDouble(), listOf(
+                120.0, -0.9808, -0.01532,
+                0.000140272128
+            )
+        ) / 86400
+        val y1000 = (year - 1000) / 100.0
+        val c500 = poly(
+            y1000, listOf(
+                1574.2, -556.01, 71.23472, 0.319781,
+                -0.8503463, -0.005050998,
+                0.0083572073
+            )
+        ) / 86400
+        val y0 = year / 100.0
+        val c0 = poly(
+            y0, listOf(
+                10583.6, -1014.41, 33.78311,
+                -5.952053, -0.1798452, 0.022174192,
+                0.0090316521
+            )
+        ) / 86400
+        val y1820 = (year - 1820) / 100.0
+        val other = poly(y1820, listOf(-20.0, 0.0, 32.0)) / 86400
+        return when {
+            2051 <= year && year <= 2150 -> c2051
+            2006 <= year && year <= 2050 -> c2006
+            1987 <= year && year <= 2005 -> c1987
+            1900 <= year && year <= 1986 -> c1900
+            1800 <= year && year <= 1899 -> c1800
+            1700 <= year && year <= 1799 -> c1700
+            1600 <= year && year <= 1699 -> c1600
+            500 <= year && year <= 1599 -> c500
+            -500 < year && year < 500 -> c0
+            else -> other
+        }
+    }
+
+    /**
+     * Equation of time (as fraction of day) for moment tee.
+     *
+     * Adapted from "Astronomical Algorithms" by Jean Meeus,
+     * Willmann-Bell, 2nd edn., 1998, p. 185.
+     */
+    private fun equationOfTime(tee: Double): Double {
+        val c = julianCenturies(tee)
+        val lamda = poly(c, listOf(280.46645, 36000.76983, 0.0003032))
+        val anomaly = poly(c, listOf(357.52910, 35999.05030, -0.0001559, -0.00000048))
+        val eccentricity = poly(c, listOf(0.016708617, -0.000042037, -0.0000001236))
+        val varepsilon = obliquity(tee)
+        val y = tanDegrees(varepsilon / 2).pow(2)
+        val equation = ((1.0 / 2 / PI) *
+                (y * sinDegrees(2 * lamda)
+                        - 2 * eccentricity * sinDegrees(anomaly)
+                        + 4 * eccentricity * y * sinDegrees(anomaly)
+                        * cosDegrees(2 * lamda)
+                        - 0.5 * y * y * sinDegrees(4 * lamda)
+                        - 1.25 * eccentricity * eccentricity
+                        * sinDegrees(2 * anomaly)))
+        val result = sign(equation) * min(abs(equation), hr(12))
+        return sign(equation) * min(abs(equation), hr(12))
+    }
+
+    /**
+     * Longitude of sun at moment tee.
+     *
+     * Adapted from "Planetary Programs and Tables from -4000
+     * to +2800" by Pierre Bretagnon and Jean-Louis Simon,
+     * Willmann-Bell, 1986.
+     */
+    private fun solarLongitude(tee: Double): Double {
+        val c = julianCenturies(tee)  // moment in Julian centuries
+        val coefficients = listOf(
+            403406, 195207, 119433, 112392, 3891, 2819, 1721,
+            660, 350, 334, 314, 268, 242, 234, 158, 132, 129, 114,
+            99, 93, 86, 78, 72, 68, 64, 46, 38, 37, 32, 29, 28, 27, 27,
+            25, 24, 21, 21, 20, 18, 17, 14, 13, 13, 13, 12, 10, 10, 10,
+            10
+        )
+        val multipliers = listOf(
+            0.9287892, 35999.1376958, 35999.4089666,
+            35998.7287385, 71998.20261, 71998.4403,
+            36000.35726, 71997.4812, 32964.4678,
+            -19.4410, 445267.1117, 45036.8840, 3.1008,
+            22518.4434, -19.9739, 65928.9345,
+            9038.0293, 3034.7684, 33718.148, 3034.448,
+            -2280.773, 29929.992, 31556.493, 149.588,
+            9037.750, 107997.405, -4444.176, 151.771,
+            67555.316, 31556.080, -4561.540,
+            107996.706, 1221.655, 62894.167,
+            31437.369, 14578.298, -31931.757,
+            34777.243, 1221.999, 62894.511,
+            -4442.039, 107997.909, 119.066, 16859.071,
+            -4.578, 26895.292, -39.127, 12297.536,
+            90073.778
+        )
+        val addends = listOf(
+            270.54861, 340.19128, 63.91854, 331.26220,
+            317.843, 86.631, 240.052, 310.26, 247.23,
+            260.87, 297.82, 343.14, 166.79, 81.53,
+            3.50, 132.75, 182.95, 162.03, 29.8,
+            266.4, 249.2, 157.6, 257.8, 185.1, 69.9,
+            8.0, 197.1, 250.4, 65.3, 162.7, 341.5,
+            291.6, 98.5, 146.7, 110.0, 5.2, 342.6,
+            230.9, 256.1, 45.3, 242.9, 115.2, 151.8,
+            285.3, 53.3, 126.6, 205.7, 85.9,
+            146.1
+        )
+        val lamda = (
+                282.7771834
+                        + 36000.76953744 * c
+                        + 0.000005729577951308232 *
+                        coefficients.indices.sumOf { i ->
+                            coefficients[i] * sinDegrees(addends[i] + multipliers[i] * c)
+                        }
+                )
+        return (lamda + aberration(tee) + nutation(tee)).mod(360.0)
+    }
+
+    /**
+     * Longitudinal nutation at moment tee.
+     */
+    private fun nutation(tee: Double): Double {
+        val c = julianCenturies(tee)  // moment in Julian centuries
+        val capA = poly(c, listOf(124.90, -1934.134, 0.002063))
+        val capB = poly(c, listOf(201.11, 72001.5377, 0.00057))
+        return -0.004778 * sinDegrees(capA) - 0.0003667 * sinDegrees(capB)
+    }
+
+    /**
+     * Aberration at moment tee.
+     */
+    private fun aberration(tee: Double): Double {
+        val c = julianCenturies(tee)  // moment in Julian centuries
+        return 0.0000974 * cosDegrees(177.63 + 35999.01848 * c) - 0.005575
+    }
+
+    // Longitude of sun at vernal equinox.
+    private const val SPRING = 0.0
+
+    /**
+     * Approximate moment at or before tee
+     * when solar longitude just exceeded lamda degrees.
+     */
+    private fun estimatePriorSolarLongitude(lamda: Double, tee: Double): Double {
+        val rate = MEAN_TROPICAL_YEAR / 360  // Mean change of one degree.
+        // First approximation.
+        var tau = tee - rate * ((solarLongitude(tee) - lamda) % 360)
+        val capDelta = mod3((solarLongitude(tau) - lamda), -180, 180)
+        return min(tee, tau - rate * capDelta)
+    }
+
+    // Fixed date of start of the Persian calendar.
+    private val PERSIAN_EPOCH = fixedFromJulian(622, 3, 19)
+
+    // Location of Tehran, Iran.
+    private val TEHRAN = listOf(35.68, 51.42, 1100.0, +3.5)
+
+    // Middle of Iran.
+    private val IRAN = listOf(35.5, 52.5, 0.0, +3.5)
+
+    private var persianLocale = IRAN
+
+    /**
+     * Universal time of true noon on fixed date in the locale used for computing the Persian calendar.
+     */
+    private fun middayInPersianLocale(date: Int): Double = midday(date, persianLocale)
+
+    /**
+     * Fixed date of Astronomical Persian New Year on or before fixed date.
+     */
+    private fun persianNewYearOnOrBefore(date: Int): Int {
+        // Approximate time of equinox.
+        val approx = estimatePriorSolarLongitude(SPRING, middayInPersianLocale(date))
+        var day = floor(approx).toInt() - 1
+        while (solarLongitude(middayInPersianLocale(day)) > SPRING + 2) {
+            day += 1
+        }
+        return day
+    }
+
+    /**
+     * Fixed date of Borji Persian new month on or before fixed date.
+     */
+    private fun persianBorjiNewMonthOnOrBefore(date: Int, month: Int): Int {
+        // Approximate time of equinox.
+        val targetLong = (month - 1) * 30.0
+        val approx = estimatePriorSolarLongitude(
+            targetLong, middayInPersianLocale(date)
+        )
+        var day = floor(approx).toInt() - 1
+        while (!(targetLong + 2 > solarLongitude(middayInPersianLocale(day)) &&
+                    solarLongitude(middayInPersianLocale(day)) >= targetLong)
+        ) day += 1
+        return day
+    }
+
+    /**
+     * Fixed date of Astronomical Persian date p_date.
+     */
+    internal fun fixedFromPersian(year: Int, month: Int, day: Int): Int {
+        val newYear = persianNewYearOnOrBefore(
+            PERSIAN_EPOCH + 180  // Fall after epoch.
+                    + floor(
+                MEAN_TROPICAL_YEAR *
+                        (if (0 < year) year - 1 else year)
+            ).toInt()
+        )  // No year zero.
+        return (newYear - 1  // Days in prior years.
+                // Days in prior months this year.
+                + (if (month <= 7) 31 * (month - 1) else 30 * (month - 1) + 6)
+                + day)  // Days so far this month.
+    }
+
+    /**
+     * Fixed date of Borji Persian date p_date.
+     */
+    private fun fixedFromPersianBorji(pDate: Triple<Int, Int, Int>): Int {
+        val (year, month, day) = pDate
+        val newMonth = persianBorjiNewMonthOnOrBefore(
+            PERSIAN_EPOCH + 180
+                    + floor(
+                MEAN_TROPICAL_YEAR *
+                        ((if (0 < year) year - 1 else year) + (month - 1) / 12.0)
+            ).toInt(),
+            month
+        )
+        return (newMonth - 1  // Days in prior months.
+                + day)  // Days so far this month.
+    }
+
+    /**
+     * Astronomical Persian date corresponding to fixed date.
+     */
+    internal fun persianFromFixed(date: Int): IntArray {
+        val newYear = persianNewYearOnOrBefore(date)
+        val y = round((newYear - PERSIAN_EPOCH) / MEAN_TROPICAL_YEAR).toInt() + 1
+        val year = if (0 < y) y else y - 1  // No year zero
+        val dayOfYear = date - fixedFromPersian(year, 1, 1) + 1
+        val month =
+            if (dayOfYear <= 186) ceil(dayOfYear / 31.0).toInt()
+            else ceil((dayOfYear - 6) / 30.0).toInt()
+        // Calculate the day by subtraction
+        val day = date - fixedFromPersian(year, month, 1) + 1
+        println("$date $year/$month/$day")
+        return intArrayOf(year, month, day)
+    }
+
+    /**
+     * Borji Persian date corresponding to fixed date.
+     */
+    private fun persianBorjiFromFixed(date: Int): IntArray {
+        val newYear = persianNewYearOnOrBefore(date)
+        val y = round((newYear - PERSIAN_EPOCH) / MEAN_TROPICAL_YEAR).toInt() + 1
+        val year = if (0 < y) y else y - 1  // No year zero
+        var month = 1
+        while (month < 12 && date >= fixedFromPersianBorji(Triple(year, month + 1, 1))) {
+            month += 1
+        }
+        // Calculate the day by subtraction
+        val day = date - fixedFromPersianBorji(Triple(year, month, 1)) + 1
+        return intArrayOf(year, month, day)
+    }
+
+    /**
+     * Fixed date of Persian New Year (Nowruz) in Gregorian year g_year.
+     */
+    private fun nowruz(gYear: Int): Int {
+        val persianYear = gYear - gregorianYearFromFixed(PERSIAN_EPOCH) + 1
+        val y = if (persianYear <= 0) persianYear - 1 else persianYear  // No Persian year 0
+        return fixedFromPersian(y, 1, 1)
+    }
+
+    /**
+     * True if g_year is a leap year on the Persian calendar.
+     */
+    private fun persianLeapYear(pYear: Int): Boolean {
+        val thisNowruz = fixedFromPersian(pYear, 1, 1)
+        val nextNowruz = fixedFromPersian(pYear + 1, 1, 1)
+        return nextNowruz - thisNowruz == 366
+    }
+
+    private const val OFFSET_JDN = 1_721_425L
+    fun fromJdn(jdn: Long): IntArray = persianFromFixed((jdn - OFFSET_JDN).toInt())
+
+    fun toJdn(year: Int, month: Int, dayOfMonth: Int): Long =
+        fixedFromPersian(year, month, dayOfMonth).toLong() + OFFSET_JDN
+
+//    fun main() {
+//        val today = java.time.LocalDate.now()
+//        val fixedDate = fixedFromGregorian(Triple(today.year, today.monthValue, today.dayOfMonth))
+//        val persianDate = persianFromFixed(fixedDate)
+//        println("${persianDate.first}/${persianDate.second}/${persianDate.third}")
+//    }
 }
