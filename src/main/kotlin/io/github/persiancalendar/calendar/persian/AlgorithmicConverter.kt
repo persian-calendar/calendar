@@ -504,6 +504,13 @@ internal object AlgorithmicConverter {
         return fixedFromPersian(y, 1, 1, longitude)
     }
 
+    /** True if year is a leap year on the Persian calendar. */
+    internal fun persianLeapYear(year: Int, longitude: Double): Boolean {
+        val thisNowruz = fixedFromPersian(year, 1, 1, longitude)
+        val nextNowruz = fixedFromPersian(year + 1, 1, 1, longitude)
+        return nextNowruz - thisNowruz == 366
+    }
+
     private const val OFFSET_JDN = 1_721_425L
     private const val START_OF_NEW_ERA_JDN = 0//2424231
     private const val START_OF_NEW_ERA_YEAR = 0//1304
