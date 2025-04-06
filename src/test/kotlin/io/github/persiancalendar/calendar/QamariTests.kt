@@ -9,74 +9,7 @@ import kotlin.test.fail
 class QamariTests {
 
     @Test
-    fun `Conforms with calendar center data`() = assertAll(prepareRunners("calendar-center.txt"))
-
-    @Test
-    fun `Conforms with ettelaat data`() = assertAll(prepareRunners("ettelaat.txt"))
-
-    @Test
-    fun `Conforms with payam data`() = assertAll(prepareRunners("payam.txt"))
-
-    @Test
-    fun `Conforms with azhang data`() = assertAll(prepareRunners("azhang.txt"))
-
-    @Test
-    fun `Conforms with peyk-e-iran data`() = assertAll(prepareRunners("peyk-e-iran.txt"))
-
-    @Test
-    fun `Conforms with tarraqi data`() = assertAll(prepareRunners("taraqqi.txt"))
-
-    @Test
-    fun `Conforms with neda-ye-haq data`() = assertAll(prepareRunners("neda-ye-haq.txt"))
-
-    @Test
-    fun `Conforms with mehr-e-iran data`() = assertAll(prepareRunners("mehr-e-iran.txt"))
-
-    @Test
-    fun `Conforms with tamasha data`() = assertAll(prepareRunners("tamasha.txt"))
-
-    @Test
-    fun `Conforms with eqdam data`() = assertAll(prepareRunners("eqdam.txt"))
-//
-//    @Test
-//    fun `Conforms with iran data`() = assertAll(prepareRunners("iran.txt"))
-
-    @Test
-    fun `Conforms with iranshahr data`() = assertAll(prepareRunners("iranshahr.txt"))
-
-//    @Test
-//    fun `Conforms with ordibehesht data`() = assertAll(prepareRunners("ordibehesht.txt"))
-
-
-    @Test
-    fun `Conforms with anqa data`() = assertAll(prepareRunners("anqa.txt"))
-
-//    @Test
-//    fun `Conforms with foolad data`() = assertAll(prepareRunners("foolad.txt"))
-
-    @Test
-    fun `Conforms with golshan data`() = assertAll(prepareRunners("golshan.txt"))
-
-//    @Test
-//    fun `Conforms with habl-ol-matin data`() = assertAll(prepareRunners("habl-ol-matin.txt"))
-
-    @Test
-    fun `Conforms with khalq data`() = assertAll(prepareRunners("khalq.txt"))
-
-    @Test
-    fun `Conforms with nejat-e-vatan data`() = assertAll(prepareRunners("nejat-e-vatan.txt"))
-
-    @Test
-    fun `Conforms with shafaq-e-sorkh data`() = assertAll(prepareRunners("shafaq-e-sorkh.txt"))
-
-//    @Test
-//    fun `Conforms with kooshesh data`() = assertAll(prepareRunners("kooshesh.txt"))
-
-    @Test
-    fun `Conforms with qanoon data`() = assertAll(prepareRunners("qanoon.txt"))
-
-    @Test
-    fun `Conforms with setare-ye-iran data`() = assertAll(prepareRunners("setare-ye-iran.txt"))
+    fun `Conforms with calendar center data`() = assertAll(prepareRunners("consolidated.txt"))
 
     private fun prepareRunners(testFileName: String): List<() -> Unit> {
         return IranianIslamicDateConverter::class.java
