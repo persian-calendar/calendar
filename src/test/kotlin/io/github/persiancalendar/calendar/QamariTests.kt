@@ -9,15 +9,14 @@ import kotlin.test.fail
 class QamariTests {
 
     @Test
-    fun `Conforms with calendar center data`() = assertAll(prepareRunners("consolidated.txt"))
-
-    private fun prepareRunners(testFileName: String): List<() -> Unit> {
-        return IranianIslamicDateConverter::class.java
-            .getResourceAsStream("/qamari/$testFileName")
+    fun `Conforms with Qamari tests`() {
+        assertAll(
+            IranianIslamicDateConverter::class.java
+                .getResourceAsStream("/qamari/consolidated.txt")
             ?.readBytes()
             .let {
                 if (it == null) {
-                    System.err.println("$testFileName couldn't be found, skip")
+                    System.err.println("consolidated.txt couldn't be found, skip")
                     ByteArray(0)
                 } else it
             }
@@ -31,7 +30,7 @@ class QamariTests {
                             .trimStart('*').trim()
                             .replace(Regex("[ /-]"), ",")
                             .split(',')
-                            .map { it.toIntOrNull() ?: fail(testFileName + "\n" + line) })
+                            .map { it.toIntOrNull() ?: fail(line) })
                 {
                     assertEquals(
                         listOf(year, month, day),
@@ -41,6 +40,6 @@ class QamariTests {
                         line.split(" ")[0]
                     )
                 }
-            }
+            })
     }
 }
