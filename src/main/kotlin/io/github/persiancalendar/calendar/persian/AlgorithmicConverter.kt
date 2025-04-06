@@ -406,10 +406,10 @@ internal object AlgorithmicConverter {
     private val PERSIAN_EPOCH = fixedFromJulian(622, 3, 19)
 
     // Location of Tehran, Iran.
-    private val TEHRAN = 51.42
+    private val TEHRAN = doubleArrayOf(35.68, 51.42, 1100.0, +3.5)
 
     // Middle of Iran.
-    private val IRAN = 52.5
+    private val IRAN = doubleArrayOf(35.5, 52.5, 0.0, +3.5)
 
     /** Fixed date of Astronomical Persian New Year on or before fixed date. */
     private fun persianNewYearOnOrBefore(date: Int, longitude: Double): Int {
@@ -510,14 +510,14 @@ internal object AlgorithmicConverter {
     fun fromJdn(jdn: Long): IntArray {
         val newEra = jdn >= START_OF_NEW_ERA_JDN
         val fixed = (jdn - OFFSET_JDN).toInt()
-        val longitude = if (newEra) IRAN else TEHRAN
+        val longitude = (if (newEra) IRAN else TEHRAN)[1]
         return if (newEra) persianFromFixed(fixed, longitude)
         else persianBorjiFromFixed(fixed, longitude)
     }
 
     fun toJdn(year: Int, month: Int, dayOfMonth: Int): Long {
         val newEra = year >= START_OF_NEW_ERA_YEAR
-        val longitude = if (newEra) IRAN else TEHRAN
+        val longitude = (if (newEra) IRAN else TEHRAN)[1]
         val fixed = if (newEra) fixedFromPersian(year, month, dayOfMonth, longitude)
         else fixedFromPersianBorji(year, month, dayOfMonth, longitude)
         return fixed.toLong() + OFFSET_JDN
