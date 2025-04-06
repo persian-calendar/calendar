@@ -13,14 +13,14 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
 
     // Converters
     override fun toJdn(): Long {
-        var result = OldEraConverter.toJdn(year, month, dayOfMonth)
-        if (result == -1L) result = LookupTableConverter.toJdn(year, month, dayOfMonth)
+        var result = LookupTableConverter.toJdn(year, month, dayOfMonth)
+        if (result == -1L) result = OldEraConverter.toJdn(year, month, dayOfMonth)
         if (result == -1L) result = AlgorithmicConverter.toJdn(year, month, dayOfMonth)
         return result
     }
 
     override fun fromJdn(jdn: Long): IntArray =
-        OldEraConverter.fromJdn(jdn) ?: LookupTableConverter.fromJdn(jdn)
+        LookupTableConverter.fromJdn(jdn) ?: OldEraConverter.fromJdn(jdn)
         ?: AlgorithmicConverter.fromJdn(jdn)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate =
