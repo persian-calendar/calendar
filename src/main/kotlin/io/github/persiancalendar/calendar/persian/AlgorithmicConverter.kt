@@ -511,17 +511,17 @@ internal object AlgorithmicConverter {
     private const val START_OF_MODERN_ERA_JDN = 2424231
     private const val START_OF_MODERN_ERA_YEAR = 1304
     fun fromJdn(jdn: Long): IntArray {
-        val newEra = jdn >= START_OF_MODERN_ERA_JDN
+        val isModernEra = jdn >= START_OF_MODERN_ERA_JDN
         val fixed = (jdn - OFFSET_JDN).toInt()
-        val longitude = (if (newEra) IRAN else TEHRAN)[1]
-        return if (newEra) persianFromFixed(fixed, longitude)
+        val longitude = (if (isModernEra) IRAN else TEHRAN)[1]
+        return if (isModernEra) persianFromFixed(fixed, longitude)
         else persianBorjiFromFixed(fixed, longitude)
     }
 
     fun toJdn(year: Int, month: Int, dayOfMonth: Int): Long {
-        val newEra = year >= START_OF_MODERN_ERA_YEAR
-        val longitude = (if (newEra) IRAN else TEHRAN)[1]
-        val fixed = if (newEra) fixedFromPersian(year, month, dayOfMonth, longitude)
+        val isModernEra = year >= START_OF_MODERN_ERA_YEAR
+        val longitude = (if (isModernEra) IRAN else TEHRAN)[1]
+        val fixed = if (isModernEra) fixedFromPersian(year, month, dayOfMonth, longitude)
         else fixedFromPersianBorji(year, month, dayOfMonth, longitude)
         return fixed.toLong() + OFFSET_JDN
     }
