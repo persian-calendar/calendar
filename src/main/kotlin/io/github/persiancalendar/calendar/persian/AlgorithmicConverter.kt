@@ -508,7 +508,7 @@ internal object AlgorithmicConverter {
     }
 
     private const val OFFSET_JDN = 1_721_425L
-    private const val START_OF_MODERN_ERA_JDN = 2424231
+    private const val START_OF_MODERN_ERA_JDN = 2424231 // PersianDate(1304, 1, 1).toJdn()
     private const val START_OF_MODERN_ERA_YEAR = 1304
     fun fromJdn(jdn: Long): IntArray {
         val isModernEra = jdn >= START_OF_MODERN_ERA_JDN
