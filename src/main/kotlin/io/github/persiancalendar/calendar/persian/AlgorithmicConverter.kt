@@ -406,7 +406,8 @@ internal object AlgorithmicConverter {
     private val PERSIAN_EPOCH = fixedFromJulian(622, 3, 19)
 
     // Location of Tehran, Iran.
-    private val TEHRAN = doubleArrayOf(35.68, 51.42, 1100.0, +3.5)
+    // Specifically location of "Dar ul-Funun", https://w.wiki/DjPM
+    private val TEHRAN = doubleArrayOf(35.683789, 51.421864, 1100.0, +3.5)
 
     // Middle of Iran.
     private val IRAN = doubleArrayOf(35.5, 52.5, 0.0, +3.5)
