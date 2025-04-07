@@ -55,12 +55,12 @@ internal object AlgorithmicConverter {
     }
 
     /** Fixed date equivalent to the Gregorian date g_date. */
-    private fun fixedFromGregorian(year: Int, month: Int, day: Int): Int {
+    internal fun fixedFromGregorian(year: Int, month: Int, day: Int): Int {
         return (GREGORIAN_EPOCH - 1  // Days before start of calendar
                 + 365 * (year - 1)  // Ordinary days since epoch
-                + (year - 1) / 4   // Julian leap days since epoch...
-                - (year - 1) / 100  // ...minus century years since epoch...
-                + (year - 1) / 400  // plus years since epoch divisible by 400.
+                + (year - 1).floorDiv(4)   // Julian leap days since epoch...
+                - (year - 1).floorDiv(100)  // ...minus century years since epoch...
+                + (year - 1).floorDiv(400)  // plus years since epoch divisible by 400.
                 // Days in prior months this year assuming 30-day Feb
                 + (367 * month - 362) / 12
                 // Correct for 28- or 29-day Feb
@@ -122,7 +122,7 @@ internal object AlgorithmicConverter {
         val y = if (year < 0) year + 1 else year  // No year zero
         return (JULIAN_EPOCH - 1  // Days before start of calendar
                 + 365 * (y - 1)  // Ordinary days since epoch.
-                + (y - 1) / 4   // Leap days since epoch...
+                + (y - 1).floorDiv(4)   // Leap days since epoch...
                 // Days in prior months this year...
                 + ((367 * month - 362) / 12)  // ...assuming 30-day Feb
                 // Correct for 28- or 29-day Feb
