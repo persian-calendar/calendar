@@ -397,7 +397,7 @@ internal object AlgorithmicConverter {
     private fun estimatePriorSolarLongitude(lamda: Double, tee: Double): Double {
         val rate = MEAN_TROPICAL_YEAR / 360  // Mean change of one degree.
         // First approximation.
-        val tau = tee - rate * ((solarLongitude(tee) - lamda) % 360)
+        val tau = tee - rate * ((solarLongitude(tee) - lamda).mod(360.0))
         val capDelta = mod3((solarLongitude(tau) - lamda), -180, 180)
         return min(tee, tau - rate * capDelta)
     }
@@ -413,12 +413,11 @@ internal object AlgorithmicConverter {
 
     /** Fixed date of Astronomical Persian New Year on or before fixed date. */
     internal fun persianNewYearOnOrBefore(date: Int, longitude: Double): Int {
-        return persianBorjiNewMonthOnOrBefore(date, 1, longitude)
-//        // Approximate time of equinox.
-//        val approx = estimatePriorSolarLongitude(SPRING, midday(date, longitude))
-//        var day = floor(approx).toInt() - 1
-//        while (solarLongitude(midday(day, longitude)) > SPRING + 2) day += 1
-//        return day
+        // Approximate time of equinox.
+        val approx = estimatePriorSolarLongitude(SPRING, midday(date, longitude))
+        var day = floor(approx).toInt() - 1
+        while (solarLongitude(midday(day, longitude)) > SPRING + 2) day += 1
+        return day
     }
 
     /** Fixed date of Borji Persian new month on or before fixed date. */
@@ -509,8 +508,8 @@ internal object AlgorithmicConverter {
     }
 
     private const val OFFSET_JDN = 1_721_425L
-    private const val START_OF_MODERN_ERA_JDN = 0//2424231
-    private const val START_OF_MODERN_ERA_YEAR = 0//1304
+    private const val START_OF_MODERN_ERA_JDN = 2424231
+    private const val START_OF_MODERN_ERA_YEAR = 1304
     fun fromJdn(jdn: Long): IntArray {
         val newEra = jdn >= START_OF_MODERN_ERA_JDN
         val fixed = (jdn - OFFSET_JDN).toInt()
