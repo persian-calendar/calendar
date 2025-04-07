@@ -90,7 +90,7 @@ internal object AlgorithmicConverter {
     private fun gregorianNewYear(gYear: Int): Int = fixedFromGregorian(gYear, 1, 1)
 
     /** Gregorian (year, month, day) corresponding to fixed date. */
-    private fun gregorianFromFixed(date: Int): Triple<Int, Int, Int> {
+    internal fun gregorianFromFixed(date: Int): IntArray {
         val year = gregorianYearFromFixed(date)
         val priorDays = date - gregorianNewYear(year)  // This year
         // To simulate a 30-day Feb
@@ -102,7 +102,7 @@ internal object AlgorithmicConverter {
         val month = (12 * (priorDays + correction) + 373) / 367  // Assuming a 30-day Feb
         // Calculate the day by subtraction.
         val day = date - fixedFromGregorian(year, month, 1) + 1
-        return Triple(year, month, day)
+        return intArrayOf(year, month, day)
     }
 
     /** Number of days from Gregorian date g_date1 until g_date2. */
@@ -118,7 +118,7 @@ internal object AlgorithmicConverter {
     private fun julianLeapYear(jYear: Int): Boolean = (jYear % 4) == (if (jYear > 0) 0 else 3)
 
     /** Fixed date equivalent to the Julian date. */
-    private fun fixedFromJulian(year: Int, month: Int, day: Int): Int {
+    internal fun fixedFromJulian(year: Int, month: Int, day: Int): Int {
         val y = if (year < 0) year + 1 else year  // No year zero
         return (JULIAN_EPOCH - 1  // Days before start of calendar
                 + 365 * (y - 1)  // Ordinary days since epoch.
@@ -128,6 +128,32 @@ internal object AlgorithmicConverter {
                 // Correct for 28- or 29-day Feb
                 + (if (month <= 2) 0 else if (julianLeapYear(year)) -1 else -2)
                 + day)           // Days so far this month.
+    }
+
+    /** True if jYear is a leap year on the Julian calendar. */
+    private fun isJulianLeapYear(jYear: Int): Boolean = jYear % 4 == (if (jYear > 0) 0 else 3)
+
+    /** Julian (year month day) corresponding to fixed $date$. */
+    internal fun julianFromFixed(date: Int): IntArray {
+        // Nominal year.
+        val approx = floor((4 * (date - JULIAN_EPOCH) + 1464) / 1461.0).toInt()
+        val year = if (approx <= 0) approx - 1 else approx  // No year 0.
+
+        // This year
+        val priorDays = date - fixedFromJulian(year, 1, 1)
+
+        // To simulate a 30-day Feb
+        val correction = if (date < fixedFromJulian(year, 3, 1)) 0 else {
+            if (isJulianLeapYear(year)) 1 else 2
+        }
+
+        // Assuming a 30-day Feb
+        val month = floor((12 * (priorDays + correction) + 373) / 367.0).toInt()
+
+        // Calculate the day by subtraction.
+        val day = 1 + (date - fixedFromJulian(year, month, 1))
+
+        return intArrayOf(year, month, day)
     }
 
     /** x hours. */
@@ -525,5 +551,18 @@ internal object AlgorithmicConverter {
         val fixed = if (isModernEra) fixedFromPersian(year, month, dayOfMonth, longitude)
         else fixedFromPersianBorji(year, month, dayOfMonth, longitude)
         return fixed.toLong() + OFFSET_JDN
+    }
+
+    internal fun civilToJdn(year: Int, month: Int, dayOfMonth: Int): Long {
+        return OFFSET_JDN + if (
+            (year > 1582)
+            || ((year == 1582) && (month > 10))
+            || ((year == 1582) && (month == 10) && (dayOfMonth > 14))
+        ) fixedFromGregorian(year, month, dayOfMonth) else fixedFromJulian(year, month, dayOfMonth)
+    }
+
+    fun civilFromJdn(jdn: Long): IntArray {
+        val fixed = (jdn - OFFSET_JDN).toInt()
+        return if (jdn > 2299160) gregorianFromFixed(fixed) else julianFromFixed(fixed)
     }
 }

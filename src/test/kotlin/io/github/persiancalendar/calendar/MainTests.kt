@@ -1,6 +1,7 @@
 package io.github.persiancalendar.calendar
 
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
+import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -182,7 +183,7 @@ class MainTests {
     }
 
     @Test
-    fun `Practice Gregorian converting back and forth`() {
+    fun `Practice CivilDate converting back and forth`() {
         (startJdn..endJdn).mapNotNull {
             val date = CivilDate(it)
             assertEquals(it, date.toJdn())
@@ -201,6 +202,26 @@ class MainTests {
             assertTrue(date.dayOfMonth in 1..32)
             date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(29..32)
+    }
+
+    @Test
+    fun `Practice Gregorian converting back and forth`() {
+        (startJdn..endJdn).map {
+            val date = AlgorithmicConverter.gregorianFromFixed(it.toInt())
+            val convertedBack = AlgorithmicConverter.fixedFromGregorian(date[0], date[1], date[2])
+            assertEquals(it.toInt(), convertedBack)
+            date[2]
+        }.ensureContinuity().ensureValidMonthLengths(28..32)
+    }
+
+    @Test
+    fun `Practice Julian converting back and forth`() {
+        (startJdn..endJdn).map {
+            val date = AlgorithmicConverter.julianFromFixed(it.toInt())
+            val convertedBack = AlgorithmicConverter.fixedFromJulian(date[0], date[1], date[2])
+            assertEquals(it.toInt(), convertedBack)
+            date[2]
+        }.ensureContinuity().ensureValidMonthLengths(28..32)
     }
 
     // This gets a list of day of months and ensures they are either in increasing order or are 1
