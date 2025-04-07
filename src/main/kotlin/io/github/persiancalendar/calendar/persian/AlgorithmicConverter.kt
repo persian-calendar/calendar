@@ -371,8 +371,8 @@ internal object AlgorithmicConverter {
         return (lamda + aberration(tee) + nutation(tee)).mod(360.0)
     }
 
-    val nutationCoefficientA = doubleArrayOf(124.90, -1934.134, 0.002063)
-    val nutationCoefficientB = doubleArrayOf(201.11, 72001.5377, 0.00057)
+    private val nutationCoefficientA = doubleArrayOf(124.90, -1934.134, 0.002063)
+    private val nutationCoefficientB = doubleArrayOf(201.11, 72001.5377, 0.00057)
     /** Longitudinal nutation at moment tee. */
     private fun nutation(tee: Double): Double {
         val c = julianCenturies(tee)  // moment in Julian centuries
@@ -412,27 +412,24 @@ internal object AlgorithmicConverter {
     private val IRAN = doubleArrayOf(35.5, 52.5, 0.0, +3.5)
 
     /** Fixed date of Astronomical Persian New Year on or before fixed date. */
-    private fun persianNewYearOnOrBefore(date: Int, longitude: Double): Int {
-        // Approximate time of equinox.
-        val approx = estimatePriorSolarLongitude(SPRING, midday(date, longitude))
-        var day = floor(approx).toInt() - 1
-        while (solarLongitude(midday(day, longitude)) > SPRING + 2) day += 1
-        return day
+    internal fun persianNewYearOnOrBefore(date: Int, longitude: Double): Int {
+        return persianBorjiNewMonthOnOrBefore(date, 1, longitude)
+//        // Approximate time of equinox.
+//        val approx = estimatePriorSolarLongitude(SPRING, midday(date, longitude))
+//        var day = floor(approx).toInt() - 1
+//        while (solarLongitude(midday(day, longitude)) > SPRING + 2) day += 1
+//        return day
     }
 
-    /**
-     * Fixed date of Borji Persian new month on or before fixed date.
-     */
-    private fun persianBorjiNewMonthOnOrBefore(date: Int, month: Int, longitude: Double): Int {
+    /** Fixed date of Borji Persian new month on or before fixed date. */
+    internal fun persianBorjiNewMonthOnOrBefore(date: Int, month: Int, longitude: Double): Int {
         // Approximate time of equinox.
         val targetLong = (month - 1) * 30.0
-        val approx = estimatePriorSolarLongitude(
-            targetLong, midday(date, longitude)
-        )
+        val approx = estimatePriorSolarLongitude(targetLong, midday(date, longitude))
         var day = floor(approx).toInt() - 1
         while (true) {
-            val longitude = solarLongitude(midday(day, longitude))
-            if (!(targetLong + 2 > longitude && longitude >= targetLong)) break
+            val solarLong = solarLongitude(midday(day, longitude))
+            if ((targetLong + 2 > solarLong && solarLong >= targetLong)) break
             day += 1
         }
         return day
@@ -455,7 +452,7 @@ internal object AlgorithmicConverter {
     }
 
     /** Fixed date of Borji Persian date p_date. */
-    private fun fixedFromPersianBorji(year: Int, month: Int, day: Int, longitude: Double): Int {
+    internal fun fixedFromPersianBorji(year: Int, month: Int, day: Int, longitude: Double): Int {
         val newMonth = persianBorjiNewMonthOnOrBefore(
             PERSIAN_EPOCH + 180
                     + floor(
@@ -484,7 +481,7 @@ internal object AlgorithmicConverter {
     }
 
     /** Borji Persian date corresponding to fixed date. */
-    private fun persianBorjiFromFixed(date: Int, longitude: Double): IntArray {
+    internal fun persianBorjiFromFixed(date: Int, longitude: Double): IntArray {
         val newYear = persianNewYearOnOrBefore(date, longitude)
         val y = round((newYear - PERSIAN_EPOCH) / MEAN_TROPICAL_YEAR).toInt() + 1
         val year = if (0 < y) y else y - 1  // No year zero
@@ -512,10 +509,10 @@ internal object AlgorithmicConverter {
     }
 
     private const val OFFSET_JDN = 1_721_425L
-    private const val START_OF_NEW_ERA_JDN = 0//2424231
-    private const val START_OF_NEW_ERA_YEAR = 0//1304
+    private const val START_OF_MODERN_ERA_JDN = 0//2424231
+    private const val START_OF_MODERN_ERA_YEAR = 0//1304
     fun fromJdn(jdn: Long): IntArray {
-        val newEra = jdn >= START_OF_NEW_ERA_JDN
+        val newEra = jdn >= START_OF_MODERN_ERA_JDN
         val fixed = (jdn - OFFSET_JDN).toInt()
         val longitude = (if (newEra) IRAN else TEHRAN)[1]
         return if (newEra) persianFromFixed(fixed, longitude)
@@ -523,7 +520,7 @@ internal object AlgorithmicConverter {
     }
 
     fun toJdn(year: Int, month: Int, dayOfMonth: Int): Long {
-        val newEra = year >= START_OF_NEW_ERA_YEAR
+        val newEra = year >= START_OF_MODERN_ERA_YEAR
         val longitude = (if (newEra) IRAN else TEHRAN)[1]
         val fixed = if (newEra) fixedFromPersian(year, month, dayOfMonth, longitude)
         else fixedFromPersianBorji(year, month, dayOfMonth, longitude)
