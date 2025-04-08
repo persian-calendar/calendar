@@ -537,7 +537,7 @@ internal object AlgorithmicConverter {
     private const val OFFSET_JDN = 1_721_425L
     private const val START_OF_MODERN_ERA_JDN = 2424231 // PersianDate(1304, 1, 1).toJdn()
     private const val START_OF_MODERN_ERA_YEAR = 1304
-    fun fromJdn(jdn: Long): IntArray {
+    internal fun fromJdn(jdn: Long): IntArray {
         val isModernEra = jdn >= START_OF_MODERN_ERA_JDN
         val fixed = (jdn - OFFSET_JDN).toInt()
         val longitude = (if (isModernEra) IRAN else TEHRAN)[1]
@@ -545,7 +545,7 @@ internal object AlgorithmicConverter {
         else persianBorjiFromFixed(fixed, longitude)
     }
 
-    fun toJdn(year: Int, month: Int, dayOfMonth: Int): Long {
+    internal fun toJdn(year: Int, month: Int, dayOfMonth: Int): Long {
         val isModernEra = year >= START_OF_MODERN_ERA_YEAR
         val longitude = (if (isModernEra) IRAN else TEHRAN)[1]
         val fixed = if (isModernEra) fixedFromPersian(year, month, dayOfMonth, longitude)
@@ -561,7 +561,7 @@ internal object AlgorithmicConverter {
         ) fixedFromGregorian(year, month, dayOfMonth) else fixedFromJulian(year, month, dayOfMonth)
     }
 
-    fun civilFromJdn(jdn: Long): IntArray {
+    internal fun civilFromJdn(jdn: Long): IntArray {
         val fixed = (jdn - OFFSET_JDN).toInt()
         return if (jdn > 2299160) gregorianFromFixed(fixed) else julianFromFixed(fixed)
     }
