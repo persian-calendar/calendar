@@ -1,15 +1,17 @@
 package io.github.persiancalendar.calendar.islamic
 
 /**
- * Credits of this work goes to Saeed Rasooli and his
+ * Credits of idea of this work goes to Saeed Rasooli and his
  * Kudos to his creative work!
  * I've tried to optimize its runtime performance, so it is a bit different from the way it is used in starcal.
+ *
+ * And Roozbeh Pournader has put a great effort to provide historical data for it, thanks so much!
  */
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
     private const val SUPPORTED_START_JDN = 2_397_421L
-    private const val SUPPORTED_START_YEAR = 1268
+    internal const val SUPPORTED_START_YEAR = 1268
     private val jdSupportEnd: Long
     private val months: IntArray
     private val supportedYears: Int
@@ -220,7 +222,7 @@ object IranianIslamicDateConverter {
         if (jd < SUPPORTED_START_JDN || jd >= jdSupportEnd) return null
         val days = (jd - SUPPORTED_START_JDN).toInt()
         var index =
-            (days / 29.572).toInt() // It is an estimation of lunar month length which is 29.53059
+            (days / 29.61).toInt() // It is an estimation of lunar month length which is 29.53059
         while (index + 1 < months.size && months[index + 1] <= days) ++index
         val yearIndex = index / 12
         val month = index % 12
