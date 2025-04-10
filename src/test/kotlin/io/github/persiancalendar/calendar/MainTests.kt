@@ -153,7 +153,7 @@ class MainTests {
     fun `Practice Islamic converting back and forth`() {
         val startJdn = CivilDate(1600, 1, 1).toJdn()
         val endJdn = CivilDate(2200, 1, 1).toJdn()
-        (startJdn..endJdn).mapNotNull {
+        (startJdn..endJdn).map {
             val date = IslamicDate(it)
             assertEquals(
                 it,
@@ -162,7 +162,7 @@ class MainTests {
             )
             assertTrue(date.month in 1..12)
             assertTrue(date.dayOfMonth in 1..30, date.toString())
-            if (date.year == 1267 && date.month == 12) null else date.dayOfMonth
+            date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(29..30)
     }
 
