@@ -21,7 +21,7 @@ class QamariTests {
                 ?.readBytes()
                 .let {
                     if (it == null) {
-                        System.err.println("consolidated.txt couldn't be found, skip")
+                        System.err.println("$fileName couldn't be found, skip")
                         ByteArray(0)
                     } else it
                 }
