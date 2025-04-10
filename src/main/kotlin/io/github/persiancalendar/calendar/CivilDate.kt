@@ -18,4 +18,6 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
 
     override fun monthsDistanceTo(date: CivilDate): Int =
         TwelveMonthsYear.monthsDistanceTo(this, date)
+
+    override fun toString(): String = "CivilDate($year, $month, $dayOfMonth)"
 }

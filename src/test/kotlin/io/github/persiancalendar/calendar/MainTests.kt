@@ -161,7 +161,7 @@ class MainTests {
                 "$it: ${date.year}/${date.month}/${date.dayOfMonth}"
             )
             assertTrue(date.month in 1..12)
-            assertTrue(date.dayOfMonth in 1..30)
+            assertTrue(date.dayOfMonth in 1..30, date.toString())
             date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(29..30)
     }

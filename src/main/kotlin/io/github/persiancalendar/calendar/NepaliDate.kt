@@ -37,6 +37,8 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
         )
     }
 
+    override fun toString(): String = "NepaliDate($year, $month, $dayOfMonth)"
+
     override fun monthStartOfMonthsDistance(monthsDistance: Int): NepaliDate =
         monthStartOfMonthsDistance(this, monthsDistance, ::NepaliDate)
 

@@ -42,6 +42,8 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
 
     override fun monthsDistanceTo(date: IslamicDate): Int = monthsDistanceTo(this, date)
 
+    override fun toString(): String = "IslamicDate($year, $month, $dayOfMonth)"
+
     companion object {
         // Converters
         var useUmmAlQura = false

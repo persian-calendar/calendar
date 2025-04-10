@@ -28,6 +28,8 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
 
     override fun monthsDistanceTo(date: PersianDate): Int = monthsDistanceTo(this, date)
 
+    override fun toString(): String = "PersianDate($year, $month, $dayOfMonth)"
+
     companion object {
         // First six months have length of 31, next 5 months are 30 and the last month is 29 and in leap years are 30
         private val daysToMonth =
