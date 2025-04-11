@@ -204,7 +204,6 @@ object IranianIslamicDateConverter {
             /*1448*/ 30, 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29,
             /*1449*/ 30, 29, 29, 30, 29, 30, 29, 30, 30, 30, 29, 29
         )
-        println(hijriMonths.average())
         supportedYears = hijriMonths.size / 12
         months = IntArray(hijriMonths.size)
         var jd = 0
