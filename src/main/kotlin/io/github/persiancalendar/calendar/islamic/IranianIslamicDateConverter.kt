@@ -10,8 +10,8 @@ package io.github.persiancalendar.calendar.islamic
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
-    private const val SUPPORTED_START_JDN = 2_397_421L /**/ - 354L
-    private const val SUPPORTED_START_YEAR = 1268 /**/ - 1
+    private const val SUPPORTED_START_JDN = 2_397_067L
+    private const val SUPPORTED_START_YEAR = 1267
     private val jdSupportEnd: Long
     private val months: IntArray
     private val supportedYears: Int
@@ -20,7 +20,7 @@ object IranianIslamicDateConverter {
         // https://github.com/roozbehp/qamari/commit/91c41b8171697cf760cad6cbfebe3ce6f8c3f0cc
         // https://calendar.ut.ac.ir/
         val hijriMonths = intArrayOf(
-            /*1267*/ 30, 30, 30, 29, 30, 30, 29, 30, 29, 29, 29, 30, /*after this is the real data*/
+            /*1267*/ 30, 30, 30, 30, 30, 29, 29, 30, 29, 30, 29, 29,
             /*1268*/ 30, 29, 30, 30, 30, 29, 30, 29, 30, 29, 30, 29,
             /*1269*/ 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30,
             /*1270*/ 29, 30, 29, 29, 30, 29, 30, 30, 29, 30, 30, 29,
@@ -222,8 +222,7 @@ object IranianIslamicDateConverter {
     internal fun fromJdn(jd: Long): IntArray? {
         if (jd < SUPPORTED_START_JDN || jd >= jdSupportEnd) return null
         val days = (jd - SUPPORTED_START_JDN).toInt()
-        var index =
-            (days / 29.68).toInt() // It is an estimation of lunar month length which is 29.53059
+        var index = days / 30
         while (index + 1 < months.size && months[index + 1] <= days) ++index
         val yearIndex = index / 12
         val month = index % 12
