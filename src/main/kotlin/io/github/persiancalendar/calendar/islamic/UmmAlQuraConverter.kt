@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 // Copied from below link but modified to suit our need
-// https://github.com/msarhan/ummalqura-calendar/blob/master/src/main/java/com/github/msarhan/ummalqura/calendar/text/UmmalquraFormatData_en.java
+// https://github.com/msarhan/ummalqura-calendar/blob/master/src/main/java/com/github/msarhan/ummalqura/calendar/UmmalquraGregorianConverter.java
 package io.github.persiancalendar.calendar.islamic
 
 import kotlin.math.floor
