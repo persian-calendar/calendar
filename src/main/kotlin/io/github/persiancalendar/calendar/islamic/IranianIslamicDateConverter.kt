@@ -10,8 +10,8 @@ package io.github.persiancalendar.calendar.islamic
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
     const val latestSupportedYearOfIran = 1404
-    private const val SUPPORTED_START_JDN = 2_397_067L
-    private const val SUPPORTED_START_YEAR = 1267
+    private const val SUPPORTED_START_JDN = 2_396_005L
+    private const val SUPPORTED_START_YEAR = 1265 - 1/*one year is just added to make the rest fit*/
     private val jdSupportEnd: Long
     private val months: IntArray
     private val supportedYears: Int
@@ -20,7 +20,10 @@ object IranianIslamicDateConverter {
         // https://github.com/roozbehp/qamari/commit/91c41b8171697cf760cad6cbfebe3ce6f8c3f0cc
         // https://calendar.ut.ac.ir/
         val hijriMonths = intArrayOf(
-            /*1267*/ 30, 30, 30, 30, 30, 29, 29, 30, 29, 30, 29, 29,
+            /*1264*/ 30, 29, 30, 29, 30, 29, 29, 30, 29, 30, 30, 30,/**/
+            /*1265*/ 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29,
+            /*1266*/ 30, 29, 30, 29, 30, 30, 29, 30, 29, 30, 29, 30,
+            /*1267*/ 29, 30, 29, 30, 30, 29, 29, 30, 29, 30, 29, 29,
             /*1268*/ 30, 29, 30, 30, 30, 29, 30, 29, 30, 29, 30, 29,
             /*1269*/ 29, 30, 29, 30, 30, 29, 30, 30, 29, 30, 29, 30,
             /*1270*/ 29, 30, 29, 29, 30, 29, 30, 30, 29, 30, 30, 29,

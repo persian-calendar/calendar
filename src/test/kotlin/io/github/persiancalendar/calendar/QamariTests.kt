@@ -47,4 +47,35 @@ class QamariTests {
                     }
                 })
     }
+
+//    @Test
+//    fun helper1() {
+//        val baseDate = IslamicDate(1264, 1, 1)
+//        (0..<12 * 5).forEach { months ->
+//            val nextMonth = baseDate.monthStartOfMonthsDistance(months + 1)
+//            val thisMonth = baseDate.monthStartOfMonthsDistance(months)
+//            if (thisMonth.month == 1) print("/*${thisMonth.year}*/ ")
+//            print(nextMonth.toJdn() - thisMonth.toJdn())
+//            if (thisMonth.month == 12) println(", ") else print(", ")
+//        }
+//    }
+
+//    @Test
+//    fun helper2() {
+//        var lastMonth = 0L
+//        var counter = 0
+//        IranianIslamicDateConverter::class.java
+//            .getResourceAsStream("/qamari/consolidated.txt")
+//            ?.readBytes()!!
+//            .decodeToString()
+//            .split("\n")
+//            .take(12 * 5)
+//            .forEach {
+//                val (y, m, d) = it.split(" ")[1].split("-").map { it.toInt(10) }
+//                val thisMonth = CivilDate(y, m, d).toJdn()
+//                if (lastMonth != 0L) print("${thisMonth - lastMonth}, ")
+//                lastMonth = thisMonth
+//                if (((counter++) - 1) % 12 == 11) println()
+//            }
+//    }
 }
