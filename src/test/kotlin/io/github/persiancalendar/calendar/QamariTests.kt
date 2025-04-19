@@ -78,4 +78,44 @@ class QamariTests {
 //                if (((counter++) - 1) % 12 == 11) println()
 //            }
 //    }
+
+//    @Test
+//    fun helper2() {
+//        var lastMonth = 0
+//        var counter = 0
+//        println("Table start:")
+//        val monthTypes = mutableListOf<Char>()
+//        val yearPrefix = mutableListOf<String>()
+//        val yearSuffix = mutableListOf<String>()
+//        IranianIslamicDateConverter::class.java
+//            .getResourceAsStream("/qamari/consolidated.txt")
+//            ?.readBytes()!!
+//            .decodeToString()
+//            .trim()
+//            .split("\n")
+//            .forEach { line ->
+//                val (qamariPart, isoPart) = line.split(" ")
+//                if (counter % 12 == 0) {
+//                    yearPrefix += "PackedHijriYearInfo::new(${qamariPart.split("/")[0]}, ["
+//                    yearSuffix += "], iso(${
+//                        isoPart.split("-").joinToString(", ") {
+//                            it.trimStart('0')
+//                        }
+//                    })),"
+//                }
+//                ++counter
+//
+//                val (y, m, d) = isoPart.split("-").map { it.toInt(10) }
+//                val thisMonth = AlgorithmicConverter.fixedFromGregorian(y, m, d)
+//                if (lastMonth != 0) monthTypes += when (thisMonth - lastMonth) {
+//                    30 -> 'l'
+//                    29 -> 's'
+//                    else -> fail()
+//                }
+//                lastMonth = thisMonth
+//            }
+//        monthTypes.chunked(12).forEachIndexed { i, chunk ->
+//            println(yearPrefix[i] + chunk.joinToString(", ") + yearSuffix[i])
+//        }
+//    }
 }
