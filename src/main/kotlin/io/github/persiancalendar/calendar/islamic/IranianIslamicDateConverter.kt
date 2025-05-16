@@ -1,11 +1,11 @@
 package io.github.persiancalendar.calendar.islamic
 
 /**
- * Credits of idea of this work goes to Saeed Rasooli and his
- * Kudos to his creative work!
- * I've tried to optimize its runtime performance, so it is a bit different from the way it is used in starcal.
+ * It uses the data provided in https://github.com/roozbehp/qamari/blob/main/consolidated.txt
  *
- * And Roozbeh Pournader has put a great effort to provide historical data for it, thanks so much!
+ * Historically it was inspired from the idea of https://github.com/ilius/starcal/blob/main/scal3/cal_types/hijri-monthes.json
+ * And it was extended by https://web.archive.org/web/20240518065835/https://calendar.ut.ac.ir/Fa/Software/CalConv.asp which
+ * is now defunct and we now use our own data.
  */
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
@@ -17,8 +17,6 @@ object IranianIslamicDateConverter {
     private val supportedYears: Int
 
     init {
-        // https://github.com/roozbehp/qamari/commit/91c41b8171697cf760cad6cbfebe3ce6f8c3f0cc
-        // https://calendar.ut.ac.ir/
         // Each 1 means 30 and each 0 means
         val hijriMonths = shortArrayOf(
             /*1264*/ 0b1_0_1_0_1_0_0_1_0_1_1_1,/**/
