@@ -17,7 +17,7 @@ object IranianIslamicDateConverter {
     private val supportedYears: Int
 
     init {
-        // Each 1 means 30 and each 0 means
+        // 1 -> 30, 0 -> 29
         val hijriMonths = shortArrayOf(
             /*1264*/ 0b1_0_1_0_1_0_0_1_0_1_1_1,/**/
             /*1265*/ 0b1_0_1_0_1_0_1_0_1_0_1_0,
