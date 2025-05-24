@@ -45,7 +45,9 @@ class BooksTests {
                 val islamicDate = run {
                     val islamicParts = parts[4].trim().split(" ")
                     assertEquals(3, islamicParts.size, it)
-                    val islamicMonth = gregorianMonths.indexOf(gregorianMonths[1]) + 1
+                    val islamicMonth = islamicMonths.indexOf(islamicParts[1]) + 1
+//                    if (parts[5].trim().isNotBlank())
+//                        println("[" + islamicParts[2].toInt() + ", " + islamicMonth + ", " + parts[5].trim().toInt() + "], ")
                     assertNotEquals(0, islamicMonth, it)
                     IslamicDate(
                         islamicParts[2].toInt(),
