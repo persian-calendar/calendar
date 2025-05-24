@@ -1,15 +1,25 @@
 package io.github.persiancalendar.calendar.persian
 
 internal object OldEraConverter {
-    private const val jdSupportStart: Long = 2_397_203 // CivilDate(1851, 3, 21).toJdn()
+    private const val jdSupportStart: Long = 2_393_551 // CivilDate(1841, 3, 21).toJdn()
     private val jdSupportEnd: Long
     private val months: IntArray
     private val supportedYears: Int
-    private const val supportedYearsStart = 1230
+    private const val supportedYearsStart = 1220
 
     init {
         // This is brought from https://github.com/roozbehp/persiancalendar/blob/4fc570c/data/tsybulsky.txt
         val monthLength = listOf(
+            /*1220*/ 30, 31, 32, 31, 31, 31, 31, 30, 29, 30, 29, 30,
+            /*1221*/ 31, 31, 31, 31, 32, 31, 30, 30, 29, 30, 29, 30,
+            /*1222*/ 31, 31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30,
+            /*1223*/ 30, 31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30,
+            /*1224*/ 30, 31, 32, 31, 31, 31, 31, 30, 29, 30, 29, 30,
+            /*1225*/ 31, 31, 31, 31, 32, 31, 30, 30, 29, 29, 30, 30,
+            /*1226*/ 31, 31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30,
+            /*1227*/ 30, 31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30,
+            /*1228*/ 30, 31, 32, 31, 31, 31, 31, 30, 29, 30, 29, 30,
+            /*1229*/ 31, 31, 31, 31, 32, 31, 30, 30, 29, 30, 29, 30,
             /*1230*/ 31, 31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30,
             /*1231*/ 30, 31, 31, 32, 31, 31, 30, 30, 30, 29, 30, 30,
             /*1232*/ 30, 31, 32, 31, 31, 31, 31, 29, 30, 29, 30, 30,
