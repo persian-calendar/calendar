@@ -1,11 +1,9 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
-import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
-import io.github.persiancalendar.calendar.persian.AlgorithmicConverter.fixedFromJulian
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.fail
 
 class ImportedTests {
@@ -292,7 +290,7 @@ class ImportedTests {
 
     @Test
     fun `old era persian calendar passes`() {
-        val tests = IranianIslamicDateConverter::class.java
+        val tests = ImportedTests::class.java
             .getResourceAsStream("/OldEraPersianCalendar.txt")
             ?.readBytes()!!
             .decodeToString()

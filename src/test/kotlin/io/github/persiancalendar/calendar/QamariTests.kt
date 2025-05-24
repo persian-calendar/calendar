@@ -1,6 +1,5 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +15,7 @@ class QamariTests {
 
     fun checkFile(fileName: String) {
         assertAll(
-            IranianIslamicDateConverter::class.java
+            QamariTests::class.java
                 .getResourceAsStream(fileName)
                 ?.readBytes()
                 .let {
