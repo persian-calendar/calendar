@@ -350,4 +350,15 @@ class MainTests {
 //        //     assertEquals(it, ChineseDate.fromJdn(it).toJdn())
 //        // }
 //    }
+
+    @Test
+    fun `Misc tests`() {
+        // https://t.me/khoshnevisi_Qodama/29080 or https://archive.is/4CDPj
+        // Provided by Mahmoud Arasteh what is actually written is
+        // "شب شنبه پنجم محرم یکهزار و سیصد" but "شب شنبه" means Friday
+        // And 4 should mean Friday
+        //  (We don't actually have the concept of week day in this library but it's actually
+        //   tested on upper layers and we want to remainder in a stable way)
+        assertEquals(4, IslamicDate(1300, 1, 5).toJdn() % 7)
+    }
 }
