@@ -1,14 +1,17 @@
 package io.github.persiancalendar.calendar
 
+import org.junit.jupiter.api.assertAll
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class BooksTests {
 
     @Test
     fun `Verify with Sarlati`() {
-        BooksTests::class.java
+        assertAll(BooksTests::class.java
             .getResourceAsStream("/Sarlati.txt")
             ?.readBytes()!!
             .decodeToString()
@@ -50,25 +53,25 @@ class BooksTests {
                         islamicMonths.indexOf(islamicParts[1]) + 1,
                         islamicParts[0].toInt()
                     )
-                }
+                };
 
-                when (persianDate) {
-                    // Skip these
-                    PersianDate(1229, 4, 1),
-                    PersianDate(1285, 10, 1) -> Unit
+                {
+                    val message = "$persianDate-$gregorianDate\n_${it}ـ"
+                    assertTrue(abs(IslamicDate(persianDate).toJdn() - islamicDate.toJdn()) < 3, message)
+                    when (persianDate) {
+                        // Skip these
+                        PersianDate(1229, 4, 1),
+                        PersianDate(1285, 10, 1) -> Unit
 
-                    else -> assertEquals(
-                        persianDate.toJdn(),
-                        gregorianDate.toJdn(),
-                        "$persianDate-$gregorianDate\n_${it}ـ"
-                    )
+                        else -> assertEquals(persianDate.toJdn(), gregorianDate.toJdn(), message)
+                    }
                 }
 //                assertEquals(
 //                    islamicDate.toJdn(),
 //                    gregorianDate.toJdn(),
 //                    "$persianDate-$gregorianDate\n_${it}ـ"
 //                )
-            }
+            })
     }
 
     private val persianMonths = listOf(
