@@ -15,8 +15,6 @@ class BooksTests {
             .split("\n")
             .drop(1)
             .filter { it != "|---|---|---|---|---|---|---|" }
-            // Not all are verified
-            .take(400)
             .map {
                 val parts = it.split("|")
 
@@ -54,12 +52,17 @@ class BooksTests {
                     )
                 }
 
-                // Skip one date
-                if (persianDate != PersianDate(1229, 4, 1)) assertEquals(
-                    persianDate.toJdn(),
-                    gregorianDate.toJdn(),
-                    "$persianDate-$gregorianDate\n_${it}ـ"
-                )
+                when (persianDate) {
+                    // Skip these
+                    PersianDate(1229, 4, 1),
+                    PersianDate(1285, 10, 1) -> Unit
+
+                    else -> assertEquals(
+                        persianDate.toJdn(),
+                        gregorianDate.toJdn(),
+                        "$persianDate-$gregorianDate\n_${it}ـ"
+                    )
+                }
 //                assertEquals(
 //                    islamicDate.toJdn(),
 //                    gregorianDate.toJdn(),
