@@ -11,68 +11,103 @@ class BooksTests {
 
     @Test
     fun `Verify with Sarlati`() {
-        assertAll(BooksTests::class.java
-            .getResourceAsStream("/Sarlati.txt")
-            ?.readBytes()!!
-            .decodeToString()
-            .split("\n")
-            .drop(1)
-            .filter { it != "|---|---|---|---|---|---|---|" }
-            .map {
-                val parts = it.split("|")
+        var tests = BooksTests::class.java
+                .getResourceAsStream("/Sarlati.txt")
+                ?.readBytes()!!
+                .decodeToString()
+        assertAll(
+            tests
+                .split("\n")
+                .drop(1)
+                .filter { it != "|---|---|---|---|---|---|---|" }
+                .map {
+                    val parts = it.split("|")
 
-                val persianDate = run {
-                    val persianParts = parts[2].trim().split(" ")
-                    assertEquals(3, persianParts.size, it)
-                    val persianYear = persianParts[2].toInt()
-                    val persianMonth = (if (persianYear < 1304) borjiMonths else persianMonths)
-                        .indexOf(persianParts[1]) + 1
-                    assertNotEquals(0, persianMonth, it)
-                    PersianDate(persianYear, persianMonth, persianParts[0].toInt())
-                }
-                val gregorianDate = run {
-                    val gregorianParts = parts[6].trim().split(" ")
-                    assertEquals(3, gregorianParts.size, it)
-                    val gregorianMonth = gregorianMonths.indexOf(gregorianParts[1]) + 1
-                    assertNotEquals(0, gregorianMonth, it)
-                    CivilDate(
-                        gregorianParts[2].toInt(),
-                        gregorianMonth,
-                        gregorianParts[0].toInt()
-                    )
-                }
-                val islamicDate = run {
-                    val islamicParts = parts[4].trim().split(" ")
-                    assertEquals(3, islamicParts.size, it)
-                    val islamicMonth = islamicMonths.indexOf(islamicParts[1]) + 1
+                    val persianDate = run {
+                        val persianParts = parts[2].trim().split(" ")
+                        assertEquals(3, persianParts.size, it)
+                        val persianYear = persianParts[2].toInt()
+                        val persianMonth = (if (persianYear < 1304) borjiMonths else persianMonths)
+                            .indexOf(persianParts[1]) + 1
+                        assertNotEquals(0, persianMonth, it)
+                        PersianDate(persianYear, persianMonth, persianParts[0].toInt())
+                    }
+                    val gregorianDate = run {
+                        val gregorianParts = parts[6].trim().split(" ")
+                        assertEquals(3, gregorianParts.size, it)
+                        val gregorianMonth = gregorianMonths.indexOf(gregorianParts[1]) + 1
+                        assertNotEquals(0, gregorianMonth, it)
+                        CivilDate(
+                            gregorianParts[2].toInt(),
+                            gregorianMonth,
+                            gregorianParts[0].toInt()
+                        )
+                    }
+                    val islamicDate = run {
+                        val islamicParts = parts[4].trim().split(" ")
+                        assertEquals(3, islamicParts.size, it)
+                        val islamicMonth = islamicMonths.indexOf(islamicParts[1]) + 1
 //                    if (parts[5].trim().isNotBlank())
 //                        println("[" + islamicParts[2].toInt() + ", " + islamicMonth + ", " + parts[5].trim().toInt() + "], ")
-                    assertNotEquals(0, islamicMonth, it)
-                    IslamicDate(
-                        islamicParts[2].toInt(),
-                        islamicMonths.indexOf(islamicParts[1]) + 1,
-                        islamicParts[0].toInt()
-                    )
-                };
+                        assertNotEquals(0, islamicMonth, it)
+                        IslamicDate(
+                            islamicParts[2].toInt(),
+                            islamicMonths.indexOf(islamicParts[1]) + 1,
+                            islamicParts[0].toInt()
+                        )
+                    };
 
-                {
-                    val message = "$persianDate-$gregorianDate\n_${it}ـ"
-                    assertTrue(abs(IslamicDate(persianDate).toJdn() - islamicDate.toJdn()) < 3, message)
-                    when (persianDate) {
-                        // Skip these
-                        PersianDate(1229, 4, 1),
-                        PersianDate(1285, 10, 1) -> Unit
+                    {
+                        val message = "$persianDate-$gregorianDate\n_${it}ـ"
 
-                        else -> assertEquals(persianDate.toJdn(), gregorianDate.toJdn(), message)
+                        when (persianDate) {
+                            // Skip these
+                            PersianDate(1229, 4, 1),
+                            PersianDate(1285, 10, 1) -> Unit
+
+                            else -> {
+                                assertEquals(
+                                    parts[1].trim(),
+                                    gregorianDate.weekDay,
+                                    message
+                                )
+                                assertEquals(
+                                    parts[1].trim(),
+                                    persianDate.weekDay,
+                                    message
+                                )
+                            }
+                        }
+                        assertTrue(
+                            abs(IslamicDate(persianDate).toJdn() - islamicDate.toJdn()) < 3,
+                            message
+                        )
+                        when (persianDate) {
+                            // Skip these
+                            PersianDate(1229, 4, 1),
+                            PersianDate(1285, 10, 1) -> Unit
+
+                            else -> assertEquals(
+                                persianDate.toJdn(),
+                                gregorianDate.toJdn(),
+                                message
+                            )
+                        }
                     }
-                }
 //                assertEquals(
 //                    islamicDate.toJdn(),
 //                    gregorianDate.toJdn(),
 //                    "$persianDate-$gregorianDate\n_${it}ـ"
 //                )
-            })
+                })
     }
+
+    private val weekDays = listOf(
+        "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه", "یکشنبه",
+    )
+
+    private val AbstractDate.weekDay
+        get(): String = weekDays[(toJdn() % 7).toInt()]
 
     private val persianMonths = listOf(
         "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد",
