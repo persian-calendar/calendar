@@ -11,15 +11,16 @@ class BooksTests {
 
     @Test
     fun `Verify with Sarlati`() {
-        var tests = BooksTests::class.java
-                .getResourceAsStream("/Sarlati.txt")
-                ?.readBytes()!!
-                .decodeToString()
+        val tests = BooksTests::class.java
+            .getResourceAsStream("/Sarlati.txt")
+            ?.readBytes()!!
+            .decodeToString()
         assertAll(
             tests
                 .split("\n")
                 .drop(1)
                 .filter { it != "|---|---|---|---|---|---|---|" }
+                .filter { !it.startsWith("#") }
                 .map {
                     val parts = it.split("|")
 
@@ -47,8 +48,8 @@ class BooksTests {
                         val islamicParts = parts[4].trim().split(" ")
                         assertEquals(3, islamicParts.size, it)
                         val islamicMonth = islamicMonths.indexOf(islamicParts[1]) + 1
-//                    if (parts[5].trim().isNotBlank())
-//                        println("[" + islamicParts[2].toInt() + ", " + islamicMonth + ", " + parts[5].trim().toInt() + "], ")
+//                        if (parts[5].isNotBlank())
+//                            println("[" + islamicParts[2].toInt() + ", " + islamicMonth + ", " + parts[5].trim().toInt() + "], ")
                         assertNotEquals(0, islamicMonth, it)
                         IslamicDate(
                             islamicParts[2].toInt(),
@@ -60,31 +61,25 @@ class BooksTests {
                     {
                         val message = "$persianDate-$gregorianDate\n_${it}ـ"
 
+                        assertEquals(
+                            parts[1].trim(),
+                            gregorianDate.weekDay,
+                            message
+                        )
                         when (persianDate) {
-                            // Skip these
-                            PersianDate(1229, 4, 1),
                             PersianDate(1285, 10, 1) -> Unit
 
-                            else -> {
-                                assertEquals(
-                                    parts[1].trim(),
-                                    gregorianDate.weekDay,
-                                    message
-                                )
-                                assertEquals(
-                                    parts[1].trim(),
-                                    persianDate.weekDay,
-                                    message
-                                )
-                            }
+                            else -> assertEquals(
+                                parts[1].trim(),
+                                persianDate.weekDay,
+                                message
+                            )
                         }
                         assertTrue(
                             abs(IslamicDate(persianDate).toJdn() - islamicDate.toJdn()) < 3,
                             message
                         )
                         when (persianDate) {
-                            // Skip these
-                            PersianDate(1229, 4, 1),
                             PersianDate(1285, 10, 1) -> Unit
 
                             else -> assertEquals(
@@ -93,12 +88,12 @@ class BooksTests {
                                 message
                             )
                         }
+//                        assertEquals(
+//                            islamicDate.toJdn(),
+//                            gregorianDate.toJdn(),
+//                            "$persianDate-$gregorianDate\n_${it}ـ"
+//                        )
                     }
-//                assertEquals(
-//                    islamicDate.toJdn(),
-//                    gregorianDate.toJdn(),
-//                    "$persianDate-$gregorianDate\n_${it}ـ"
-//                )
                 })
     }
 
