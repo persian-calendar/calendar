@@ -15,6 +15,7 @@ class BooksTests {
             .getResourceAsStream("/Sarlati.txt")
             ?.readBytes()!!
             .decodeToString()
+        val qamari = mutableListOf<Triple<Int, Int, Int>>()
         assertAll(
             tests
                 .split("\n")
@@ -48,8 +49,13 @@ class BooksTests {
                         val islamicParts = parts[4].trim().split(" ")
                         assertEquals(3, islamicParts.size, it)
                         val islamicMonth = islamicMonths.indexOf(islamicParts[1]) + 1
-//                        if (parts[5].isNotBlank())
-//                            println("[" + islamicParts[2].toInt() + ", " + islamicMonth + ", " + parts[5].trim().toInt() + "], ")
+                        if (parts[5].isNotBlank()) qamari.add(
+                            Triple(
+                                islamicParts[2].toInt(),
+                                islamicMonth,
+                                parts[5].trim().toInt()
+                            )
+                        )
                         assertNotEquals(0, islamicMonth, it)
                         IslamicDate(
                             islamicParts[2].toInt(),
@@ -95,6 +101,13 @@ class BooksTests {
 //                        )
                     }
                 })
+
+//        qamari.sortBy { it.first }
+//        print(qamari.groupBy { it.first }.map { g ->
+//            "/*${g.key}*/ 0b" + g.value.distinctBy { it.second }.sortedBy { it.second }.map {
+//                if (it.third == 30) 1 else 0
+//            }.joinToString("_") + ",\n"
+//        }.joinToString(""))
     }
 
     private val weekDays = listOf(
