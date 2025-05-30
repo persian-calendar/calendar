@@ -120,13 +120,6 @@ class BooksTests {
 //        }.joinToString(""))
     }
 
-    private val weekDays = listOf(
-        "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه", "یکشنبه",
-    )
-
-    private val AbstractDate.weekDay
-        get(): String = weekDays[(toJdn() % 7).toInt()]
-
     private val persianMonths = listOf(
         "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد",
         "شهریور", "مهر", "آبان", "آذر", "دی",
@@ -144,4 +137,12 @@ class BooksTests {
         "محرم", "صفر", "ربیع‌الاول", "ربیع‌الثانی", "جمادى‌الاولى", "جمادی‌الثانیه",
         "رجب", "شعبان", "رمضان", "شوال", "ذی‌القعده", "ذی‌الحجه"
     )
+
+    companion object {
+        private val weekDays = listOf(
+            "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه", "یکشنبه",
+        )
+
+        internal val AbstractDate.weekDay get(): String = weekDays[(toJdn() % 7).toInt()]
+    }
 }

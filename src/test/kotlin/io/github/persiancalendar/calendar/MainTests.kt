@@ -1,5 +1,6 @@
 package io.github.persiancalendar.calendar
 
+import io.github.persiancalendar.calendar.BooksTests.Companion.weekDay
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
 import org.junit.jupiter.api.Test
@@ -356,17 +357,14 @@ class MainTests {
         // https://t.me/khoshnevisi_Qodama/29080 or https://archive.is/4CDPj
         // Provided by Mahmoud Arasteh what is actually written is
         // "شب شنبه پنجم محرم یکهزار و سیصد" but "شب شنبه" means Friday
-        // And 4 should mean Friday
-        //  (We don't actually have the concept of week day in this library but it's actually
-        //   tested on upper layers and we want to remainder in a stable way)
         // https://t.me/khoshnevisi_Qodama/29080 archived at https://archive.is/4CDPj
-        assertEquals(4, IslamicDate(1300, 1, 5).toJdn() % 7)
+        assertEquals("جمعه", IslamicDate(1300, 1, 5).weekDay)
         // https://t.me/Calligraphy_Archive/1364 archived at https://archive.is/fCfv9
-        assertEquals(4, IslamicDate(1294, 1, 25).toJdn() % 7)
+        assertEquals("جمعه", IslamicDate(1294, 1, 25).weekDay)
         // Doesn't match right now :/
         //// https://t.me/Calligraphy_Archive/345 archived at https://archive.is/8Az2y
-        //assertEquals(2, IslamicDate(1289, 3, 7).toJdn() % 7)
+//        assertEquals("پنجشنبه", IslamicDate(1289, 3, 7).weekDay)
         // https://t.me/Calligraphy_Archive/1384 archived at https://archive.is/S3ncG
-        assertEquals(6, IslamicDate(1336, 12, 15).toJdn() % 7)
+        assertEquals("یکشنبه", IslamicDate(1336, 12, 15).weekDay)
     }
 }
