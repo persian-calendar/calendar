@@ -20,9 +20,12 @@ class BooksTests {
             tests
                 .split("\n")
                 .drop(1)
-                .filter { it != "|---|---|---|---|---|---|---|" }
-                .filter { !it.startsWith("#") }
-                .map {
+                .mapNotNull {
+                    if (it == "|---|---|---|---|---|---|---|") {
+//                        println()
+                        return@mapNotNull null
+                    }
+                    if (it.startsWith("#")) return@mapNotNull null
                     val parts = it.split("|")
 
                     val persianDate = run {
@@ -33,17 +36,6 @@ class BooksTests {
                             .indexOf(persianParts[1]) + 1
                         assertNotEquals(0, persianMonth, it)
                         PersianDate(persianYear, persianMonth, persianParts[0].toInt())
-                    }
-                    val gregorianDate = run {
-                        val gregorianParts = parts[6].trim().split(" ")
-                        assertEquals(3, gregorianParts.size, it)
-                        val gregorianMonth = gregorianMonths.indexOf(gregorianParts[1]) + 1
-                        assertNotEquals(0, gregorianMonth, it)
-                        CivilDate(
-                            gregorianParts[2].toInt(),
-                            gregorianMonth,
-                            gregorianParts[0].toInt()
-                        )
                     }
                     val islamicDate = run {
                         val islamicParts = parts[4].trim().split(" ")
@@ -57,10 +49,28 @@ class BooksTests {
                             )
                         )
                         assertNotEquals(0, islamicMonth, it)
-                        IslamicDate(
-                            islamicParts[2].toInt(),
-                            islamicMonths.indexOf(islamicParts[1]) + 1,
-                            islamicParts[0].toInt()
+
+                        val month = islamicMonths.indexOf(islamicParts[1]) + 1
+                        //print(islamicParts[2] + "/$month/" + islamicParts[0] + " ")
+
+                        IslamicDate(islamicParts[2].toInt(), month, islamicParts[0].toInt())
+                    }
+                    val gregorianDate = run {
+                        val gregorianParts = parts[6].trim().split(" ")
+                        assertEquals(3, gregorianParts.size, it)
+                        val gregorianMonth = gregorianMonths.indexOf(gregorianParts[1]) + 1
+                        assertNotEquals(0, gregorianMonth, it)
+
+//                        println(
+//                            gregorianParts[2] +
+//                                    "-${gregorianMonth.toString().padStart(2, '0')}-" +
+//                                    gregorianParts[0].padStart(2, '0')
+//                        )
+
+                        CivilDate(
+                            gregorianParts[2].toInt(),
+                            gregorianMonth,
+                            gregorianParts[0].toInt()
                         )
                     };
 
