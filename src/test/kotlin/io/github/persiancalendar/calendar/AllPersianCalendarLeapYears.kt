@@ -1,6 +1,6 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
+import io.github.persiancalendar.calendar.util.persianLeapYear
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +19,7 @@ class AllPersianCalendarLeapYears {
         (1..10_000).forEach {
             assertEquals(
                 it in leapYears,
-                AlgorithmicConverter.persianLeapYear(it, 52.5),
+                persianLeapYear(it, 52.5),
                 it.toString()
             )
         }

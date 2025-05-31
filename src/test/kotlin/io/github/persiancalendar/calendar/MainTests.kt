@@ -2,7 +2,10 @@ package io.github.persiancalendar.calendar
 
 import io.github.persiancalendar.calendar.BooksTests.Companion.weekDay
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
-import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
+import io.github.persiancalendar.calendar.util.fixedFromGregorian
+import io.github.persiancalendar.calendar.util.fixedFromJulian
+import io.github.persiancalendar.calendar.util.gregorianFromFixed
+import io.github.persiancalendar.calendar.util.julianFromFixed
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -207,8 +210,8 @@ class MainTests {
     @Test
     fun `Practice Gregorian converting back and forth`() {
         (startJdn..endJdn).map {
-            val date = AlgorithmicConverter.gregorianFromFixed(it.toInt())
-            val convertedBack = AlgorithmicConverter.fixedFromGregorian(date[0], date[1], date[2])
+            val date = gregorianFromFixed(it.toInt())
+            val convertedBack = fixedFromGregorian(date[0], date[1], date[2])
             assertEquals(it.toInt(), convertedBack)
             date[2]
         }.ensureContinuity().ensureValidMonthLengths(28..32)
@@ -217,8 +220,8 @@ class MainTests {
     @Test
     fun `Practice Julian converting back and forth`() {
         (startJdn..endJdn).map {
-            val date = AlgorithmicConverter.julianFromFixed(it.toInt())
-            val convertedBack = AlgorithmicConverter.fixedFromJulian(date[0], date[1], date[2])
+            val date = julianFromFixed(it.toInt())
+            val convertedBack = fixedFromJulian(date[0], date[1], date[2])
             assertEquals(it.toInt(), convertedBack)
             date[2]
         }.ensureContinuity().ensureValidMonthLengths(28..32)

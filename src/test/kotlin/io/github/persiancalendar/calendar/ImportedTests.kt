@@ -3,7 +3,6 @@ package io.github.persiancalendar.calendar
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.fail
 
 class ImportedTests {

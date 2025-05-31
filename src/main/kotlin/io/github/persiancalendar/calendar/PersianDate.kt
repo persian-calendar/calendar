@@ -1,10 +1,11 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
 import io.github.persiancalendar.calendar.persian.LookupTableConverter
 import io.github.persiancalendar.calendar.persian.OldEraConverter
 import io.github.persiancalendar.calendar.util.TwelveMonthsYear.monthStartOfMonthsDistance
 import io.github.persiancalendar.calendar.util.TwelveMonthsYear.monthsDistanceTo
+import io.github.persiancalendar.calendar.util.jdnFromPersian
+import io.github.persiancalendar.calendar.util.persianFromJdn
 
 class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
     constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
@@ -15,13 +16,12 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
     override fun toJdn(): Long {
         var result = LookupTableConverter.toJdn(year, month, dayOfMonth)
         if (result == -1L) result = OldEraConverter.toJdn(year, month, dayOfMonth)
-        if (result == -1L) result = AlgorithmicConverter.toJdn(year, month, dayOfMonth)
+        if (result == -1L) result = jdnFromPersian(year, month, dayOfMonth)
         return result
     }
 
     override fun fromJdn(jdn: Long): IntArray =
-        LookupTableConverter.fromJdn(jdn) ?: OldEraConverter.fromJdn(jdn)
-        ?: AlgorithmicConverter.fromJdn(jdn)
+        LookupTableConverter.fromJdn(jdn) ?: OldEraConverter.fromJdn(jdn) ?: persianFromJdn(jdn)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate =
         monthStartOfMonthsDistance(this, monthsDistance, ::PersianDate)

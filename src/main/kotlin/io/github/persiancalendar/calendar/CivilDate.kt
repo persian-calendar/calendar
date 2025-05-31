@@ -1,7 +1,8 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.persian.AlgorithmicConverter
 import io.github.persiancalendar.calendar.util.TwelveMonthsYear
+import io.github.persiancalendar.calendar.util.civilFromJdn
+import io.github.persiancalendar.calendar.util.jdnFromCivil
 
 class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
     constructor(year: Int, month: Int, dayOfMonth: Int) : super(year, month, dayOfMonth)
@@ -9,9 +10,9 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
     constructor(jdn: Long) : super(jdn)
 
     // Converters
-    override fun toJdn(): Long = AlgorithmicConverter.civilToJdn(year, month, dayOfMonth)
+    override fun toJdn(): Long = jdnFromCivil(year, month, dayOfMonth)
 
-    override fun fromJdn(jdn: Long): IntArray = AlgorithmicConverter.civilFromJdn(jdn)
+    override fun fromJdn(jdn: Long): IntArray = civilFromJdn(jdn)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): CivilDate =
         TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, ::CivilDate)
