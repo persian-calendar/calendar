@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class CalendarCenterConversions {
     // https://calendar.ut.ac.ir/Fa/Software/CalConv.asp
     @ParameterizedTest
-    @CsvFileSource(resources = ["/CalendarCenterData.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/CalendarCenterData.txt"], numLinesToSkip = 1)
     fun `Matches with Calendar Center converter Hijri months`(
         persianDay: Int, persianMonth: Int, persianYear: Int,
         islamicDay: Int, islamicMonth: Int, islamicYear: Int,
