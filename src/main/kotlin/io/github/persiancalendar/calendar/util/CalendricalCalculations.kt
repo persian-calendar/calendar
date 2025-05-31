@@ -272,40 +272,40 @@ private val otherCoefficients = doubleArrayOf(-20.0, 0.0, 32.0)
 private fun ephemerisCorrection(tee: Double): Double {
     val year = gregorianYearFromFixed(floor(tee).toInt())
     return when {
-        2051 <= year && year <= 2150 ->
+        year in 2051..2150 ->
             (-20 + 32 * ((year - 1820) / 100.0).pow(2) + 0.5628 * (2150 - year)) / 86400
 
-        2006 <= year && year <= 2050 -> {
+        year in 2006..2050 -> {
             val y2000 = year - 2000
             poly(y2000.toDouble(), c2006Coefficients) / 86400
         }
 
-        1987 <= year && year <= 2005 -> {
+        year in 1987..2005 -> {
             val y2000 = year - 2000
             poly(y2000.toDouble(), c1987Coefficients) / 86400
         }
 
-        1900 <= year && year <= 1986 -> {
+        year in 1900..1986 -> {
             val c = gregorianDateDifference(1900, 1, 1, year, 7, 1) / 36525.0
             poly(c, c1900Coefficients)
         }
 
-        1800 <= year && year <= 1899 -> {
+        year in 1800..1899 -> {
             val c = gregorianDateDifference(1900, 1, 1, year, 7, 1) / 36525.0
             poly(c, c1800Coefficients)
         }
 
-        1700 <= year && year <= 1799 -> {
+        year in 1700..1799 -> {
             val y1700 = year - 1700
             poly(y1700.toDouble(), c1700Coefficients) / 86400
         }
 
-        1600 <= year && year <= 1699 -> {
+        year in 1600..1699 -> {
             val y1600 = year - 1600
             poly(y1600.toDouble(), c1600Coefficients) / 86400
         }
 
-        500 <= year && year <= 1599 -> {
+        year in 500..1599 -> {
             val y1000 = (year - 1000) / 100.0
             poly(y1000, c500Coefficients) / 86400
         }
