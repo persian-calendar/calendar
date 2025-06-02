@@ -10,6 +10,32 @@ import kotlin.test.assertTrue
 class BooksTests {
 
     @Test
+    fun `Verify with Khaterat-e Etemadolsaltaneh`() {
+        assertAll(
+            """
+1292/5/30 یکشنبه
+1292/6/1 دوشنبه
+1292/7/1 سه‌شنبه
+1292/8/1 پنجشنبه
+1292/9/1 شنبه
+1292/10/1 دوشنبه
+1292/11/1 سه‌شنبه
+1292/12/5 دوشنبه
+1293/1/18 دوشنبه
+1298/4/19 یکشنبه
+1298/5/1 جمعه
+1298/6/1 شنبه
+        """.trim().split("\n").map {
+                {
+                    val (dateParts, weekDay) = it.split(" ")
+                    val (year, month, day) = dateParts.split("/").map { it.toInt() }
+                    assertEquals(weekDay, IslamicDate(year, month, day).weekDay, it)
+                }
+            }
+        )
+    }
+
+    @Test
     fun `Verify with Sarlati`() {
         val tests = BooksTests::class.java
             .getResourceAsStream("/Sarlati.txt")
