@@ -9,9 +9,9 @@ value class DateTriplet private constructor(private val packedValue: Long) {
                 (dayOfMonth.toLong() and 0xFFFF)
     )
 
-    val year: Int get() = ((packedValue shr 32) and 0xFFFF).toInt()
-    val month: Int get() = ((packedValue shr 16) and 0xFFFF).toInt()
-    val dayOfMonth: Int get() = (packedValue and 0xFFFF).toInt()
+    val year: Int get() = ((packedValue shr 32) and 0xFFFF).toShort().toInt()
+    val month: Int get() = ((packedValue shr 16) and 0xFFFF).toShort().toInt()
+    val dayOfMonth: Int get() = (packedValue and 0xFFFF).toShort().toInt()
 
     operator fun component1(): Int = year
     operator fun component2(): Int = month
