@@ -3,6 +3,7 @@
 // Which is released under Apache 2.0 license
 package io.github.persiancalendar.calendar.util
 
+import io.github.persiancalendar.calendar.DateTriplet
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -91,7 +92,7 @@ private fun gregorianYearFromFixed(date: Int): Int {
 private fun gregorianNewYear(gYear: Int): Int = fixedFromGregorian(gYear, 1, 1)
 
 /** Gregorian (year, month, day) corresponding to fixed date. */
-internal fun gregorianFromFixed(date: Int): IntArray {
+internal fun gregorianFromFixed(date: Int): DateTriplet {
     val year = gregorianYearFromFixed(date)
     val priorDays = date - gregorianNewYear(year)  // This year
     // To simulate a 30-day Feb
@@ -103,7 +104,7 @@ internal fun gregorianFromFixed(date: Int): IntArray {
     val month = (12 * (priorDays + correction) + 373) / 367  // Assuming a 30-day Feb
     // Calculate the day by subtraction.
     val day = date - fixedFromGregorian(year, month, 1) + 1
-    return intArrayOf(year, month, day)
+    return DateTriplet(year = year, month = month, dayOfMonth = day)
 }
 
 /** Number of days from Gregorian date g_date1 until g_date2. */
@@ -135,7 +136,7 @@ internal fun fixedFromJulian(year: Int, month: Int, day: Int): Int {
 private fun isJulianLeapYear(jYear: Int): Boolean = jYear % 4 == (if (jYear > 0) 0 else 3)
 
 /** Julian (year month day) corresponding to fixed $date$. */
-internal fun julianFromFixed(date: Int): IntArray {
+internal fun julianFromFixed(date: Int): DateTriplet {
     // Nominal year.
     val approx = floor((4 * (date - JULIAN_EPOCH) + 1464) / 1461.0).toInt()
     val year = if (approx <= 0) approx - 1 else approx  // No year 0.
@@ -154,7 +155,7 @@ internal fun julianFromFixed(date: Int): IntArray {
     // Calculate the day by subtraction.
     val day = 1 + (date - fixedFromJulian(year, month, 1))
 
-    return intArrayOf(year, month, day)
+    return DateTriplet(year = year, month = month, dayOfMonth = day)
 }
 
 /** x hours. */
@@ -507,7 +508,7 @@ internal fun fixedFromPersianBorji(year: Int, month: Int, day: Int, longitude: D
 }
 
 /** Astronomical Persian date corresponding to fixed date. */
-internal fun persianFromFixed(date: Int, longitude: Double): IntArray {
+internal fun persianFromFixed(date: Int, longitude: Double): DateTriplet {
     val newYear = persianNewYearOnOrBefore(date, longitude)
     val y = round((newYear - PERSIAN_EPOCH) / MEAN_TROPICAL_YEAR).toInt() + 1
     val year = if (0 < y) y else y - 1  // No year zero
@@ -517,11 +518,11 @@ internal fun persianFromFixed(date: Int, longitude: Double): IntArray {
         else ceil((dayOfYear - 6) / 30.0).toInt()
     // Calculate the day by subtraction
     val day = date - fixedFromPersian(year, month, 1, longitude) + 1
-    return intArrayOf(year, month, day)
+    return DateTriplet(year = year, month = month, dayOfMonth = day)
 }
 
 /** Borji Persian date corresponding to fixed date. */
-internal fun persianBorjiFromFixed(date: Int, longitude: Double): IntArray {
+internal fun persianBorjiFromFixed(date: Int, longitude: Double): DateTriplet {
     val newYear = persianNewYearOnOrBefore(date, longitude)
     val y = round((newYear - PERSIAN_EPOCH) / MEAN_TROPICAL_YEAR).toInt() + 1
     val year = if (0 < y) y else y - 1  // No year zero
@@ -531,7 +532,7 @@ internal fun persianBorjiFromFixed(date: Int, longitude: Double): IntArray {
     }
     // Calculate the day by subtraction
     val day = date - fixedFromPersianBorji(year, month, 1, longitude) + 1
-    return intArrayOf(year, month, day)
+    return DateTriplet(year = year, month = month, dayOfMonth = day)
 }
 
 /** Fixed date of Persian New Year (Nowruz) in Gregorian year g_year. */
@@ -551,7 +552,7 @@ internal fun persianLeapYear(year: Int, longitude: Double): Boolean {
 private const val OFFSET_JDN = 1_721_425L
 private const val START_OF_MODERN_ERA_JDN = 2424231 // PersianDate(1304, 1, 1).toJdn()
 private const val START_OF_MODERN_ERA_YEAR = 1304
-internal fun persianFromJdn(jdn: Long): IntArray {
+internal fun persianFromJdn(jdn: Long): DateTriplet {
     val isModernEra = jdn >= START_OF_MODERN_ERA_JDN
     val fixed = (jdn - OFFSET_JDN).toInt()
     val longitude = (if (isModernEra) IRAN else TEHRAN)[1]
@@ -575,7 +576,7 @@ internal fun jdnFromCivil(year: Int, month: Int, dayOfMonth: Int): Long {
     ) fixedFromGregorian(year, month, dayOfMonth) else fixedFromJulian(year, month, dayOfMonth)
 }
 
-internal fun civilFromJdn(jdn: Long): IntArray {
+internal fun civilFromJdn(jdn: Long): DateTriplet {
     val fixed = (jdn - OFFSET_JDN).toInt()
     return if (jdn > 2299160) gregorianFromFixed(fixed) else julianFromFixed(fixed)
 }

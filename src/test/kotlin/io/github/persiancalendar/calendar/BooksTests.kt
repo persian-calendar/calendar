@@ -34,7 +34,7 @@ class BooksTests {
             .getResourceAsStream("/Sarlati.txt")
             ?.readBytes()!!
             .decodeToString()
-        val qamari = mutableListOf<Triple<Int, Int, Int>>()
+        val qamari = mutableListOf<DateTriplet>()
         assertAll(
             tests
                 .split("\n")
@@ -61,10 +61,10 @@ class BooksTests {
                         assertEquals(3, islamicParts.size, it)
                         val islamicMonth = islamicMonths.indexOf(islamicParts[1]) + 1
                         if (parts[5].isNotBlank()) qamari.add(
-                            Triple(
-                                islamicParts[2].toInt(),
-                                islamicMonth,
-                                parts[5].trim().toInt()
+                            DateTriplet(
+                                year = islamicParts[2].toInt(),
+                                month = islamicMonth,
+                                dayOfMonth = parts[5].trim().toInt()
                             )
                         )
                         assertNotEquals(0, islamicMonth, it)

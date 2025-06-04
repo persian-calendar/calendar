@@ -1,5 +1,6 @@
 package io.github.persiancalendar.calendar.persian
 
+import io.github.persiancalendar.calendar.DateTriplet
 import io.github.persiancalendar.calendar.PersianDate.Companion.daysInPreviousMonths
 import io.github.persiancalendar.calendar.PersianDate.Companion.monthFromDaysCount
 
@@ -36,7 +37,7 @@ internal object LookupTableConverter {
         return yearsStartingJdn[year - startingYear] + daysInPreviousMonths(month) + day - 1
     }
 
-    fun fromJdn(jdn: Long): IntArray? {
+    fun fromJdn(jdn: Long): DateTriplet? {
         if (jdn < yearsStartingJdn[0] || jdn > yearsStartingJdn[yearsStartingJdn.size - 1]) return null
         var year = (jdn - yearsStartingJdn[0]).toInt() / 366
         while (year < yearsStartingJdn.size - 1) {
@@ -48,6 +49,6 @@ internal object LookupTableConverter {
         val dayOfYear = (jdn - startOfYearJdn).toInt() + 1
         val month = monthFromDaysCount(dayOfYear)
         val day = dayOfYear - daysInPreviousMonths(month)
-        return intArrayOf(year, month, day)
+        return DateTriplet(year = year, month = month, dayOfMonth = day)
     }
 }

@@ -1,5 +1,7 @@
 package io.github.persiancalendar.calendar.persian
 
+import io.github.persiancalendar.calendar.DateTriplet
+
 internal object OldEraConverter {
     private const val jdSupportStart: Long = 2_393_551 // CivilDate(1841, 3, 21).toJdn()
     private val jdSupportEnd: Long
@@ -110,7 +112,7 @@ internal object OldEraConverter {
         return if (yearIndex < 0 || yearIndex >= supportedYears) -1 else months[yearIndex * 12 + month - 1] + day + jdSupportStart - 1
     }
 
-    internal fun fromJdn(jd: Long): IntArray? {
+    internal fun fromJdn(jd: Long): DateTriplet? {
         if (jd < jdSupportStart || jd >= jdSupportEnd) return null
         val days = (jd - jdSupportStart).toInt()
         var index = days / 32 // It is just the upper bound of months lengths
@@ -118,6 +120,10 @@ internal object OldEraConverter {
         val yearIndex = index / 12
         val month = index % 12
         val day = days - months[index]
-        return intArrayOf(yearIndex + supportedYearsStart, month + 1, day + 1)
+        return DateTriplet(
+            year = yearIndex + supportedYearsStart,
+            month = month + 1,
+            dayOfMonth = day + 1
+        )
     }
 }

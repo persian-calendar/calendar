@@ -20,7 +20,7 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
         return result
     }
 
-    override fun fromJdn(jdn: Long): IntArray =
+    override fun fromJdn(jdn: Long): DateTriplet =
         LookupTableConverter.fromJdn(jdn) ?: OldEraConverter.fromJdn(jdn) ?: persianFromJdn(jdn)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate =

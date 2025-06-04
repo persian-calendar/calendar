@@ -30,10 +30,10 @@ abstract class AbstractDate {
     }
 
     constructor(jdn: Long) {
-        val result = fromJdn(jdn)
-        this.year = result[0]
-        this.month = result[1]
-        this.dayOfMonth = result[2]
+        val result = this.fromJdn(jdn)
+        this.year = result.year
+        this.month = result.month
+        this.dayOfMonth = result.dayOfMonth
     }
 
     constructor(date: AbstractDate) : this(date.toJdn())
@@ -41,7 +41,7 @@ abstract class AbstractDate {
     // Things needed to be implemented by subclasses
     abstract fun toJdn(): Long
 
-    protected abstract fun fromJdn(jdn: Long): IntArray
+    protected abstract fun fromJdn(jdn: Long): DateTriplet
 
     override fun equals(other: Any?): Boolean {
         if (other == null || this::class != other::class || other !is AbstractDate) return false

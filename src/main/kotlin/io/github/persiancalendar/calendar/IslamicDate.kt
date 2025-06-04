@@ -27,7 +27,7 @@ class IslamicDate : AbstractDate, YearMonthDate<IslamicDate> {
         else FallbackIslamicConverter.toJdn(year, month, day) - islamicOffset
     }
 
-    override fun fromJdn(jdn: Long): IntArray {
+    override fun fromJdn(jdn: Long): DateTriplet {
         var jdn = jdn
         jdn += islamicOffset.toLong()
         return (if (useUmmAlQura) {

@@ -12,7 +12,7 @@ class CivilDate : AbstractDate, YearMonthDate<CivilDate> {
     // Converters
     override fun toJdn(): Long = jdnFromCivil(year, month, dayOfMonth)
 
-    override fun fromJdn(jdn: Long): IntArray = civilFromJdn(jdn)
+    override fun fromJdn(jdn: Long): DateTriplet = civilFromJdn(jdn)
 
     override fun monthStartOfMonthsDistance(monthsDistance: Int): CivilDate =
         TwelveMonthsYear.monthStartOfMonthsDistance(this, monthsDistance, ::CivilDate)

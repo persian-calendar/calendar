@@ -1,6 +1,7 @@
 package io.github.persiancalendar.calendar.islamic
 
 import io.github.persiancalendar.calendar.CivilDate
+import io.github.persiancalendar.calendar.DateTriplet
 import io.github.persiancalendar.calendar.util.sinOfDegree
 import io.github.persiancalendar.calendar.util.toRadians
 import kotlin.math.cos
@@ -103,7 +104,7 @@ internal object FallbackIslamicConverter {
         }
     }
 
-    fun fromJdn(jd: Long): IntArray {
+    fun fromJdn(jd: Long): DateTriplet {
         val civil = CivilDate(jd)
         var year = civil.year
         var month = civil.month
@@ -125,6 +126,6 @@ internal object FallbackIslamicConverter {
         }
         if (year <= 0) year -= 1
         day = floor(jd - mjd + .5).toInt()
-        return intArrayOf(year, month, day)
+        return DateTriplet(year = year, month = month, dayOfMonth = day)
     }
 }

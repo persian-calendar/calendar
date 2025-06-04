@@ -1,5 +1,7 @@
 package io.github.persiancalendar.calendar.islamic
 
+import io.github.persiancalendar.calendar.DateTriplet
+
 /**
  * It uses the data provided in https://github.com/roozbehp/qamari/blob/main/consolidated.txt
  *
@@ -222,7 +224,7 @@ object IranianIslamicDateConverter {
         else months[yearIndex * 12 + month - 1] + day + SUPPORTED_START_JDN - 1
     }
 
-    internal fun fromJdn(jd: Long): IntArray? {
+    internal fun fromJdn(jd: Long): DateTriplet? {
         if (jd < SUPPORTED_START_JDN || jd >= jdSupportEnd) return null
         val days = (jd - SUPPORTED_START_JDN).toInt()
         var index = days / 30
@@ -230,6 +232,10 @@ object IranianIslamicDateConverter {
         val yearIndex = index / 12
         val month = index % 12
         val day = days - months[index]
-        return intArrayOf(yearIndex + SUPPORTED_START_YEAR, month + 1, day + 1)
+        return DateTriplet(
+            year = yearIndex + SUPPORTED_START_YEAR,
+            month = month + 1,
+            dayOfMonth = day + 1,
+        )
     }
 }

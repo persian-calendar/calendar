@@ -21,7 +21,7 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
         return months[yearIndex * 12 + month - 1] + dayOfMonth + erasDays + jdSupportStart - 1
     }
 
-    override fun fromJdn(jdn: Long): IntArray {
+    override fun fromJdn(jdn: Long): DateTriplet {
         var days = (jdn - jdSupportStart).toInt()
         val eras = calculateEras(days, supportedDays)
         days -= eras * supportedDays
@@ -30,10 +30,10 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
         var index = (days / 31.26).toInt() // this is average months length in this calendar
         while (index + 1 < months.size && months[index + 1] <= days) ++index
 
-        return intArrayOf(
-            (index / 12) + eraStartYear,
-            (index % 12) + 1,
-            days - months[index] + 1
+        return DateTriplet(
+            year = (index / 12) + eraStartYear,
+            month = (index % 12) + 1,
+            dayOfMonth = days - months[index] + 1
         )
     }
 

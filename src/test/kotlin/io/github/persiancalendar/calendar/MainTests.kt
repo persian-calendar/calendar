@@ -211,9 +211,9 @@ class MainTests {
     fun `Practice Gregorian converting back and forth`() {
         (startJdn..endJdn).map {
             val date = gregorianFromFixed(it.toInt())
-            val convertedBack = fixedFromGregorian(date[0], date[1], date[2])
+            val convertedBack = fixedFromGregorian(date.year, date.month, date.dayOfMonth)
             assertEquals(it.toInt(), convertedBack)
-            date[2]
+            date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(28..32)
     }
 
@@ -221,9 +221,9 @@ class MainTests {
     fun `Practice Julian converting back and forth`() {
         (startJdn..endJdn).map {
             val date = julianFromFixed(it.toInt())
-            val convertedBack = fixedFromJulian(date[0], date[1], date[2])
+            val convertedBack = fixedFromJulian(date.year, date.month, date.dayOfMonth)
             assertEquals(it.toInt(), convertedBack)
-            date[2]
+            date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(28..32)
     }
 

@@ -25,6 +25,7 @@
 // https://github.com/msarhan/ummalqura-calendar/blob/master/src/main/java/com/github/msarhan/ummalqura/calendar/UmmalquraGregorianConverter.java
 package io.github.persiancalendar.calendar.islamic
 
+import io.github.persiancalendar.calendar.DateTriplet
 import kotlin.math.floor
 
 internal object UmmAlQuraConverter {
@@ -212,7 +213,7 @@ internal object UmmAlQuraConverter {
         return if (lookupResult == -1) -1 else hd + lookupResult - 1 + 2400000
     }
 
-    fun fromJdn(jdn: Long): IntArray? {
+    fun fromJdn(jdn: Long): DateTriplet? {
         val mjdn = jdn - 2400000
         val i = ummalquraData.indexOfFirst { it > mjdn }
         val totalMonths = i + 16260
@@ -222,7 +223,7 @@ internal object UmmAlQuraConverter {
         val lookupResult = ummalquraData(i - 1)
         if (lookupResult == -1) return null
         val hd = (mjdn - lookupResult + 1).toInt()
-        return intArrayOf(hy, hm, hd)
+        return DateTriplet(year = hy, month = hm, dayOfMonth = hd)
     }
 
     private fun getNewMoonMJDNIndex(hy: Int, hm: Int): Int {
