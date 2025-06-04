@@ -3,7 +3,7 @@ package io.github.persiancalendar.calendar
 // Putting numbers bigger than [-32768-32767] causes undefined behavior
 @JvmInline
 value class DateTriplet private constructor(private val packedValue: Long) {
-    constructor(year: Int, month: Int, dayOfMonth: Int) : this(
+    internal constructor(year: Int, month: Int, dayOfMonth: Int) : this(
         ((year.toLong() and 0xFFFF) shl 32) or
                 ((month.toLong() and 0xFFFF) shl 16) or
                 (dayOfMonth.toLong() and 0xFFFF)

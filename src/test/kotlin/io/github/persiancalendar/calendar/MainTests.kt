@@ -8,6 +8,7 @@ import io.github.persiancalendar.calendar.util.gregorianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromJdn
 import org.junit.jupiter.api.Test
+import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -374,7 +375,10 @@ class MainTests {
 
     @Test
     fun `Julian date`() {
-        println(julianFromJdn(PersianDate(1404, 1, 1).toJdn()))
-        println(CivilDate(PersianDate(1404, 1, 1).toJdn()))
+        assertEquals(
+            // There is "۸ آذر" in the first page of سالنمای فارسی مصباح‌زاده"
+            DateTriplet(2025, 3, 8),
+            julianFromJdn(PersianDate(1404, 1, 1).toJdn())
+        )
     }
 }
