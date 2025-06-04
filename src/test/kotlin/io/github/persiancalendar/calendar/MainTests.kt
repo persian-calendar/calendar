@@ -6,6 +6,7 @@ import io.github.persiancalendar.calendar.util.fixedFromGregorian
 import io.github.persiancalendar.calendar.util.fixedFromJulian
 import io.github.persiancalendar.calendar.util.gregorianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromFixed
+import io.github.persiancalendar.calendar.util.julianFromJdn
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -369,5 +370,11 @@ class MainTests {
 //        assertEquals("پنجشنبه", IslamicDate(1289, 3, 7).weekDay)
         // https://t.me/Calligraphy_Archive/1384 archived at https://archive.is/S3ncG
         assertEquals("یکشنبه", IslamicDate(1336, 12, 15).weekDay)
+    }
+
+    @Test
+    fun `Julian date`() {
+        println(julianFromJdn(PersianDate(1404, 1, 1).toJdn()))
+        println(CivilDate(PersianDate(1404, 1, 1).toJdn()))
     }
 }

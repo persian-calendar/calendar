@@ -568,6 +568,9 @@ internal fun jdnFromPersian(year: Int, month: Int, dayOfMonth: Int): Long {
     return fixed.toLong() + OFFSET_JDN
 }
 
+// Expose this so the app can display Julian date, but it's unstable
+fun julianFromJdn(jdn: Long): DateTriplet = julianFromFixed((jdn - OFFSET_JDN).toInt())
+
 internal fun jdnFromCivil(year: Int, month: Int, dayOfMonth: Int): Long {
     return OFFSET_JDN + if (
         (year > 1582)
@@ -576,7 +579,5 @@ internal fun jdnFromCivil(year: Int, month: Int, dayOfMonth: Int): Long {
     ) fixedFromGregorian(year, month, dayOfMonth) else fixedFromJulian(year, month, dayOfMonth)
 }
 
-internal fun civilFromJdn(jdn: Long): DateTriplet {
-    val fixed = (jdn - OFFSET_JDN).toInt()
-    return if (jdn > 2299160) gregorianFromFixed(fixed) else julianFromFixed(fixed)
-}
+internal fun civilFromJdn(jdn: Long): DateTriplet =
+    if (jdn > 2299160) gregorianFromFixed((jdn - OFFSET_JDN).toInt()) else julianFromJdn(jdn)
