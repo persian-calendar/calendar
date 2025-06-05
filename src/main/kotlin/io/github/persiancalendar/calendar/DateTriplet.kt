@@ -2,16 +2,16 @@ package io.github.persiancalendar.calendar
 
 // Putting numbers bigger than [-32768-32767] causes undefined behavior
 @JvmInline
-value class DateTriplet private constructor(private val packedValue: Long) {
+value class DateTriplet private constructor(private val packedValue: Int) {
     internal constructor(year: Int, month: Int, dayOfMonth: Int) : this(
-        ((year.toLong() and 0xFFFF) shl 32) or
-                ((month.toLong() and 0xFFFF) shl 16) or
-                (dayOfMonth.toLong() and 0xFFFF)
+        ((year and 0xFFFF) shl 16) or
+                ((month and 0xFF) shl 8) or
+                (dayOfMonth and 0xFF)
     )
 
-    val year: Int get() = ((packedValue shr 32) and 0xFFFF).toShort().toInt()
-    val month: Int get() = ((packedValue shr 16) and 0xFFFF).toShort().toInt()
-    val dayOfMonth: Int get() = (packedValue and 0xFFFF).toShort().toInt()
+    val year: Int get() = ((packedValue shr 16) and 0xFFFF).toShort().toInt()
+    val month: Int get() = ((packedValue shr 8) and 0xFF).toByte().toInt()
+    val dayOfMonth: Int get() = (packedValue and 0xFF).toByte().toInt()
 
     operator fun component1(): Int = year
     operator fun component2(): Int = month
