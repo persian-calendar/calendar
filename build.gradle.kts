@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     java
@@ -27,14 +27,10 @@ tasks.test {
 }
 
 val javaVersion = JavaVersion.VERSION_21
-
-configure<JavaPluginExtension> {
-    sourceCompatibility = javaVersion
-}
-
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = javaVersion.majorVersion
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(javaVersion.majorVersion)
+    }
 }
 
 publishing {
