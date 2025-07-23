@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    val junit5Version = "5.13.3"
+    val junit5Version = "5.13.4"
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit5Version")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junit5Version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
