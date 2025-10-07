@@ -1,8 +1,8 @@
 name: Follow Iran Calendar Center website
 
 on:
-  schedule:
-    - cron: '43 */6 * * *' # every six hours
+  #schedule:
+  #  - cron: '43 */6 * * *' # every six hours
 
 jobs:
   build:
