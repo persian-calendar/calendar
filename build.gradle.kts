@@ -25,11 +25,9 @@ tasks.test {
     useJUnitPlatform()
 }
 
-val javaVersion = JavaVersion.VERSION_21
 kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(javaVersion.majorVersion)
-    }
+    jvmToolchain(21)
+    compilerOptions { jvmTarget = JvmTarget.JVM_21 }
 }
 
 publishing {
