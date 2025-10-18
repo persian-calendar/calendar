@@ -30,10 +30,17 @@ kotlin {
     compilerOptions { jvmTarget = JvmTarget.JVM_21 }
 }
 
+val sourceJar by tasks.registering(Jar::class) {
+    dependsOn(tasks["classes"])
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
 publishing {
     publications {
         register("mavenJava", MavenPublication::class) {
-            from(components["java"])
+            from(components["kotlin"])
+            artifact(sourceJar)
         }
     }
 }
