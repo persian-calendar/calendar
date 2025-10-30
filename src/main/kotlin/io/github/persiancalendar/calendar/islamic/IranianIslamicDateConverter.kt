@@ -11,7 +11,7 @@ import io.github.persiancalendar.calendar.DateTriplet
  */
 object IranianIslamicDateConverter {
     // This is a package public API used in the app
-    const val latestSupportedYearOfIran = 1404
+    const val latestSupportedYearOfIran = 1405
     private const val SUPPORTED_START_JDN = 2_396_005L
     private const val SUPPORTED_START_YEAR = 1265 - 1/*one year is just added to make the rest fit*/
     private val jdSupportEnd: Long
@@ -204,8 +204,8 @@ object IranianIslamicDateConverter {
             /*1444*/ 0b1_1_0_1_0_0_1_0_1_0_1_0,
             /*1445*/ 0b1_1_1_0_1_0_0_1_0_1_0_0,
             /*1446*/ 0b1_1_1_0_1_1_0_1_0_0_0_1,
-            /*1447*/ 0b0_1_1_0_1_1_1_0_1_____0_0_0,
-            /*1448*/ 0b1_0_1_0_1_1_0_1_1_0_1_0,
+            /*1447*/ 0b0_1_1_0_1_1_1_0_1_0_0_0,
+            /*1448*/ 0b1_0_1_0_1_1_1_0_1_____0_1_0,
             /*1449*/ 0b1_0_0_1_0_1_0_1_1_1_0_0,
         )
         supportedYears = hijriMonths.size

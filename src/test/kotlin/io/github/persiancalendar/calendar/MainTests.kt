@@ -8,7 +8,7 @@ import io.github.persiancalendar.calendar.util.gregorianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromJdn
 import org.junit.jupiter.api.Test
-import java.util.Date
+import org.junit.jupiter.api.assertAll
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -306,7 +306,7 @@ class MainTests {
     }
 
     @Test
-    fun `Supported Year Islamic Calendar Conversions`() {
+    fun `Islamic Calendar Conversions of 1404`() {
         val dates = listOf(
             listOf(1404, 1, 11, 1446, 10, 1),
             listOf(1404, 2, 9, 1446, 11, 1),
@@ -322,14 +322,47 @@ class MainTests {
             listOf(1404, 11, 30, 1447, 9, 1),
             listOf(1405, 1, 1, 1447, 10, 1),
         )
-        assertEquals(
-            dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran }, 12
-        )
+        assertEquals(dates.count { it[0] == 1401 }, 12)
         dates.forEach {
             assertEquals(
                 PersianDate(it[0], it[1], it[2]).toJdn(), IslamicDate(it[3], it[4], it[5]).toJdn()
             )
         }
+    }
+
+    // https://www.pcci.ir/ershad_content/media/image/2025/10/%D8%AA%D9%82%D9%88%DB%8C%D9%85%201405_1633718.pdf
+    @Test
+    fun `Supported Year Islamic Calendar Conversions`() {
+        val dates = listOf(
+            listOf(1405, 1, 1, 1447, 10, 1),
+            listOf(1405, 1, 30, 1447, 11, 1),
+            listOf(1405, 2, 28, 1447, 12, 1),
+            listOf(1405, 3, 26, 1448, 1, 1),
+            listOf(1405, 4, 25, 1448, 2, 1),
+            listOf(1405, 5, 23, 1448, 3, 1),
+            listOf(1405, 6, 22, 1448, 4, 1),
+            listOf(1405, 7, 20, 1448, 5, 1),
+            listOf(1405, 8, 20, 1448, 6, 1),
+            listOf(1405, 9, 20, 1448, 7, 1),
+            listOf(1405, 10, 20, 1448, 8, 1),
+            listOf(1405, 11, 19, 1448, 9, 1),
+            listOf(1405, 12, 19, 1448, 10, 1),
+        )
+        assertEquals(
+            expected = dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran },
+            actual = 13,
+        )
+        dates.map {
+            {
+                val persianDate = PersianDate(it[0], it[1], it[2])
+                val islamicDate = IslamicDate(it[3], it[4], it[5])
+                assertEquals(
+                    persianDate.toJdn(),
+                    islamicDate.toJdn(),
+                    "$persianDate-$islamicDate",
+                )
+            }
+        }.let(::assertAll)
     }
 
     @Test
