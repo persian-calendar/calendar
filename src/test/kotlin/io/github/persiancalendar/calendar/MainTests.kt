@@ -322,7 +322,7 @@ class MainTests {
             listOf(1404, 11, 30, 1447, 9, 1),
             listOf(1405, 1, 1, 1447, 10, 1),
         )
-        assertEquals(dates.count { it[0] == 1401 }, 12)
+        assertEquals(dates.count { it[0] == 1404 }, 12)
         dates.forEach {
             assertEquals(
                 PersianDate(it[0], it[1], it[2]).toJdn(), IslamicDate(it[3], it[4], it[5]).toJdn()
