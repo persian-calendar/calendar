@@ -552,11 +552,11 @@ internal fun persianLeapYear(year: Int, longitude: Double): Boolean {
 private const val OFFSET_JDN = 1_721_425L
 private const val START_OF_MODERN_ERA_JDN = 2424231 // PersianDate(1304, 1, 1).toJdn()
 private const val START_OF_MODERN_ERA_YEAR = 1304
-internal fun persianFromJdn(jdn: Long): DateTriplet {
+internal fun persianFromJdn(jdn: Long, alwaysBorji: Boolean = false): DateTriplet {
     val isModernEra = jdn >= START_OF_MODERN_ERA_JDN
     val fixed = (jdn - OFFSET_JDN).toInt()
     val longitude = (if (isModernEra) IRAN else TEHRAN)[1]
-    return if (isModernEra) persianFromFixed(fixed, longitude)
+    return if (isModernEra && !alwaysBorji) persianFromFixed(fixed, longitude)
     else persianBorjiFromFixed(fixed, longitude)
 }
 

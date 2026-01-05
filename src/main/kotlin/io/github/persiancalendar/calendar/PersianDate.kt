@@ -20,9 +20,6 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
         return result
     }
 
-    override fun fromJdn(jdn: Long): DateTriplet =
-        LookupTableConverter.fromJdn(jdn) ?: OldEraConverter.fromJdn(jdn) ?: persianFromJdn(jdn)
-
     override fun monthStartOfMonthsDistance(monthsDistance: Int): PersianDate =
         monthStartOfMonthsDistance(this, monthsDistance, ::PersianDate)
 
@@ -30,7 +27,14 @@ class PersianDate : AbstractDate, YearMonthDate<PersianDate> {
 
     override fun toString(): String = "PersianDate($year, $month, $dayOfMonth)"
 
+    override fun fromJdn(jdn: Long): DateTriplet =
+        LookupTableConverter.fromJdn(jdn) ?: OldEraConverter.fromJdn(jdn) ?: persianFromJdn(jdn)
+
     companion object {
+        // This is always Borji (old era) and never new era's fixed months days
+        fun borjiFromJdn(jdn: Long): DateTriplet =
+            OldEraConverter.fromJdn(jdn) ?: persianFromJdn(jdn, alwaysBorji = true)
+
         // First six months have length of 31, next 5 months are 30 and the last month is 29 and in leap years are 30
         private val daysToMonth =
             intArrayOf(0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366)

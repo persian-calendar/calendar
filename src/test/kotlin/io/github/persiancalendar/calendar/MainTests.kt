@@ -414,4 +414,24 @@ class MainTests {
             julianFromJdn(PersianDate(1404, 1, 1).toJdn())
         )
     }
+
+    @Test
+    fun `Test borji conversion`() {
+        listOf(
+            PersianDate(1401, 1, 1) to DateTriplet(1401, 1, 1),
+            PersianDate(1401, 2, 1) to DateTriplet(1401, 2, 2),
+            PersianDate(1401, 3, 1) to DateTriplet(1401, 3, 2),
+            // PersianDate(1401, 4, 1) to DateTriplet(1401, 4, 2),
+            PersianDate(1401, 5, 1) to DateTriplet(1401, 5, 1),
+            PersianDate(1401, 6, 1) to DateTriplet(1401, 6, 1),
+            PersianDate(1401, 7, 1) to DateTriplet(1401, 7, 1),
+            // PersianDate(1401, 8, 1) to DateTriplet(1401, 8, 1),
+            // PersianDate(1401, 9, 1) to DateTriplet(1401, 9, 1),
+            PersianDate(1401, 10, 1) to DateTriplet(1401, 10, 1),
+            PersianDate(1401, 11, 1) to DateTriplet(1401, 11, 2),
+            PersianDate(1401, 12, 1) to DateTriplet(1401, 12, 2),
+        ).map { (date, triplet) ->
+            { assertEquals(triplet, PersianDate.borjiFromJdn(date.toJdn()), "$date") }
+        }.let(::assertAll)
+    }
 }
