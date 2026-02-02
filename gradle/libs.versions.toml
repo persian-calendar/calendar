@@ -1,0 +1,10 @@
+[versions]
+# Build tools
+agp = "8.12.3"
+kotlin = "2.2.21"
+
+[libraries]
+
+[plugins]
+androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
