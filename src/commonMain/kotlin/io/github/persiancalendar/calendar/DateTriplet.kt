@@ -1,5 +1,7 @@
 package io.github.persiancalendar.calendar
 
+import kotlin.jvm.JvmInline
+
 // Putting numbers bigger than [-32768-32767] causes undefined behavior
 @JvmInline
 value class DateTriplet private constructor(private val packedValue: Int) {
