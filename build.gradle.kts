@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     id("maven-publish")
+    alias(libs.plugins.kotest)
+    alias(libs.plugins.ksp)
 }
 
 group = "io.github.persiancalendar"
@@ -56,12 +58,20 @@ kotlin {
     }
 
     sourceSets {
-        val commonTest by getting {
+        commonTest {
             dependencies {
+                implementation("io.kotest:kotest-assertions-core:6.0.3")
+                implementation("io.kotest:kotest-framework-engine:6.0.3")
                 implementation(kotlin("test"))
             }
+            resources.srcDirs("src/commonTest/resources")
         }
 
+        jvmTest {
+            dependencies {
+                implementation("io.kotest:kotest-runner-junit5:6.0.3")
+            }
+        }
     }
 }
 

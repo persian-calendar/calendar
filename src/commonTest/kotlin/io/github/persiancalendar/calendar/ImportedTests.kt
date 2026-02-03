@@ -1,14 +1,12 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
+import io.kotest.core.spec.style.FunSpec
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class ImportedTests {
+class ImportedTests : FunSpec({
 
-    @Test
-    fun `Conforms with officially published leap years`() {
+    test("Conforms with officially published leap years") {
         // Doesn't match with https://calendar.ut.ac.ir/Fa/News/Data/Doc/KabiseShamsi1206-1498-new.pdf
         val leapYears = listOf(
             1210, 1214, 1218, 1222, 1226, 1230, 1234, 1238, 1243, 1247, 1251, 1255, 1259, 1263,
@@ -25,8 +23,7 @@ class ImportedTests {
         }
     }
 
-    @Test
-    fun `Partially conforming with calendariale tests`() {
+    test("Partially conforming with calendariale tests") {
         val J0000 = 1721425L // Ours is different apparently
         listOf(
 //        listOf(-214193, -1208, 5, 1),
@@ -155,7 +152,7 @@ class ImportedTests {
         }
     }
 
-    private val persianDates = listOf(
+    val persianDates = listOf(
         // Persian year, Persian Month, Persian Day, Gregorian Year, Gregorian Month, Gregorian Day
         // listOf(1, 1, 1, 622, 3, 22), TODO: Make these work, probably the Gregorian calendar side is broken
         // listOf(101, 2, 2, 722, 4, 23),
@@ -254,17 +251,17 @@ class ImportedTests {
         listOf(9378, 10, 13, 9999, 12, 31)
     )
 
-    @Test
-    fun `Matches with dotnet tests for Persian calendar`() = persianDates.forEach { line ->
-        assertEquals(
-            PersianDate(line[0], line[1], line[2]).toJdn(),
-            CivilDate(line[3], line[4], line[5]).toJdn(),
-            line.toString()
-        )
+    test("Matches with dotnet tests for Persian calendar") {
+        persianDates.forEach { line ->
+            assertEquals(
+                PersianDate(line[0], line[1], line[2]).toJdn(),
+                CivilDate(line[3], line[4], line[5]).toJdn(),
+                line.toString()
+            )
+        }
     }
 
-    @Test
-    fun `Test Nepali calendar implementation`() {
+    test("Test Nepali calendar implementation") {
         // https://github.com/techgaun/ad-bs-converter/blob/master/test/unit/converter.js
         """2072/4/3 to 2015/7/19
         2072/4/16 to 2015/8/1
@@ -287,38 +284,31 @@ class ImportedTests {
         }
     }
 
-    @Test
-    fun `old era persian calendar passes`() {
-        val tests = ImportedTests::class.java
-            .getResourceAsStream("/OldEraPersianCalendar.txt")
-            ?.readBytes()!!
-            .decodeToString()
+    test("old era persian calendar passes") {
+        readResource("OldEraPersianCalendar.txt")
             .split("\n")
             .map { it.split("#")[0] }
             .filter { it.isNotBlank() }
-            .map { line ->
+            .forEach { line ->
                 val (persianYear, persianMonth, year, month, day) = (
                         line
                             .trimStart('*').trim()
                             .replace(Regex("[ /-]"), ",")
                             .split(',')
                             .map { it.toIntOrNull() ?: fail(line) })
-                {
-                    assertEquals(
-                        expected = listOf(year, month, day),
-                        actual = CivilDate(
-                            PersianDate(
-                                persianYear,
-                                persianMonth,
-                                1
-                            )
-                        ).let { date ->
-                            listOf(date.year, date.month, date.dayOfMonth)
-                        },
-                        message = line.split(" ")[0]
-                    )
-                }
+                assertEquals(
+                    expected = listOf(year, month, day),
+                    actual = CivilDate(
+                        PersianDate(
+                            persianYear,
+                            persianMonth,
+                            1
+                        )
+                    ).let { date ->
+                        listOf(date.year, date.month, date.dayOfMonth)
+                    },
+                    message = line.split(" ")[0]
+                )
             }
-        assertAll(tests)
     }
-}
+})

@@ -1,51 +1,19 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.jupiter.api.assertAll
-import kotlin.test.Test
+import io.kotest.core.spec.style.FunSpec
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class QamariTests {
+class QamariTests : FunSpec({
 
-    @Test
-    fun `Conforms with Qamari tests`() = checkFile("/qamari/consolidated.txt")
-
-    @Test
-    fun `Conforms with predictions`() = checkFile("/qamari-perdictions.txt")
-
-    fun checkFile(fileName: String) {
-        assertAll(
-            QamariTests::class.java
-                .getResourceAsStream(fileName)
-                ?.readBytes()
-                .let {
-                    if (it == null) {
-                        System.err.println("$fileName couldn't be found, skip")
-                        ByteArray(0)
-                    } else it
-                }
-                .decodeToString()
-                .split("\n")
-                .map { it.split("#")[0] }
-                .filter { it.isNotBlank() }
-                .map { line ->
-                    val (qamariYear, qamariMonth, year, month, day) = (
-                            line
-                                .trimStart('*').trim()
-                                .replace(Regex("[ /-]"), ",")
-                                .split(',')
-                                .map { it.toIntOrNull() ?: fail(line) })
-                    {
-                        assertEquals(
-                            listOf(year, month, day),
-                            CivilDate(IslamicDate(qamariYear, qamariMonth, 1)).let { date ->
-                                listOf(date.year, date.month, date.dayOfMonth)
-                            },
-                            fileName + ": " + line.split(" ")[0]
-                        )
-                    }
-                })
+    test("Conforms with Qamari tests") {
+        checkFile("qamari/consolidated.txt")
     }
+
+    test("Conforms with predictions") {
+        checkFile("qamari-perdictions.txt")
+    }
+
 
 //    @Test
 //    fun helper1() {
@@ -117,4 +85,33 @@ class QamariTests {
 //            println(yearPrefix[i] + chunk.joinToString(", ") + yearSuffix[i])
 //        }
 //    }
+})
+
+
+fun checkFile(fileName: String) {
+    val content = try {
+        readResource(fileName)
+    } catch (e: Exception) {
+        println("$fileName couldn't be found, skip")
+        return
+    }
+    content
+        .split("\n")
+        .map { it.split("#")[0] }
+        .filter { it.isNotBlank() }
+        .forEach { line ->
+            val (qamariYear, qamariMonth, year, month, day) = (
+                    line
+                        .trimStart('*').trim()
+                        .replace(Regex("[ /-]"), ",")
+                        .split(',')
+                        .map { it.toIntOrNull() ?: fail(line) })
+            assertEquals(
+                listOf(year, month, day),
+                CivilDate(IslamicDate(qamariYear, qamariMonth, 1)).let { date ->
+                    listOf(date.year, date.month, date.dayOfMonth)
+                },
+                fileName + ": " + line.split(" ")[0]
+            )
+        }
 }

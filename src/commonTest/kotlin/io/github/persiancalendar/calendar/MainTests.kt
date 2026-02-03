@@ -1,21 +1,21 @@
 package io.github.persiancalendar.calendar
 
-import io.github.persiancalendar.calendar.BooksTests.Companion.weekDay
 import io.github.persiancalendar.calendar.islamic.IranianIslamicDateConverter
 import io.github.persiancalendar.calendar.util.fixedFromGregorian
 import io.github.persiancalendar.calendar.util.fixedFromJulian
 import io.github.persiancalendar.calendar.util.gregorianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromJdn
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
+import io.kotest.core.spec.style.FunSpec
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class MainTests {
+class MainTests : FunSpec({
 
-    @Test
-    fun `Islamic converter test`() {
+    val startJdn = CivilDate(1250, 1, 1).toJdn()
+    val endJdn = CivilDate(2350, 1, 1).toJdn()
+
+    test("Islamic converter test") {
         listOf(
             listOf(2453767, 1427, 1, 1), listOf(2455658, 1432, 5, 2)
 //            listOf(2458579, 1440, 7, 29), listOf(2458580, 1440, 8, 1)
@@ -133,11 +133,7 @@ class MainTests {
         )
     }
 
-    private val startJdn = CivilDate(1250, 1, 1).toJdn()
-    private val endJdn = CivilDate(2350, 1, 1).toJdn()
-
-    @Test
-    fun `Practice Persian converting back and forth`() {
+    test("Practice Persian converting back and forth") {
         assertEquals(PersianDate(1398, 1, 1).toJdn(), 2458564)
         (startJdn..endJdn).map {
             val date = PersianDate(it)
@@ -155,8 +151,7 @@ class MainTests {
         }.ensureContinuity().ensureValidMonthLengths(29..32)
     }
 
-    @Test
-    fun `Practice Islamic converting back and forth`() {
+    test("Practice Islamic converting back and forth") {
         val startJdn = CivilDate(1600, 1, 1).toJdn()
         val endJdn = CivilDate(2200, 1, 1).toJdn()
         (startJdn..endJdn).map {
@@ -172,8 +167,7 @@ class MainTests {
         }.ensureContinuity().ensureValidMonthLengths(29..30)
     }
 
-    @Test
-    fun `Practice UmmAlqara converting back and forth`() {
+    test("Practice UmmAlqara converting back and forth") {
         val startJdn = CivilDate(1950, 1, 1).toJdn()
         val endJdn = CivilDate(2150, 1, 1).toJdn()
         IslamicDate.useUmmAlQura = true
@@ -187,8 +181,7 @@ class MainTests {
         IslamicDate.useUmmAlQura = false
     }
 
-    @Test
-    fun `Practice CivilDate converting back and forth`() {
+    test("Practice CivilDate converting back and forth") {
         (startJdn..endJdn).mapNotNull {
             val date = CivilDate(it)
             assertEquals(it, date.toJdn())
@@ -198,8 +191,7 @@ class MainTests {
         }.ensureContinuity().ensureValidMonthLengths(28..31)
     }
 
-    @Test
-    fun `Practice Nepali converting back and forth`() {
+    test("Practice Nepali converting back and forth") {
         (startJdn..endJdn).mapNotNull {
             val date = NepaliDate(it)
             assertEquals(it, date.toJdn(), CivilDate(it).run { "$year/$month/$dayOfMonth" })
@@ -209,8 +201,7 @@ class MainTests {
         }.ensureContinuity().ensureValidMonthLengths(29..32)
     }
 
-    @Test
-    fun `Practice Gregorian converting back and forth`() {
+    test("Practice Gregorian converting back and forth") {
         (startJdn..endJdn).map {
             val date = gregorianFromFixed(it.toInt())
             val convertedBack = fixedFromGregorian(date.year, date.month, date.dayOfMonth)
@@ -219,39 +210,17 @@ class MainTests {
         }.ensureContinuity().ensureValidMonthLengths(28..32)
     }
 
-    @Test
-    fun `Practice Julian converting back and forth`() {
-        (startJdn..endJdn).map {
+    test("Practice Julian converting back and forth") {
+       (startJdn..endJdn).map {
             val date = julianFromFixed(it.toInt())
             val convertedBack = fixedFromJulian(date.year, date.month, date.dayOfMonth)
             assertEquals(it.toInt(), convertedBack)
             date.dayOfMonth
         }.ensureContinuity().ensureValidMonthLengths(28..32)
+
     }
 
-    // This gets a list of day of months and ensures they are either in increasing order or are 1
-    private fun List<Int>.ensureContinuity(): List<Int> {
-        this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
-            assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
-            dayOfMonth
-        }
-        return this
-    }
-
-    // This gets a list of day of months and ensures they are either in increasing order or are 1
-    private fun List<Int>.ensureValidMonthLengths(validMonthLengthRange: IntRange): List<Int> {
-        this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
-            if (dayOfMonth == 1) assertTrue(
-                previousDayOfMonth in validMonthLengthRange,
-                "$previousDayOfMonth"
-            )
-            dayOfMonth
-        }
-        return this
-    }
-
-    @Test
-    fun `Test month distance methods`() {
+    test("Test month distance methods") {
         run {
             val date = CivilDate(2014, 7, 7)
             assertEquals(0, date.monthsDistanceTo(date))
@@ -281,8 +250,7 @@ class MainTests {
         }
     }
 
-    @Test
-    fun `Islamic Calendar Conversions of 1401`() {
+    test("Islamic Calendar Conversions of 1401") {
         val dates = listOf(
             listOf(1401, 1, 14, 1443, 9, 1),
             listOf(1401, 2, 13, 1443, 10, 1),
@@ -305,8 +273,7 @@ class MainTests {
         }
     }
 
-    @Test
-    fun `Islamic Calendar Conversions of 1404`() {
+    test("Islamic Calendar Conversions of 1404") {
         val dates = listOf(
             listOf(1404, 1, 11, 1446, 10, 1),
             listOf(1404, 2, 9, 1446, 11, 1),
@@ -331,8 +298,7 @@ class MainTests {
     }
 
     // https://www.pcci.ir/ershad_content/media/image/2025/10/%D8%AA%D9%82%D9%88%DB%8C%D9%85%201405_1633718.pdf
-    @Test
-    fun `Supported Year Islamic Calendar Conversions`() {
+    test("Supported Year Islamic Calendar Conversions") {
         val dates = listOf(
             listOf(1405, 1, 1, 1447, 10, 1),
             listOf(1405, 1, 30, 1447, 11, 1),
@@ -362,11 +328,10 @@ class MainTests {
                     "$persianDate-$islamicDate",
                 )
             }
-        }.let(::assertAll)
+        }.forEach { it() }
     }
 
-    @Test
-    fun `Use constructor for date conversion`() {
+    test("Use constructor for date conversion") {
         assertEquals(
             PersianDate(NepaliDate(CivilDate(IslamicDate(PersianDate(1400, 1, 1))))),
             PersianDate(1400, 1, 1)
@@ -390,8 +355,7 @@ class MainTests {
 //        // }
 //    }
 
-    @Test
-    fun `Misc tests`() {
+    test("Misc tests") {
         // https://t.me/khoshnevisi_Qodama/29080 or https://archive.is/4CDPj
         // Provided by Mahmoud Arasteh what is actually written is
         // "شب شنبه پنجم محرم یکهزار و سیصد" but "شب شنبه" means Friday
@@ -406,8 +370,7 @@ class MainTests {
         assertEquals("یکشنبه", IslamicDate(1336, 12, 15).weekDay)
     }
 
-    @Test
-    fun `Julian date`() {
+    test("Julian date") {
         assertEquals(
             // There is "۸ آذر" in the first page of سالنمای فارسی مصباح‌زاده"
             DateTriplet(2025, 3, 8),
@@ -415,8 +378,7 @@ class MainTests {
         )
     }
 
-    @Test
-    fun `Test borji conversion`() {
+    test("Test borji conversion") {
         listOf(
             PersianDate(1401, 1, 1) to DateTriplet(1401, 1, 1),
             PersianDate(1401, 2, 1) to DateTriplet(1401, 2, 2),
@@ -432,6 +394,27 @@ class MainTests {
             PersianDate(1401, 12, 1) to DateTriplet(1401, 12, 2),
         ).map { (date, triplet) ->
             { assertEquals(triplet, PersianDate.borjiFromJdn(date.toJdn()), "$date") }
-        }.let(::assertAll)
+        }.forEach { it() }
     }
+})
+
+// This gets a list of day of months and ensures they are either in increasing order or are 1
+fun List<Int>.ensureContinuity(): List<Int> {
+    this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
+        assertTrue(dayOfMonth == 1 || dayOfMonth == previousDayOfMonth + 1)
+        dayOfMonth
+    }
+    return this
+}
+
+// This gets a list of day of months and ensures they are either in increasing order or are 1
+fun List<Int>.ensureValidMonthLengths(validMonthLengthRange: IntRange): List<Int> {
+    this.reduce { previousDayOfMonth: Int, dayOfMonth: Int ->
+        if (dayOfMonth == 1) assertTrue(
+            previousDayOfMonth in validMonthLengthRange,
+            "$previousDayOfMonth"
+        )
+        dayOfMonth
+    }
+    return this
 }
