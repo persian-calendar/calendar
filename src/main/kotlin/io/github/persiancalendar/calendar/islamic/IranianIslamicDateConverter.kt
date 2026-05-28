@@ -220,12 +220,12 @@ object IranianIslamicDateConverter {
 
     internal fun toJdn(year: Int, month: Int, day: Int): Long {
         val yearIndex = year - SUPPORTED_START_YEAR
-        return if (yearIndex < 0 || yearIndex >= supportedYears) -1
+        return if (yearIndex !in 0..<supportedYears) -1
         else months[yearIndex * 12 + month - 1] + day + SUPPORTED_START_JDN - 1
     }
 
     internal fun fromJdn(jd: Long): DateTriplet? {
-        if (jd < SUPPORTED_START_JDN || jd >= jdSupportEnd) return null
+        if (jd !in SUPPORTED_START_JDN..<jdSupportEnd) return null
         val days = (jd - SUPPORTED_START_JDN).toInt()
         var index = days / 30
         while (index + 1 < months.size && months[index + 1] <= days) ++index

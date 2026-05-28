@@ -109,11 +109,11 @@ internal object OldEraConverter {
 
     internal fun toJdn(year: Int, month: Int, day: Int): Long {
         val yearIndex = year - supportedYearsStart
-        return if (yearIndex < 0 || yearIndex >= supportedYears) -1 else months[yearIndex * 12 + month - 1] + day + jdSupportStart - 1
+        return if (yearIndex !in 0..<supportedYears) -1 else months[yearIndex * 12 + month - 1] + day + jdSupportStart - 1
     }
 
     internal fun fromJdn(jd: Long): DateTriplet? {
-        if (jd < jdSupportStart || jd >= jdSupportEnd) return null
+        if (jd !in jdSupportStart..<jdSupportEnd) return null
         val days = (jd - jdSupportStart).toInt()
         var index = days / 32 // It is just the upper bound of months lengths
         while (index + 1 < months.size && months[index + 1] <= days) ++index
