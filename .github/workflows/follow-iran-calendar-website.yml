@@ -29,7 +29,7 @@ jobs:
               --data-binary @-
 
       - name: Update the repo also
-        uses: EndBug/add-and-commit@2d7c2e89fcb436f8e139cc80813bd030bdd40c4b
+        uses: EndBug/add-and-commit@9532192d1b36bc6e7fe18e44d50dace071388166
         with:
           default_author: github_actions
           message: 'ci: Update Iran Calendar Center data'
