@@ -1,8 +1,12 @@
 name: Follow Iran Calendar Center website
 
 on:
-  #schedule:
-  #  - cron: '43 */6 * * *' # every six hours
+  schedule:
+    - cron: '43 */6 * * *' # every six hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -13,9 +17,10 @@ jobs:
 
       - name: Update the text and notify if is changed
         run: |
-          sudo apt install html2text
+          sudo apt-get update
+          sudo apt-get install -y html2text
 
-          curl --fail https://calendar.ut.ac.ir/ | html2text | sed -E "s/ +[0-9]+ نفر/0 نفر/g" > .github/follow-iran-calendar-data.txt
+          node .github/fetch-calendar.mjs | html2text -utf8 > .github/follow-iran-calendar-data.txt
           # If is empty, revert to what was there at least
           [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
@@ -28,9 +33,14 @@ jobs:
               -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
               --data-binary @-
 
-      - name: Update the repo also
-        uses: EndBug/add-and-commit@9532192d1b36bc6e7fe18e44d50dace071388166
-        with:
-          default_author: github_actions
-          message: 'ci: Update Iran Calendar Center data'
-          add: .github/follow-iran-calendar-data.txt
+      - name: Commit and push the update
+        run: |
+          if [ -z "$(git status -s)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/follow-iran-calendar-data.txt
+          git commit -m "ci: Update Iran Calendar Center data"
+          git push origin "HEAD:${{ github.ref_name }}"
