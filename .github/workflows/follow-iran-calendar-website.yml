@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y html2text
 
-          node .github/fetch-calendar.mjs | html2text -utf8 | awk 'NF{if(!s)s=NR;l=NR} s{a[NR]=$0} END{if(s)for(i=s;i<=l;i++)print a[i]}' > .github/follow-iran-calendar-data.txt
+          node .github/fetch-calendar.mjs | html2text -utf8 | python3 -c 'import sys; sys.stdout.write(sys.stdin.read().strip())' > .github/follow-iran-calendar-data.txt
           # If is empty, revert to what was there at least
           [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
