@@ -8,10 +8,7 @@ class AllPersianCalendarLeapYears {
 
     @Test
     fun `Conforms with calendrical leap years`() {
-        val leapYears = AllPersianCalendarLeapYears::class.java
-            .getResourceAsStream("/leaps.txt")
-            ?.readBytes()!!
-            .decodeToString()
+        val leapYears = TestResources.leaps
             .split("\n")
             .filter { !it.startsWith("#") }
             .map { it.toInt() }

@@ -1,7 +1,6 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -289,36 +288,31 @@ class ImportedTests {
 
     @Test
     fun `old era persian calendar passes`() {
-        val tests = ImportedTests::class.java
-            .getResourceAsStream("/OldEraPersianCalendar.txt")
-            ?.readBytes()!!
-            .decodeToString()
+        TestResources.oldEraPersianCalendar
             .split("\n")
             .map { it.split("#")[0] }
             .filter { it.isNotBlank() }
-            .map { line ->
+            .forEach { line ->
                 val (persianYear, persianMonth, year, month, day) = (
                         line
                             .trimStart('*').trim()
                             .replace(Regex("[ /-]"), ",")
                             .split(',')
                             .map { it.toIntOrNull() ?: fail(line) })
-                {
-                    assertEquals(
-                        expected = listOf(year, month, day),
-                        actual = CivilDate(
-                            PersianDate(
-                                persianYear,
-                                persianMonth,
-                                1
-                            )
-                        ).let { date ->
-                            listOf(date.year, date.month, date.dayOfMonth)
-                        },
-                        message = line.split(" ")[0]
-                    )
-                }
+
+                assertEquals(
+                    expected = listOf(year, month, day),
+                    actual = CivilDate(
+                        PersianDate(
+                            persianYear,
+                            persianMonth,
+                            1
+                        )
+                    ).let { date ->
+                        listOf(date.year, date.month, date.dayOfMonth)
+                    },
+                    message = line.split(" ")[0]
+                )
             }
-        assertAll(tests)
     }
 }

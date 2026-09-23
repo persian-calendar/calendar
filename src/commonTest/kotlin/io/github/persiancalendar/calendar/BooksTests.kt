@@ -1,6 +1,5 @@
 package io.github.persiancalendar.calendar
 
-import org.junit.jupiter.api.assertAll
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,40 +10,28 @@ class BooksTests {
 
     @Test
     fun `Verify with Khaterat-e Etemadolsaltaneh`() {
-        assertAll(
-            BooksTests::class.java
-                .getResourceAsStream("/khaterat-e-etemad-ol-saltane.txt")
-                ?.readBytes()!!
-                .decodeToString()
-                .trim().split("\n").map {
-                    {
-                        if (!it.startsWith("#")) {
-                            val (dateParts, weekDay) = it.split(" ")
-                            val (year, month, day) = dateParts.split("/").map { it.toInt() }
-                            assertEquals(weekDay, IslamicDate(year, month, day).weekDay, it)
-                        }
-                    }
+        TestResources.khaterat
+            .trim().split("\n").forEach {
+                if (!it.startsWith("#")) {
+                    val (dateParts, weekDay) = it.split(" ")
+                    val (year, month, day) = dateParts.split("/").map { it.toInt() }
+                    assertEquals(weekDay, IslamicDate(year, month, day).weekDay, it)
                 }
-        )
+            }
     }
 
     @Test
     fun `Verify with Sarlati`() {
-        val tests = BooksTests::class.java
-            .getResourceAsStream("/Sarlati.txt")
-            ?.readBytes()!!
-            .decodeToString()
         val qamari = mutableListOf<DateTriplet>()
-        assertAll(
-            tests
+        TestResources.sarlati
                 .split("\n")
                 .drop(1)
-                .mapNotNull {
+                .forEach {
                     if (it == "|---|---|---|---|---|---|---|") {
 //                        println()
-                        return@mapNotNull null
+                        return@forEach
                     }
-                    if (it.startsWith("#")) return@mapNotNull null
+                    if (it.startsWith("#")) return@forEach
                     val parts = it.split("|")
 
                     val persianDate = run {
@@ -91,45 +78,43 @@ class BooksTests {
                             gregorianMonth,
                             gregorianParts[0].toInt()
                         )
-                    };
+                    }
 
-                    {
-                        val message = "$persianDate-$gregorianDate\n_${it}ـ"
+                    val message = "$persianDate-$gregorianDate\n_${it}ـ"
 
-                        assertEquals(
+                    assertEquals(
+                        parts[1].trim(),
+                        gregorianDate.weekDay,
+                        message
+                    )
+                    when (persianDate) {
+                        PersianDate(1285, 10, 1) -> Unit
+
+                        else -> assertEquals(
                             parts[1].trim(),
-                            gregorianDate.weekDay,
+                            persianDate.weekDay,
                             message
                         )
-                        when (persianDate) {
-                            PersianDate(1285, 10, 1) -> Unit
+                    }
+                    assertTrue(
+                        abs(IslamicDate(persianDate).toJdn() - islamicDate.toJdn()) < 3,
+                        message
+                    )
+                    when (persianDate) {
+                        PersianDate(1285, 10, 1) -> Unit
 
-                            else -> assertEquals(
-                                parts[1].trim(),
-                                persianDate.weekDay,
-                                message
-                            )
-                        }
-                        assertTrue(
-                            abs(IslamicDate(persianDate).toJdn() - islamicDate.toJdn()) < 3,
+                        else -> assertEquals(
+                            persianDate.toJdn(),
+                            gregorianDate.toJdn(),
                             message
                         )
-                        when (persianDate) {
-                            PersianDate(1285, 10, 1) -> Unit
-
-                            else -> assertEquals(
-                                persianDate.toJdn(),
-                                gregorianDate.toJdn(),
-                                message
-                            )
-                        }
+                    }
 //                        assertEquals(
 //                            islamicDate.toJdn(),
 //                            gregorianDate.toJdn(),
 //                            "$persianDate-$gregorianDate\n_${it}ـ"
 //                        )
-                    }
-                })
+                }
 
 //        qamari.sortBy { it.first }
 //        print(qamari.groupBy { it.first }.map { g ->

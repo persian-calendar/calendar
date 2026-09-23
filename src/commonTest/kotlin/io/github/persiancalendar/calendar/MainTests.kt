@@ -7,8 +7,7 @@ import io.github.persiancalendar.calendar.util.fixedFromJulian
 import io.github.persiancalendar.calendar.util.gregorianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromFixed
 import io.github.persiancalendar.calendar.util.julianFromJdn
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -352,17 +351,15 @@ class MainTests {
             expected = dates.count { it[0] == IranianIslamicDateConverter.latestSupportedYearOfIran },
             actual = 13,
         )
-        dates.map {
-            {
-                val persianDate = PersianDate(it[0], it[1], it[2])
-                val islamicDate = IslamicDate(it[3], it[4], it[5])
-                assertEquals(
-                    persianDate.toJdn(),
-                    islamicDate.toJdn(),
-                    "$persianDate-$islamicDate",
-                )
-            }
-        }.let(::assertAll)
+        dates.forEach {
+            val persianDate = PersianDate(it[0], it[1], it[2])
+            val islamicDate = IslamicDate(it[3], it[4], it[5])
+            assertEquals(
+                persianDate.toJdn(),
+                islamicDate.toJdn(),
+                "$persianDate-$islamicDate",
+            )
+        }
     }
 
     @Test
@@ -430,8 +427,8 @@ class MainTests {
             PersianDate(1401, 10, 1) to DateTriplet(1401, 10, 1),
             PersianDate(1401, 11, 1) to DateTriplet(1401, 11, 2),
             PersianDate(1401, 12, 1) to DateTriplet(1401, 12, 2),
-        ).map { (date, triplet) ->
-            { assertEquals(triplet, PersianDate.borjiFromJdn(date.toJdn()), "$date") }
-        }.let(::assertAll)
+        ).forEach { (date, triplet) ->
+            assertEquals(triplet, PersianDate.borjiFromJdn(date.toJdn()), "$date")
+        }
     }
 }

@@ -7,19 +7,33 @@ on:
   pull_request:
 
 jobs:
-  build:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            gradle-tasks: jvmTest jsNodeTest linuxX64Test
+          - os: macos-14
+            gradle-tasks: macosArm64Test
+          - os: windows-latest
+            gradle-tasks: mingwX64Test
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v7
         with:
+          # Test data lives in the qamari submodule under src/test/resources.
           submodules: 'true'
           fetch-depth: 1
-      - name: Set up JDK
+
+      - name: Set up JDK 21
         uses: actions/setup-java@v6
         with:
-          java-version: "21"
-          distribution: "temurin"
-      - name: Build with Gradle
-        run: ./gradlew assemble build test
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Test with Gradle
+        shell: bash
+        run: ./gradlew ${{ matrix.gradle-tasks }}
