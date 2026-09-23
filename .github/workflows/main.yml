@@ -15,7 +15,9 @@ jobs:
           - os: ubuntu-latest
             gradle-tasks: jvmTest jsNodeTest linuxX64Test
           - os: macos-14
-            gradle-tasks: macosArm64Test
+            # tvOS/watchOS simulator runtimes aren't preinstalled on hosted
+            # runners, so their test binaries are linked (compiled) but not run.
+            gradle-tasks: macosArm64Test iosSimulatorArm64Test linkDebugTestTvosSimulatorArm64 linkDebugTestWatchosSimulatorArm64
           - os: windows-latest
             gradle-tasks: mingwX64Test
 

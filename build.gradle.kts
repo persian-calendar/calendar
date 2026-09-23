@@ -72,6 +72,14 @@ kotlin {
     macosArm64()
     mingwX64()
 
+    iosArm64()
+    iosSimulatorArm64()
+    tvosArm64()
+    tvosSimulatorArm64()
+    watchosArm64()
+    watchosDeviceArm64()
+    watchosSimulatorArm64()
+
     sourceSets {
         commonTest {
             kotlin.srcDir(generatedTestResourcesDir)
