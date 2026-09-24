@@ -22,8 +22,9 @@ const USER_AGENT =
 
 const MAX_ATTEMPTS = 3;
 
-// Timeout for each untrusted Deno subprocess.
-const EVAL_TIMEOUT_MS = 1000;
+// Timeout for each untrusted Deno subprocess. Includes a little margin for
+// Deno's cold start on the CI runner.
+const EVAL_TIMEOUT_MS = 3000;
 
 // Timeout for each HTTP request, including reading the response body. Node's
 // fetch has no default timeout, so without this a stalled connection would
@@ -56,11 +57,17 @@ function evaluateChallengeExpr(expr) {
   // global scope and print the result. JSON.stringify makes the embedding safe
   // regardless of quotes or backslashes in the expression.
   const code = `console.log(String((0, eval)(${JSON.stringify(expr)})));`;
-  const result = spawnSync('deno', ['run', '--no-config', '--no-prompt', '-'], {
-    input: code,
-    timeout: EVAL_TIMEOUT_MS,
-    encoding: 'utf8',
-  });
+  // --v8-flags caps the V8 heap so a hostile expression can't balloon the
+  // runner's memory before the timeout kills the process.
+  const result = spawnSync(
+    'deno',
+    ['run', '--no-config', '--no-prompt', '--v8-flags=--max-old-space-size=64', '-'],
+    {
+      input: code,
+      timeout: EVAL_TIMEOUT_MS,
+      encoding: 'utf8',
+    },
+  );
 
   if (result.error) {
     throw result.error;
