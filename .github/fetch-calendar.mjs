@@ -3,7 +3,14 @@
 // The site sits behind an ArvanCloud JavaScript challenge. That challenge only
 // computes two cookies (__arcsjs / __arcsjsc) from obfuscated inline JS and
 // then reloads the page. We solve that locally instead of running a headless
-// browser, which keeps the GitHub Actions job fast and dependency-free.
+// browser, which keeps the GitHub Actions job fast.
+//
+// The challenge code is untrusted. It is evaluated inside an isolated V8
+// context (isolated-vm) with no access to process, filesystem, network or any
+// other Node.js host API, and is bounded by time and memory limits. It is never
+// executed with `eval` in the main process.
+
+import ivm from 'isolated-vm';
 
 const URL = 'https://calendar.ut.ac.ir/';
 
@@ -12,6 +19,10 @@ const USER_AGENT =
   '(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 const MAX_ATTEMPTS = 3;
+
+// Limits for the sandbox in which the untrusted challenge code runs.
+const EVAL_TIMEOUT_MS = 1000;
+const EVAL_MEMORY_MB = 16;
 
 // The challenge XORs each character with 6, twice (E(E(value))).
 function xorEncode(s, key = 6) {
@@ -30,7 +41,36 @@ function isChallengePage(html) {
   );
 }
 
-function solveChallenge(html) {
+// Evaluates the untrusted challenge expressions inside an isolated V8 context.
+// The isolate has none of Node.js's host globals (process, Buffer, fetch, ...),
+// no filesystem, network or subprocess access, and is bounded by time and
+// memory limits. Each expression must evaluate to a plain string, which is what
+// the challenge cookies are built from.
+async function evaluateChallenge(exprs) {
+  const isolate = new ivm.Isolate({ memoryLimit: EVAL_MEMORY_MB });
+  try {
+    const context = await isolate.createContext();
+    try {
+      const values = [];
+      for (const expr of exprs) {
+        const value = await context.eval(expr, { timeout: EVAL_TIMEOUT_MS });
+        if (typeof value !== 'string') {
+          throw new Error(
+            `Challenge expression did not evaluate to a string (got ${typeof value})`,
+          );
+        }
+        values.push(value);
+      }
+      return values;
+    } finally {
+      context.release();
+    }
+  } finally {
+    isolate.dispose();
+  }
+}
+
+async function solveChallenge(html) {
   const exprs = [];
   const re = /eval\("((?:[^"\\]|\\.)*)"\)/g;
   let match;
@@ -41,8 +81,19 @@ function solveChallenge(html) {
     return null;
   }
 
-  const valueV1 = (0, eval)(exprs[0]);
-  const value = (0, eval)(exprs[1]);
+  let values;
+  try {
+    values = await evaluateChallenge(exprs.slice(0, 2));
+  } catch (error) {
+    process.stderr.write(
+      `Failed to evaluate the challenge in the sandbox: ${
+        error && error.message ? error.message : error
+      }\n`,
+    );
+    return null;
+  }
+
+  const [valueV1, value] = values;
   const hashV1 = xorEncode(xorEncode(valueV1));
   const hash = xorEncode(xorEncode(value));
 
@@ -71,7 +122,7 @@ async function main() {
       return;
     }
 
-    cookie = solveChallenge(body);
+    cookie = await solveChallenge(body);
     if (!cookie) {
       break;
     }

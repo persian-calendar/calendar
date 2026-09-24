@@ -1,0 +1,7 @@
+{
+  "name": "calendar-github-fetch-tools",
+  "private": true,
+  "dependencies": {
+    "isolated-vm": "^7.0.1"
+  }
+}
