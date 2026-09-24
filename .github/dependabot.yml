@@ -11,7 +11,7 @@ updates:
     interval: weekly
   open-pull-requests-limit: 10
 - package-ecosystem: npm
-  directory: "/.github"
+  directory: "/.github/tools"
   schedule:
     interval: weekly
   open-pull-requests-limit: 10

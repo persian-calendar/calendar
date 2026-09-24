@@ -18,16 +18,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '26'
+          node-version-file: '.github/tools/.nvmrc'
 
       - name: Update the text and notify if is changed
         run: |
-          npm ci --prefix .github --no-audit --no-fund
+          npm ci --prefix .github/tools --no-audit --no-fund
 
           sudo apt-get update
           sudo apt-get install -y html2text
 
-          node --no-node-snapshot .github/fetch-calendar.mjs | html2text -utf8 | python3 -c 'import sys; sys.stdout.write(sys.stdin.read().strip())' > .github/follow-iran-calendar-data.txt
+          node --no-node-snapshot .github/tools/fetch-calendar.mjs | html2text -utf8 | python3 -c 'import sys; sys.stdout.write(sys.stdin.read().strip())' > .github/follow-iran-calendar-data.txt
           # If is empty, revert to what was there at least
           [ -s .github/follow-iran-calendar-data.txt ] || git checkout .github/follow-iran-calendar-data.txt
           [ -z "$(git status -s)" ] || curl -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \

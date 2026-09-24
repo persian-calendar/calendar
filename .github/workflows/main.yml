@@ -39,3 +39,20 @@ jobs:
       - name: Test with Gradle
         shell: bash
         run: ./gradlew ${{ matrix.gradle-tasks }}
+
+  node-tools:
+    name: Node tooling (challenge sandbox)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.github/tools/.nvmrc'
+
+      - name: Install and verify the sandbox
+        run: |
+          npm ci --prefix .github/tools --no-audit --no-fund
+          cd .github/tools
+          node --no-node-snapshot smoke-test.mjs
