@@ -5,12 +5,14 @@
 // then reloads the page. We solve that locally instead of running a headless
 // browser, which keeps the GitHub Actions job fast.
 //
-// The challenge code is untrusted. It is evaluated inside an isolated V8
-// context (isolated-vm) with no access to process, filesystem, network or any
-// other Node.js host API, and is bounded by time and memory limits. It is never
-// executed with `eval` in the main process.
+// The challenge code is untrusted. Each expression is evaluated in a separate
+// Deno subprocess (`deno run --no-config --no-prompt -`). `deno run` denies all
+// permissions by default and `--no-prompt` turns the interactive permission
+// prompt into an automatic denial, so the code has no network, filesystem,
+// environment or subprocess access. The process is also killed if it exceeds
+// the timeout. It is never executed with `eval` in the main process.
 
-import ivm from 'isolated-vm';
+import { spawnSync } from 'node:child_process';
 
 const URL = 'https://calendar.ut.ac.ir/';
 
@@ -20,9 +22,13 @@ const USER_AGENT =
 
 const MAX_ATTEMPTS = 3;
 
-// Limits for the sandbox in which the untrusted challenge code runs.
+// Timeout for each untrusted Deno subprocess.
 const EVAL_TIMEOUT_MS = 1000;
-const EVAL_MEMORY_MB = 16;
+
+// Timeout for each HTTP request, including reading the response body. Node's
+// fetch has no default timeout, so without this a stalled connection would
+// hang the script forever.
+const FETCH_TIMEOUT_MS = 30_000;
 
 // The challenge XORs each character with 6, twice (E(E(value))).
 function xorEncode(s, key = 6) {
@@ -41,33 +47,35 @@ function isChallengePage(html) {
   );
 }
 
-// Evaluates the untrusted challenge expressions inside an isolated V8 context.
-// The isolate has none of Node.js's host globals (process, Buffer, fetch, ...),
-// no filesystem, network or subprocess access, and is bounded by time and
-// memory limits. Each expression must evaluate to a plain string, which is what
-// the challenge cookies are built from.
-async function evaluateChallenge(exprs) {
-  const isolate = new ivm.Isolate({ memoryLimit: EVAL_MEMORY_MB });
-  try {
-    const context = await isolate.createContext();
-    try {
-      const values = [];
-      for (const expr of exprs) {
-        const value = await context.eval(expr, { timeout: EVAL_TIMEOUT_MS });
-        if (typeof value !== 'string') {
-          throw new Error(
-            `Challenge expression did not evaluate to a string (got ${typeof value})`,
-          );
-        }
-        values.push(value);
-      }
-      return values;
-    } finally {
-      context.release();
-    }
-  } finally {
-    isolate.dispose();
+// Evaluates one untrusted challenge expression in a separate Deno process.
+// `deno run` denies all permissions by default, `--no-prompt` makes it deny
+// rather than interactively asking, and `--no-config` ignores any stray
+// deno.json. The process is also killed if it runs past the timeout.
+function evaluateChallengeExpr(expr) {
+  // Embed the expression as a JSON string literal, then eval it in Deno's
+  // global scope and print the result. JSON.stringify makes the embedding safe
+  // regardless of quotes or backslashes in the expression.
+  const code = `console.log(String((0, eval)(${JSON.stringify(expr)})));`;
+  const result = spawnSync('deno', ['run', '--no-config', '--no-prompt', '-'], {
+    input: code,
+    timeout: EVAL_TIMEOUT_MS,
+    encoding: 'utf8',
+  });
+
+  if (result.error) {
+    throw result.error;
   }
+  if (result.status !== 0) {
+    throw new Error(
+      `deno run failed (status ${result.status}): ${result.stderr}`,
+    );
+  }
+
+  const value = result.stdout.trimEnd();
+  if (!value) {
+    throw new Error('deno run produced no output');
+  }
+  return value;
 }
 
 async function solveChallenge(html) {
@@ -83,7 +91,7 @@ async function solveChallenge(html) {
 
   let values;
   try {
-    values = await evaluateChallenge(exprs.slice(0, 2));
+    values = exprs.slice(0, 2).map(evaluateChallengeExpr);
   } catch (error) {
     process.stderr.write(
       `Failed to evaluate the challenge in the sandbox: ${
@@ -105,7 +113,11 @@ async function fetchPage(cookie) {
   if (cookie) {
     headers.cookie = cookie;
   }
-  const res = await fetch(URL, { headers, redirect: 'follow' });
+  const res = await fetch(URL, {
+    headers,
+    redirect: 'follow',
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   return res.text();
 }
 
@@ -115,7 +127,18 @@ async function main() {
   let cookie = '';
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
-    const body = await fetchPage(cookie);
+    let body;
+    try {
+      body = await fetchPage(cookie);
+    } catch (error) {
+      process.stderr.write(
+        `Fetch attempt ${attempt + 1} failed: ${
+          error && error.message ? error.message : error
+        }\n`,
+      );
+      await sleep(1000);
+      continue;
+    }
 
     if (!isChallengePage(body)) {
       process.stdout.write(body);

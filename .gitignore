@@ -6,4 +6,3 @@ local.properties
 kotlin-js-store/
 /bin
 .DS_Store
-node_modules/
