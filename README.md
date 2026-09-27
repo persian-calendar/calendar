@@ -1,6 +1,8 @@
 # Calendar
 [![](https://jitpack.io/v/persian-calendar/calendar.svg)](https://jitpack.io/#persian-calendar/calendar)
 
+Demo: https://persian-calendar.github.io/calendar/
+
 Calendar converter based on http://code.google.com/p/mobile-persian-calendar/ (GPLv2) initially but changed a lot afterward.
 
   ```

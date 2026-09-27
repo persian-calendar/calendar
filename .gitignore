@@ -1,8 +1,10 @@
 /.gradle/
 /.idea/
 /build/
+/web/build/
 /.kotlin
 local.properties
 kotlin-js-store/
 /bin
 .DS_Store
+web/src/webMain/resources/icons/icon-*.png

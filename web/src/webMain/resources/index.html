@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>تبدیل تقویم</title>
+	<link rel="manifest" href="manifest.webmanifest">
+	<meta name="theme-color" content="#2563eb">
+	<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+	<link rel="icon" type="image/png" href="icons/icon-192.png">
+	<link rel="apple-touch-icon" href="icons/icon-192.png">
+	<style>
+:root {
+	color-scheme: light dark;
+	--bg: #f5f7fc;
+	--surface: #ffffff;
+	--text: #202631;
+	--muted: #5b6472;
+	--border: #dde4f0;
+	--accent: #2563eb;
+	--accent-soft: #e8f0fe;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #151923;
+		--surface: #1d2230;
+		--text: #e7eaf2;
+		--muted: #98a2b3;
+		--border: #2e3446;
+		--accent: #4f8cff;
+		--accent-soft: #1c2a4a;
+	}
+}
+
+* { box-sizing: border-box; }
+
+body {
+	font-family: system-ui, Tahoma, sans-serif;
+	max-width: 760px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+	background: var(--bg);
+	color: var(--text);
+}
+
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem 1rem;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+label {
+	display: flex;
+	flex-direction: column;
+	gap: .35rem;
+	font-size: .85rem;
+	color: var(--muted);
+}
+
+label span { text-align: center; }
+
+select, input {
+	min-width: 6.5rem;
+	height: 2.5rem;
+	padding: .4rem .65rem;
+	border: 1px solid var(--border);
+	border-radius: .65rem;
+	background: var(--surface);
+	color: var(--text);
+	font-size: .95rem;
+}
+
+select:focus-visible, input:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 1px;
+	border-color: var(--accent);
+}
+
+#output { margin-top: 1.5rem; text-align: center; }
+
+#output .weekday {
+	margin: 0 0 .4rem;
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: var(--accent);
+}
+
+#output .diff {
+	display: inline-block;
+	margin: 0 0 .9rem;
+	padding: .3rem .85rem;
+	border-radius: 999px;
+	background: var(--accent-soft);
+	color: var(--accent);
+	font-weight: 600;
+}
+
+#output ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1rem;
+}
+
+#output li {
+	width: 9rem;
+	aspect-ratio: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: .3rem;
+	padding: .8rem;
+	border: 1px solid var(--border);
+	border-radius: 1rem;
+	background: var(--surface);
+	text-align: center;
+}
+
+#output li .day {
+	font-size: 2.5rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+#output li .month {
+	font-size: .85rem;
+	font-weight: 600;
+	color: var(--muted);
+}
+
+#output li .date {
+	font-size: .8rem;
+	color: var(--muted);
+	direction: ltr;
+	unicode-bidi: isolate;
+}
+
+#output.animating li {
+	animation: pop .45s cubic-bezier(.2, .8, .3, 1.1);
+}
+
+@keyframes pop {
+	from {
+		opacity: 0;
+		transform: translateY(.6rem) scale(.95);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+footer {
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--border);
+	font-size: .8rem;
+	color: var(--muted);
+	line-height: 1.8;
+}
+	</style>
+</head>
+<body>
+	<h1>تبدیل تقویم</h1>
+	<p>یک تقویم و یک تاریخ را انتخاب کنید؛ معادل آن در تقویم‌های دیگر نشان داده می‌شود.</p>
+
+	<div class="controls">
+		<label for="calendar">
+			<span>تقویم ورودی</span>
+			<select id="calendar"></select>
+		</label>
+		<label for="day">
+			<span>روز</span>
+			<select id="day"></select>
+		</label>
+		<label for="month">
+			<span>ماه</span>
+			<select id="month"></select>
+		</label>
+		<label for="year">
+			<span>سال</span>
+			<input id="year" type="text" inputmode="numeric" dir="ltr" placeholder="مثلاً ۱۴۰۴">
+		</label>
+	</div>
+
+	<div id="output"></div>
+
+	<footer>
+		<p>محاسبهٔ سال‌های شمسی پیش از ۱۳۰۴ برپایهٔ گاهشماری بُرجی (حمل تا حوت) است.</p>
+		<p>تاریخ قمری سال‌های گذشته برپایهٔ پژوهش روزنامه‌های قدیمی است ولی محاسبهٔ سال‌های آینده دقیق نیست.</p>
+	</footer>
+
+	<script>
+		// if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+	</script>
+	<script src="web.js"></script>
+</body>
+</html>
