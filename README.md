@@ -39,8 +39,8 @@ allprojects {
 Now actually add the dependency:
 ```kotlin
 dependencies {
-    implementation("com.github.persian-calendar:calendar:x.y.z")
+    implementation("com.github.persian-calendar:calendar:LATEST_GIT_HASH")
 }
 ```
- 
+
 For other build tools support have a look at [this](https://jitpack.io/#persian-calendar/calendar).
