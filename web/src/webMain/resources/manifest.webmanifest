@@ -1,7 +1,16 @@
 {
   "name": "تبدیل تقویم",
+  "name_localized": {
+    "en": { "value": "Calendar Converter", "lang": "en", "dir": "ltr" }
+  },
   "short_name": "تقویم",
+  "short_name_localized": {
+    "en": { "value": "Calendar", "lang": "en", "dir": "ltr" }
+  },
   "description": "تبدیل تاریخ میان تقویم‌های میلادی، شمسی و قمری",
+  "description_localized": {
+    "en": { "value": "Converting dates between Gregorian, Persian, and Hijri calendars", "lang": "en", "dir": "ltr" }
+  },
   "lang": "fa",
   "dir": "rtl",
   "start_url": "./",
