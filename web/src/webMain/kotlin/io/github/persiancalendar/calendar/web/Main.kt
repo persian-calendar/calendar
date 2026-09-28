@@ -4,10 +4,10 @@ import io.github.persiancalendar.calendar.AbstractDate
 import io.github.persiancalendar.calendar.CivilDate
 import io.github.persiancalendar.calendar.IslamicDate
 import io.github.persiancalendar.calendar.PersianDate
+import io.github.persiancalendar.calendar.web.dom.Date
 import io.github.persiancalendar.calendar.web.dom.DomDivElement
 import io.github.persiancalendar.calendar.web.dom.DomInputElement
 import io.github.persiancalendar.calendar.web.dom.DomSelectElement
-import io.github.persiancalendar.calendar.web.dom.Date
 import io.github.persiancalendar.calendar.web.dom.document
 
 private class CalendarSpec(
@@ -47,7 +47,7 @@ private fun daysInMonth(id: String, year: Int, month: Int): Int {
 
 // Accept both Latin and Persian/Arabic-Indic digits in the year field.
 private fun normalizeDigits(input: String): String = buildString {
-    for (ch in input) {
+    input.forEach { ch ->
         append(
             when (ch) {
                 '۰' -> '0'; '۱' -> '1'; '۲' -> '2'; '۳' -> '3'; '۴' -> '4'
@@ -61,7 +61,7 @@ private fun normalizeDigits(input: String): String = buildString {
 }
 
 private fun toPersianDigits(input: String): String = buildString {
-    for (ch in input) {
+    input.forEach { ch ->
         append(
             when (ch) {
                 '0' -> '۰'; '1' -> '۱'; '2' -> '۲'; '3' -> '۳'; '4' -> '۴'
@@ -117,7 +117,7 @@ fun main() {
     val daySelect = document.getElementById<DomSelectElement>("day") ?: error("day")
     val output = document.getElementById<DomDivElement>("output") ?: error("output")
 
-    for (spec in calendars) {
+    calendars.forEach { spec ->
         val option = document.createElement("option")
         option.textContent = spec.label
         option.setAttribute("value", spec.id)
@@ -134,13 +134,13 @@ fun main() {
         val names = monthNames(currentSpec().id, year)
         val previous = monthSelect.value.toIntOrNull()
         monthSelect.innerHTML = ""
-        for (month in 1..12) {
+        repeat(12) { month ->
             val option = document.createElement("option")
-            option.textContent = monthLabel(names[month - 1], month)
-            option.setAttribute("value", month.toString())
+            option.textContent = monthLabel(names[month], month + 1)
+            option.setAttribute("value", (month + 1).toString())
             monthSelect.appendChild(option)
         }
-        monthSelect.value = if (previous != null) previous.toString() else "1"
+        monthSelect.value = previous?.toString() ?: "1"
     }
 
     fun populateDays() {
@@ -153,19 +153,19 @@ fun main() {
         val previous = daySelect.value.toIntOrNull()
         val maxDay = daysInMonth(currentSpec().id, year, month)
         daySelect.innerHTML = ""
-        for (day in 1..maxDay) {
+        repeat(maxDay) { day ->
             val option = document.createElement("option")
-            option.textContent = toPersianDigits(day.toString())
-            option.setAttribute("value", day.toString())
+            option.textContent = toPersianDigits((day + 1).toString())
+            option.setAttribute("value", (day + 1).toString())
             daySelect.appendChild(option)
         }
         daySelect.value = if (previous != null && previous in 1..maxDay) previous.toString() else "1"
     }
 
     fun refresh(animate: Boolean = false) {
-        val year = normalizeDigits(yearInput.value).toIntOrNull()
-        val month = monthSelect.value.toIntOrNull()
-        val day = daySelect.value.toIntOrNull()
+        val year = normalizeDigits(yearInput.value).toIntOrNull().takeIf { it in -10000..10000 }
+        val month = monthSelect.value.toIntOrNull().takeIf { it in 1..12 }
+        val day = daySelect.value.toIntOrNull().takeIf { it in 1..32 }
         if (year == null || month == null || day == null) {
             output.setAttribute("class", "")
             output.innerHTML = "<p>لطفاً یک سال معتبر وارد کنید.</p>"
