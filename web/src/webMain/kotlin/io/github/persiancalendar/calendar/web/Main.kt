@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package io.github.persiancalendar.calendar.web
 
 import io.github.persiancalendar.calendar.AbstractDate
@@ -8,7 +10,12 @@ import io.github.persiancalendar.calendar.web.dom.Date
 import io.github.persiancalendar.calendar.web.dom.DomDivElement
 import io.github.persiancalendar.calendar.web.dom.DomInputElement
 import io.github.persiancalendar.calendar.web.dom.DomSelectElement
+import io.github.persiancalendar.calendar.web.dom.console
 import io.github.persiancalendar.calendar.web.dom.document
+import io.github.persiancalendar.calendar.web.dom.navigator
+import io.github.persiancalendar.calendar.web.dom.setTimeout
+import io.github.persiancalendar.calendar.web.toPersianDigits
+import kotlin.js.ExperimentalWasmJsInterop
 
 private class CalendarSpec(
     val id: String,
@@ -168,27 +175,16 @@ fun main() {
         val day = daySelect.value.toIntOrNull().takeIf { it in 1..32 }
         if (year == null || month == null || day == null) {
             output.setAttribute("class", "")
-            output.innerHTML = "<p>لطفاً یک سال معتبر وارد کنید.</p>"
+            output.innerHTML = ""
+            val p = document.createElement("p")
+            p.textContent = "لطفاً یک سال معتبر وارد کنید."
+            output.appendChild(p)
             return
         }
         val jdn = dateOf(currentSpec().id, year, month, day).toJdn()
 
         val others = calendars.filter { it.id != currentSpec().id }
         val weekday = weekdayOf(jdn)
-        val rows = others.joinToString("") { target ->
-            val date = dateOf(target.id, jdn)
-            val names = monthNames(target.id, date.year)
-            val dayText = toPersianDigits(date.dayOfMonth.toString())
-            val monthText = "${names[date.month - 1]} (${toPersianDigits(date.month.toString())})"
-            val dateText = "${toPersianDigits(date.year.toString())}/" +
-                "${toPersianDigits(date.month.toString())}/" +
-                toPersianDigits(date.dayOfMonth.toString())
-            "<li>" +
-                "<div class=\"day\">$dayText</div>" +
-                "<div class=\"month\">$monthText</div>" +
-                "<div class=\"date\">$dateText</div>" +
-                "</li>"
-        }
 
         val delta = jdn - todayJdn
         val diffText = when {
@@ -196,8 +192,61 @@ fun main() {
             delta > 0L -> "${toPersianDigits(delta.toString())} روز بعد از امروز"
             else -> "${toPersianDigits((-delta).toString())} روز قبل از امروز"
         }
+
         output.setAttribute("class", if (animate) "animating" else "")
-        output.innerHTML = "<p class=\"weekday\">$weekday</p><p class=\"diff\">$diffText</p><ul>$rows</ul>"
+        output.innerHTML = ""
+
+        val weekdayP = document.createElement("p")
+        weekdayP.setAttribute("class", "weekday")
+        weekdayP.textContent = weekday
+        output.appendChild(weekdayP)
+
+        val diffP = document.createElement("p")
+        diffP.setAttribute("class", "diff")
+        diffP.textContent = diffText
+        output.appendChild(diffP)
+
+        val ul = document.createElement("ul")
+        others.forEach { target ->
+            val date = dateOf(target.id, jdn)
+            val names = monthNames(target.id, date.year)
+            val dayText = toPersianDigits(date.dayOfMonth.toString())
+            val monthText = "${names[date.month - 1]} (${toPersianDigits(date.month.toString())})"
+            val dateText = "${toPersianDigits(date.year.toString())}/" + "${toPersianDigits(date.month.toString())}/" + toPersianDigits(
+                date.dayOfMonth.toString()
+            )
+
+            val li = document.createElement("li")
+
+            val dayDiv = document.createElement("div")
+            dayDiv.setAttribute("class", "day")
+            dayDiv.textContent = dayText
+
+            val monthDiv = document.createElement("div")
+            monthDiv.setAttribute("class", "month")
+            monthDiv.textContent = monthText
+
+            val dateDiv = document.createElement("div")
+            dateDiv.setAttribute("class", "date")
+            dateDiv.textContent = dateText
+
+            li.appendChild(dayDiv)
+            li.appendChild(monthDiv)
+            li.appendChild(dateDiv)
+
+            li.addEventListener("click") {
+                val text = dayText + " " + monthText + " " + toPersianDigits(date.year.toString())
+                navigator.clipboard.writeText(text).then {
+                    li.setAttribute("class", "copied")
+                    setTimeout({ li.setAttribute("class", "") }, 800)
+                }.catch { err ->
+                    console.error("Failed to copy text: ", err)
+                }
+            }
+
+            ul.appendChild(li)
+        }
+        output.appendChild(ul)
     }
 
     // Show today's date (in the selected calendar) on load.

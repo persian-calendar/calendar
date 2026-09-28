@@ -142,6 +142,11 @@ select:focus-visible, input:focus-visible {
 	unicode-bidi: isolate;
 }
 
+#output li.copied {
+	background: var(--accent);
+	transition: background 0.2s;
+}
+
 #output.animating li {
 	animation: pop .45s cubic-bezier(.2, .8, .3, 1.1);
 }
@@ -193,8 +198,8 @@ footer {
 	<div id="output"></div>
 
 	<footer>
-		<p>محاسبهٔ سال‌های شمسی پیش از ۱۳۰۴ برپایهٔ گاهشماری بُرجی (حمل تا حوت) است.</p>
 		<p>تاریخ قمری سال‌های گذشته برپایهٔ پژوهش روزنامه‌های قدیمی است ولی محاسبهٔ سال‌های آینده دقیق نیست.</p>
+		<p>محاسبهٔ سال‌های شمسی پیش از ۱۳۰۴ برپایهٔ گاهشماری بُرجی (حمل تا حوت) است.</p>
 	</footer>
 
 	<script>
