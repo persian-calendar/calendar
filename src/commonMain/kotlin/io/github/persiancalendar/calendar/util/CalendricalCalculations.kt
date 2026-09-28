@@ -26,7 +26,7 @@ private fun mod3(x: Double, a: Int, b: Int): Double =
 private fun poly(indeterminate: Double, coefficients: DoubleArray): Double {
     var sum = coefficients[0]
     var indeterminateRaised = 1.0
-    for (i in 1..<coefficients.size) {
+    (1..<coefficients.size).forEach { i ->
         indeterminateRaised *= indeterminate
         sum += coefficients[i] * indeterminateRaised
     }

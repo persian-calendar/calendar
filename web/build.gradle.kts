@@ -34,7 +34,7 @@ val generateWebIcons = tasks.register("generateWebIcons") {
         webIconsDir.resolve("icon-512.png"),
     )
     doLast {
-        for (size in intArrayOf(192, 512)) {
+        listOf(192, 512).forEach { size ->
             val exit = ProcessBuilder(
                 "rsvg-convert",
                 "-w", size.toString(),

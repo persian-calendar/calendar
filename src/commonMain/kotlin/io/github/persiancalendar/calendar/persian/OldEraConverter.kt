@@ -100,9 +100,9 @@ internal object OldEraConverter {
         supportedYears = monthLength.size / 12
         months = IntArray(monthLength.size)
         var jd = 0
-        for (m in monthLength.indices) {
-            months[m] = jd
-            jd += monthLength[m]
+        monthLength.forEachIndexed { i, d ->
+            months[i] = jd
+            jd += d
         }
         jdSupportEnd = jd + jdSupportStart
     }

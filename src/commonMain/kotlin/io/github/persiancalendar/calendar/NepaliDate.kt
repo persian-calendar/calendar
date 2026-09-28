@@ -285,9 +285,9 @@ class NepaliDate : AbstractDate, YearMonthDate<NepaliDate> {
             months = IntArray(monthsData.size)
 
             var jd = 0
-            for (m in monthsData.indices) {
-                months[m] = jd
-                jd += monthsData[m]
+            monthsData.forEachIndexed { i, d ->
+                months[i] = jd
+                jd += d
             }
             supportedDays = jd
         }
