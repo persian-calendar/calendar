@@ -37,7 +37,7 @@ jobs:
         run: ./gradlew :web:jsBrowserDistribution --no-daemon
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: web/build/dist/js/productionExecutable
 
