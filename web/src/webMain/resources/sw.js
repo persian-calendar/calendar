@@ -3,6 +3,7 @@ const CACHE = 'calendar-converter-v1';
 const PRECACHE = [
   './',
   './index.html',
+  './main.js',
   './web.js',
   './manifest.webmanifest',
   './icons/icon-192.png',

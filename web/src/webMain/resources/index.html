@@ -33,7 +33,9 @@
 	}
 }
 
-* { box-sizing: border-box; }
+* {
+	box-sizing: border-box;
+}
 
 body {
 	max-width: 760px;
@@ -47,11 +49,15 @@ body {
 	font-family: system-ui, 'Segoe UI', 'Noto Sans Arabic', 'DejaVu Sans', sans-serif;
 }
 
-h1, #output li .day {
+h1,
+#output li .day {
 	font-family: Calibri, system-ui, 'Segoe UI', 'Noto Sans Arabic';
 }
 
-button, input, select, optgroup‌ {
+button,
+input,
+select,
+optgroup‌ {
 	font-family: inherit;
 }
 
@@ -71,9 +77,12 @@ label {
 	color: var(--muted);
 }
 
-label span { text-align: center; }
+label span {
+	text-align: center;
+}
 
-select, input {
+select,
+input {
 	min-width: 6.5rem;
 	height: 2.5rem;
 	padding: .4rem .65rem;
@@ -84,22 +93,27 @@ select, input {
 	font-size: .95rem;
 }
 
-select:focus-visible, input:focus-visible {
+select:focus-visible,
+input:focus-visible {
 	outline: 2px solid var(--accent);
 	outline-offset: 1px;
 	border-color: var(--accent);
 }
 
-#output { margin-top: 1.5rem; text-align: center; }
+#output,
+#error {
+	margin-top: 1.5rem;
+	text-align: center;
+}
 
-#output .weekday {
+#output #weekday {
 	margin: 0 0 .4rem;
 	font-size: 1.05rem;
 	font-weight: 700;
 	color: var(--accent);
 }
 
-#output .diff {
+#output #diff {
 	display: inline-block;
 	margin: 0 0 .9rem;
 	padding: .3rem .85rem;
@@ -122,7 +136,7 @@ select:focus-visible, input:focus-visible {
 #output li {
 	width: 9rem;
 	aspect-ratio: 1;
-	display: flex;
+	display: none;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
@@ -132,6 +146,10 @@ select:focus-visible, input:focus-visible {
 	border-radius: 1rem;
 	background: var(--surface);
 	text-align: center;
+}
+
+#output li.is-visible {
+	display: flex;
 }
 
 #output li .day {
@@ -158,21 +176,6 @@ select:focus-visible, input:focus-visible {
 	transition: background 0.2s;
 }
 
-#output.animating li {
-	animation: pop .45s cubic-bezier(.2, .8, .3, 1.1);
-}
-
-@keyframes pop {
-	from {
-		opacity: 0;
-		transform: translateY(.6rem) scale(.95);
-	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-
 footer {
 	margin-top: 2rem;
 	padding-top: 1rem;
@@ -183,6 +186,7 @@ footer {
 }
 	</style>
 </head>
+
 <body>
 	<h1>تبدیل تقویم</h1>
 	<p>یک تقویم و یک تاریخ را انتخاب کنید؛ معادل آن در تقویم‌های دیگر نشان داده می‌شود.</p>
@@ -206,7 +210,14 @@ footer {
 		</label>
 	</div>
 
-	<div id="output"></div>
+	<div id="output">
+		<p id="weekday"></p>
+		<p id="diff">امروز</p>
+		<ul id="cards"></ul>
+	</div>
+	<div id="error">
+		<p>لطفاً سالی معتبر وارد کنید</p>
+	</div>
 
 	<footer>
 		<p>تاریخ قمری سال‌های گذشته برپایهٔ پژوهش روزنامه‌های قدیمی است ولی محاسبهٔ سال‌های آینده دقیق نیست.</p>
@@ -216,6 +227,7 @@ footer {
 	<script>
 		// if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 	</script>
+	<script src="main.js"></script>
 	<script src="web.js"></script>
 </body>
 </html>
