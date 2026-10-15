@@ -57,7 +57,7 @@ h1,
 button,
 input,
 select,
-optgroup‌ {
+optgroup {
 	font-family: inherit;
 }
 
@@ -130,26 +130,58 @@ input:focus-visible {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	gap: 1rem;
 }
 
 #output li {
-	width: 9rem;
+	width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0 solid var(--border);
+	opacity: 0;
+	visibility: hidden;
+	overflow: hidden;
+
 	aspect-ratio: 1;
-	display: none;
+	flex: 0 0 auto;
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: .3rem;
-	padding: .8rem;
-	border: 1px solid var(--border);
+
 	border-radius: 1rem;
 	background: var(--surface);
 	text-align: center;
+	white-space: nowrap;
+
+	transition:
+		width .3s cubic-bezier(.4, 0, .2, 1),
+		margin .3s cubic-bezier(.4, 0, .2, 1),
+		padding .3s cubic-bezier(.4, 0, .2, 1),
+		border-width .3s cubic-bezier(.4, 0, .2, 1),
+		opacity .3s cubic-bezier(.4, 0, .2, 1),
+		background-color .2s linear,
+		visibility 0s linear .3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#output li {
+		transition: none;
+	}
 }
 
 #output li.is-visible {
-	display: flex;
+	width: 9rem;
+	margin: .5rem;
+	padding: .8rem;
+	border-width: 1px;
+	opacity: 1;
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+#output li.copied {
+	background: var(--accent);
 }
 
 #output li .day {
@@ -169,11 +201,6 @@ input:focus-visible {
 	color: var(--muted);
 	direction: ltr;
 	unicode-bidi: isolate;
-}
-
-#output li.copied {
-	background: var(--accent);
-	transition: background 0.2s;
 }
 
 footer {

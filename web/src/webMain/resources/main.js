@@ -173,9 +173,9 @@
 			var card = event.target.closest ? event.target.closest('li[data-copy]') : null;
 			if (!card) return;
 			navigator.clipboard.writeText(card.dataset.copy).then(function () {
-				card.className = 'copied';
+				card.classList.add('copied');
 				setTimeout(function () {
-					card.className = '';
+					card.classList.remove('copied');
 				}, 800);
 			}, function (error) {
 				console.error('Failed to copy text: ', error);
