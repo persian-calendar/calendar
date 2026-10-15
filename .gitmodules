@@ -1,3 +1,4 @@
 [submodule "src/test/resources/qamari"]
 	path = src/test/resources/qamari
 	url = https://github.com/roozbehp/qamari
+	branch = main
