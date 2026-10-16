@@ -49,7 +49,8 @@
 		return String(input).replace(/[۰-۹٠-٩]/g, function (digit) {
 			var code = digit.charCodeAt(0);
 			// ۰ is U+06F0 and ٠ is U+0660; both count up to ۹ / ٩ the same way
-			return String(code <= 0x06F9 ? code - 0x06F0 : code - 0x0660);
+			var base = (code >= 0x06F0 && code <= 0x06F9) ? 0x06F0 : 0x0660;
+			return String(code - base);
 		});
 	}
 
