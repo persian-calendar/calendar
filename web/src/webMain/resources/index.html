@@ -255,10 +255,13 @@ footer {
 		<p>محاسبهٔ سال‌های شمسی پیش از ۱۳۰۴ برپایهٔ گاهشماری بُرجی (حمل تا حوت) است.</p>
 	</footer>
 
-	<script>
-		// if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-	</script>
 	<script src="main.js"></script>
 	<script src="web.js"></script>
+	<script>
+		// if ('serviceWorker' in navigator &&
+		// 	location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+		// 	navigator.serviceWorker.register('sw.js');
+		// }
+	</script>
 </body>
 </html>
