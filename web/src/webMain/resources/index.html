@@ -14,22 +14,29 @@
 	color-scheme: light dark;
 	--bg: #f5f7fc;
 	--surface: #ffffff;
+	--tile: #f1f5fd;
+	--field: #ffffff;
 	--text: #202631;
 	--muted: #5b6472;
 	--border: #dde4f0;
 	--accent: #2563eb;
+	--accent-ink: #ffffff;
 	--accent-soft: #e8f0fe;
+	--glow: #e8f0fe;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
 		--bg: #151923;
 		--surface: #1d2230;
+		--tile: #171c28;
+		--field: #151923;
 		--text: #e7eaf2;
 		--muted: #98a2b3;
 		--border: #2e3446;
 		--accent: #4f8cff;
 		--accent-soft: #1c2a4a;
+		--glow: #1c2a4a;
 	}
 }
 
@@ -38,109 +45,160 @@
 }
 
 body {
-	max-width: 760px;
-	margin: 2rem auto;
-	padding: 0 1rem;
-	background: var(--bg);
+	margin: 0;
+	padding: 1.5rem 1rem 3rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.25rem;
+	min-height: 100vh;
+	background:
+		radial-gradient(60rem 40rem at 50% -10%, var(--glow) 0%, transparent 60%),
+		var(--bg);
 	color: var(--text);
-}
-
-body {
-	font-family: system-ui, 'Segoe UI', 'Noto Sans Arabic', 'DejaVu Sans', sans-serif;
+	font: 16px/1.6 system-ui, 'Segoe UI', 'Noto Sans Arabic', 'DejaVu Sans', sans-serif;
+	-webkit-text-size-adjust: 100%;
 }
 
 h1,
-#output li .day {
+#cards li .day {
 	font-family: Calibri, system-ui, 'Segoe UI', 'Noto Sans Arabic';
 }
 
-button,
-input,
+main {
+	width: 100%;
+	max-width: 44rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+header {
+	text-align: center;
+}
+
+h1 {
+	margin: 0;
+	font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+header p {
+	margin: .4rem 0 0;
+	color: var(--muted);
+	font-size: .9rem;
+}
+
+.panel {
+	display: flex;
+	flex-direction: column;
+	gap: .9rem;
+	padding: 1rem;
+	border: 1px solid var(--border);
+	border-radius: .9rem;
+	background: var(--surface);
+}
+
+.section-title,
+#error p {
+	margin: 0;
+	color: var(--muted);
+	font-size: .8rem;
+	font-weight: 600;
+}
+
+.hint {
+	margin: 0;
+	color: var(--muted);
+	font-size: .78rem;
+	text-align: center;
+}
+
+/* The output and the error message replace each other as the entered date becomes
+   valid or not. */
+[hidden] {
+	display: none !important;
+}
+
+.options {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+	gap: .75rem;
+}
+
+label {
+	display: flex;
+	flex-direction: column;
+	gap: .3rem;
+	font-size: .8rem;
+	font-weight: 600;
+	color: var(--muted);
+}
+
 select,
-optgroup {
-	font-family: inherit;
+input {
+	width: 100%;
+	height: 2.5rem;
+	padding: .4rem .65rem;
+	border: 1px solid var(--border);
+	border-radius: .5rem;
+	background: var(--field);
+	color: var(--text);
+	font: inherit;
+	font-size: .95rem;
 }
 
 #year {
 	text-align: center;
 }
 
-.controls {
-	display: flex;
-	flex-wrap: wrap;
-	gap: .75rem 1rem;
-	align-items: flex-end;
-	justify-content: center;
-}
-
-label {
-	display: flex;
-	flex-direction: column;
-	gap: .35rem;
-	font-size: .85rem;
-	color: var(--muted);
-}
-
-label span {
-	text-align: center;
-}
-
-select,
-input {
-	min-width: 6.5rem;
-	height: 2.5rem;
-	padding: .4rem .65rem;
-	border: 1px solid var(--border);
-	border-radius: .65rem;
-	background: var(--surface);
-	color: var(--text);
-	font-size: .95rem;
-}
-
 select:focus-visible,
 input:focus-visible {
 	outline: 2px solid var(--accent);
 	outline-offset: 1px;
-	border-color: var(--accent);
 }
 
-#output,
-#error {
-	margin-top: 1.5rem;
-	text-align: center;
+.output__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
 }
 
-#output #weekday {
-	margin: 0 0 .4rem;
+#weekday {
+	margin: 0;
 	font-size: 1.05rem;
 	font-weight: 700;
 	color: var(--accent);
 }
 
-#output #diff {
-	display: inline-block;
-	margin: 0 0 .9rem;
-	padding: .3rem .85rem;
+#diff {
+	margin: 0;
+	padding: .2rem .75rem;
 	border-radius: 999px;
 	background: var(--accent-soft);
 	color: var(--accent);
+	font-size: .8rem;
 	font-weight: 600;
 }
 
-#output ul {
+#cards {
 	list-style: none;
-	margin: 0;
-	padding: 0;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+	margin: 0;
+	padding: 0;
 }
 
-#output li {
+/* A card grows out of nothing when it becomes one of the equivalents, so switching
+   calendars does not jump: it collapses its old cards and opens the new ones. */
+#cards li {
 	width: 0;
 	margin: 0;
 	padding: 0;
 	border: 0 solid var(--border);
+	border-radius: .8rem;
 	opacity: 0;
 	visibility: hidden;
 	overflow: hidden;
@@ -153,10 +211,10 @@ input:focus-visible {
 	justify-content: center;
 	gap: .3rem;
 
-	border-radius: 1rem;
-	background: var(--surface);
+	background: var(--tile);
 	text-align: center;
 	white-space: nowrap;
+	cursor: pointer;
 
 	transition:
 		width .3s cubic-bezier(.4, 0, .2, 1),
@@ -165,18 +223,13 @@ input:focus-visible {
 		border-width .3s cubic-bezier(.4, 0, .2, 1),
 		opacity .3s cubic-bezier(.4, 0, .2, 1),
 		background-color .2s linear,
+		color .2s linear,
 		visibility 0s linear .3s;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	#output li {
-		transition: none;
-	}
-}
-
-#output li.is-visible {
-	width: 9rem;
-	margin: .5rem;
+#cards li.is-visible {
+	width: 8.5rem;
+	margin: .25rem;
 	padding: .8rem;
 	border-width: 1px;
 	opacity: 1;
@@ -184,23 +237,31 @@ input:focus-visible {
 	transition-delay: 0s;
 }
 
-#output li.copied {
+#cards li.copied {
+	border-color: var(--accent);
 	background: var(--accent);
+	color: var(--accent-ink);
 }
 
-#output li .day {
+#cards li.copied .month,
+#cards li.copied .date {
+	color: inherit;
+	opacity: .85;
+}
+
+#cards li .day {
 	font-size: 2.5rem;
 	font-weight: 800;
 	line-height: 1;
 }
 
-#output li .month {
+#cards li .month {
 	font-size: .85rem;
 	font-weight: 600;
 	color: var(--muted);
 }
 
-#output li .date {
+#cards li .date {
 	font-size: .8rem;
 	color: var(--muted);
 	direction: ltr;
@@ -208,47 +269,71 @@ input:focus-visible {
 }
 
 footer {
-	margin-top: 2rem;
+	width: 100%;
+	max-width: 44rem;
+	margin-top: auto;
 	padding-top: 1rem;
 	border-top: 1px solid var(--border);
-	font-size: .8rem;
 	color: var(--muted);
-	line-height: 1.8;
+	font-size: .78rem;
+	line-height: 1.9;
+	text-align: center;
+}
+
+footer p {
+	margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#cards li {
+		transition: none;
+	}
 }
 	</style>
 </head>
 
 <body>
-	<h1>تبدیل تقویم</h1>
-	<p>یک تقویم و یک تاریخ را انتخاب کنید؛ معادل آن در تقویم‌های دیگر نشان داده می‌شود.</p>
+	<main>
+		<header>
+			<h1>تبدیل تقویم</h1>
+			<p>یک تقویم و یک تاریخ را انتخاب کنید؛ معادل آن در تقویم‌های دیگر نشان داده می‌شود.</p>
+		</header>
 
-	<div class="controls">
-		<label for="calendar">
-			<span>تقویم ورودی</span>
-			<select id="calendar"></select>
-		</label>
-		<label for="day">
-			<span>روز</span>
-			<select id="day"></select>
-		</label>
-		<label for="month">
-			<span>ماه</span>
-			<select id="month"></select>
-		</label>
-		<label for="year">
-			<span>سال</span>
-			<input id="year" type="text" inputmode="numeric" dir="ltr" placeholder="مثلاً ۱۴۰۴">
-		</label>
-	</div>
+		<div class="panel">
+			<div class="options">
+				<label for="calendar">
+					<span>تقویم ورودی</span>
+					<select id="calendar"></select>
+				</label>
+				<label for="day">
+					<span>روز</span>
+					<select id="day"></select>
+				</label>
+				<label for="month">
+					<span>ماه</span>
+					<select id="month"></select>
+				</label>
+				<label for="year">
+					<span>سال</span>
+					<input id="year" type="text" inputmode="numeric" dir="ltr" placeholder="مثلاً ۱۴۰۴">
+				</label>
+			</div>
+		</div>
 
-	<div id="output">
-		<p id="weekday"></p>
-		<p id="diff">امروز</p>
-		<ul id="cards"></ul>
-	</div>
-	<div id="error">
-		<p>لطفاً سالی معتبر وارد کنید</p>
-	</div>
+		<div class="panel" id="output">
+			<p class="section-title">در تقویم‌های دیگر</p>
+			<div class="output__head">
+				<p id="weekday"></p>
+				<p id="diff">امروز</p>
+			</div>
+			<ul id="cards"></ul>
+			<p class="hint">برای رونوشت یک تاریخ، روی کارتش بزنید.</p>
+		</div>
+
+		<div class="panel" id="error" hidden>
+			<p>لطفاً سالی معتبر وارد کنید</p>
+		</div>
+	</main>
 
 	<footer>
 		<p>تاریخ قمری سال‌های گذشته برپایهٔ پژوهش روزنامه‌های قدیمی است ولی محاسبهٔ سال‌های آینده دقیق نیست.</p>

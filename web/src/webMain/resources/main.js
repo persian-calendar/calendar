@@ -133,13 +133,10 @@
 			var usable = year !== null && year >= -10000 && year <= 10000 &&
 				month >= 1 && month <= 12 && day >= 1 && day <= 32;
 
-			if (!usable) {
-				output.style.display = 'none';
-				error.style.display = 'block';
-				return;
-			}
-			output.style.display = 'block';
-			error.style.display = 'none';
+			// The two panels replace each other, so they are shown and hidden as a pair.
+			output.hidden = !usable;
+			error.hidden = usable;
+			if (!usable) return;
 
 			var jdn = jdnOf(calendarSelect.value, year, month, day);
 			var delta = jdn - todayJdn();
