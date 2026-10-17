@@ -258,10 +258,42 @@ footer {
 	<script src="main.js"></script>
 	<script src="web.js"></script>
 	<script>
-		// if ('serviceWorker' in navigator &&
-		// 	location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-		// 	navigator.serviceWorker.register('sw.js');
-		// }
+		/*
+		 * Offline support, and a page that does not go stale.
+		 *
+		 * The worker itself is the version marker: the build stamps a digest of the page into
+		 * sw.js, so every deploy gives the browser a sw.js it has not seen, which installs a
+		 * new worker, fills a new cache and drops the old one. The browser looks for that on
+		 * its own when the page is opened; the timer and the visibility check below are for a
+		 * page that is left open, since a countdown can sit in a tab for days.
+		 *
+		 * When a new worker takes over a page that was already controlled, a new version is
+		 * live, so the page reloads once to run it. The first install claims the page too, and
+		 * there is nothing to refresh then.
+		 *
+		 * Not on a development server: a cached bundle there would keep serving stale files
+		 * while the page is being worked on.
+		 */
+		if ('serviceWorker' in navigator &&
+			location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+			var hadController = !!navigator.serviceWorker.controller;
+			var reloading = false;
+			navigator.serviceWorker.addEventListener('controllerchange', function () {
+				if (!hadController || reloading) return;
+				reloading = true;
+				location.reload();
+			});
+
+			navigator.serviceWorker.register('sw.js').then(function (registration) {
+				function checkForUpdate() {
+					registration.update();
+				}
+				setInterval(checkForUpdate, 60 * 60 * 1000);
+				document.addEventListener('visibilitychange', function () {
+					if (document.visibilityState === 'visible') checkForUpdate();
+				});
+			});
+		}
 	</script>
 </body>
 </html>

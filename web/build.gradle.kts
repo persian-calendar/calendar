@@ -86,6 +86,8 @@ val webStandalone = tasks.register<Sync>("webStandalone") {
         listOf("main.js", "web.js", "main.js.map", "web.js.map").forEach { dir.resolve(it).delete() }
         val worker = dir.resolve("sw.js")
         if (worker.isFile) {
+            // The BUILD stamped into sw.js is left alone here: the deploy workflow puts the
+            // commit in its place, since that is the only place where a revision is certain.
             worker.writeText(
                 worker.readText().lines()
                     .filterNot { it.contains("'./main.js'") || it.contains("'./web.js'") }

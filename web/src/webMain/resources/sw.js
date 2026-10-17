@@ -1,4 +1,10 @@
-const CACHE = 'calendar-converter-v1';
+// The revision the page was built from, put here when the site is deployed: the browser only
+// looks for a new service worker when sw.js itself has changed, so a deploy has to change it
+// to be noticed. A new worker means a new cache, and `activate` drops the one before it. An
+// ordinary build leaves it at 'dev', where the name of the cache does not matter.
+const BUILD = 'dev';
+
+const CACHE = 'calendar-converter-' + BUILD;
 
 const PRECACHE = [
   './',

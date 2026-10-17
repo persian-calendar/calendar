@@ -36,6 +36,15 @@ jobs:
       - name: Build the static JS bundle
         run: ./gradlew :web:webStandalone --no-daemon
 
+      - name: Stamp the service worker with the commit
+        # The browser only looks for a new service worker when sw.js itself has changed, so
+        # putting the revision inside it is what makes each deploy a new worker, a new cache,
+        # and the end of the one before it. The check afterwards fails the deploy if that line
+        # went missing, rather than publishing a worker whose cache never changes.
+        run: |
+          sed -i "s/const BUILD = 'dev';/const BUILD = '${GITHUB_SHA::12}';/" web/build/dist/js/standalone/sw.js
+          grep -q "const BUILD = '${GITHUB_SHA::12}';" web/build/dist/js/standalone/sw.js
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

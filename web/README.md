@@ -33,7 +33,7 @@ Then open http://localhost:8080/.
 `webStandalone` copies the JS distribution to `web/build/dist/js/standalone/` with `main.js`
 and `web.js` written into `index.html` instead of being loaded as separate files. Publishing
 that directory means publishing one document, with no separate script requests and no chance
-of a cached page running against a newer script:
+of a cached page running against a newer script.
 
 ```sh
 ./gradlew :web:webStandalone
@@ -46,3 +46,8 @@ from the service worker's precache list, which no longer needs them.
 
 Only the JS target is handled. The Wasm build's glue loads a `.wasm` file of its own, and that
 has to stay a separate request, while the JS bundle is self-contained.
+
+The service worker is stamped with the commit at deploy time, not by this task: the
+browser only looks for a new worker when `sw.js` has changed, so putting the revision inside
+it is what turns a deploy into a new cache and the end of the old one. A local build leaves it
+at `'dev'`, where the name of the cache does not matter.
