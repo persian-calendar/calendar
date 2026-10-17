@@ -34,12 +34,14 @@ jobs:
           ./gradlew :web:generateWebIcons
 
       - name: Build the static JS bundle
-        run: ./gradlew :web:jsBrowserDistribution --no-daemon
+        run: ./gradlew :web:webStandalone --no-daemon
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: web/build/dist/js/productionExecutable
+          # The single file build: the scripts are inside index.html, so the site is one
+          # document plus its icons, font, manifest and service worker.
+          path: web/build/dist/js/standalone
 
   deploy:
     needs: build
