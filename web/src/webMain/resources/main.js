@@ -74,19 +74,36 @@
 		CALENDARS.forEach(function (calendar) {
 			calendarSelect.appendChild(option(calendar.id, calendar.label));
 		});
+		// One layer prints the date the card is showing, the other prints the one it is
+		// leaving, so a change can dissolve from the first into the second.
+		function layer(li, name) {
+			var box = document.createElement('div');
+			box.className = 'card__layer card__layer--' + name;
+			if (name === 'previous') box.setAttribute('aria-hidden', 'true');
+			var parts = {};
+			['day', 'month', 'date'].forEach(function (field) {
+				var cell = document.createElement('div');
+				cell.className = field;
+				box.appendChild(cell);
+				parts[field] = cell;
+			});
+			li.appendChild(box);
+			return parts;
+		}
+
 		var cards = CALENDARS.map(function (calendar) {
 			var li = document.createElement('li');
-			var day = document.createElement('div');
-			day.className = 'day';
-			li.appendChild(day);
-			var month = document.createElement('div');
-			month.className = 'month';
-			li.appendChild(month);
-			var date = document.createElement('div');
-			date.className = 'date';
-			li.appendChild(date);
+			var previous = layer(li, 'previous');
+			var current = layer(li, 'current');
 			document.getElementById('cards').appendChild(li);
-			return { calendar: calendar, day: day, month: month, date: date, root: li };
+			return {
+				calendar: calendar,
+				root: li,
+				previous: previous,
+				day: current.day,
+				month: current.month,
+				date: current.date,
+			};
 		});
 		calendarSelect.value = 'persian';
 
@@ -155,16 +172,42 @@
 				var monthText = monthLabel(monthNames(x.calendar.id, year)[month - 1], month);
 				x.root.dataset.copy = dayText + ' ' + monthText + ' ' +
 					year.toLocaleString('fa', { useGrouping: false });
-				x.day.textContent = dayText;
-				x.month.textContent = monthText;
-				x.date.textContent = [
+				setDate(x, dayText, monthText, [
 					year.toLocaleString('fa', { useGrouping: false }),
 					month.toLocaleString('fa'),
 					day.toLocaleString('fa'),
-				].join('/');
+				].join('/'));
 				x.root.classList.toggle('is-visible', x.calendar.id !== calendarSelect.value);
 			});
 		}
+
+		// Moves the old date to the layer that fades out and puts the new one on the layer
+		// that fades in. The class has to come off and the layout settle in between, or a
+		// second change while one is still running would not animate at all.
+		function setDate(x, dayText, monthText, dateText) {
+			var changed = x.day.textContent !== dayText || x.month.textContent !== monthText ||
+				x.date.textContent !== dateText;
+			if (changed && x.day.textContent !== '') {
+				x.previous.day.textContent = x.day.textContent;
+				x.previous.month.textContent = x.month.textContent;
+				x.previous.date.textContent = x.date.textContent;
+				x.root.classList.remove('is-changing');
+				void x.root.offsetWidth;
+				x.root.classList.add('is-changing');
+			}
+			x.day.textContent = dayText;
+			x.month.textContent = monthText;
+			x.date.textContent = dateText;
+		}
+
+		// The class is what starts the dissolve, so it comes off once the new date has
+		// arrived and the next change can start a fresh one.
+		output.addEventListener('animationend', function (event) {
+			var card = event.target.closest ? event.target.closest('li') : null;
+			if (card && event.animationName === 'card-dissolve-in') {
+				card.classList.remove('is-changing');
+			}
+		});
 
 		// Tapping a card copies that date. One listener, so the markup stays a string.
 		output.addEventListener('click', function (event) {

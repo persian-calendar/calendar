@@ -194,6 +194,7 @@ input:focus-visible {
 /* A card grows out of nothing when it becomes one of the equivalents, so switching
    calendars does not jump: it collapses its old cards and opens the new ones. */
 #cards li {
+	position: relative;
 	width: 0;
 	margin: 0;
 	padding: 0;
@@ -209,7 +210,6 @@ input:focus-visible {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: .3rem;
 
 	background: var(--tile);
 	text-align: center;
@@ -247,6 +247,42 @@ input:focus-visible {
 #cards li.copied .date {
 	color: inherit;
 	opacity: .85;
+}
+
+/* A card holds the date twice, so a change dissolves into the next one: the layer on
+   its way out fades exactly as the new one fades in. The old layer is taken out of the
+   flow, leaving the card the size its current content asks for. */
+.card__layer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: .3rem;
+}
+
+.card__layer--previous {
+	position: absolute;
+	inset: 0;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+}
+
+#cards li.is-changing .card__layer--previous {
+	animation: card-dissolve-out 240ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+#cards li.is-changing .card__layer--current {
+	animation: card-dissolve-in 240ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+@keyframes card-dissolve-out {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@keyframes card-dissolve-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
 }
 
 #cards li .day {
@@ -287,6 +323,12 @@ footer p {
 @media (prefers-reduced-motion: reduce) {
 	#cards li {
 		transition: none;
+	}
+
+	/* A new date still replaces the old one, only without the dissolve. */
+	#cards li.is-changing .card__layer--previous,
+	#cards li.is-changing .card__layer--current {
+		animation: none;
 	}
 }
 	</style>
