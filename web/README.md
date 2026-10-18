@@ -4,6 +4,33 @@ A tiny HTML demo of this calendar library.
 
 https://persian-calendar.github.io/calendar/
 
+## Links to a date
+
+The address bar always holds what the page is showing, so copying it gives a link to that
+date, and opening one starts there:
+
+```
+#date=2025-04-04&calendar=gregorian
+#date=1304-04-04&calendar=islamic
+#date=1404-04-04&calendar=persian
+```
+
+It is a fragment rather than a query string, so the address is never sent to the server:
+a link says where it came from to nobody. `?date=…&calendar=…` is still read, for links made
+before that was so, and is rewritten into the fragment as soon as it lands.
+
+`calendar` takes the ICU ids — `gregorian`, `persian` and `islamic` — which are also the
+values of the selector; the library knows the first one as `civil`, and the page maps
+between the two. `date` is `year-month-day` in the named calendar's own year, with the year
+allowed to be negative. Month and day are written padded, and `1404-4-4` is understood just
+as well as `1404-04-04`.
+
+A date the named calendar does not have — a thirteenth month, a thirty-first day of a
+thirty-day month, a year beyond what the page accepts — is shown as an error rather than
+corrected into a neighbouring date, and it is never handed to the library. The address bar
+keeps the link as it arrived until the reader changes a field, so reloading shows the same
+error.
+
 ## Run locally
 
 From the repository root:
