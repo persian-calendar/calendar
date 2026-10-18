@@ -301,9 +301,9 @@
 		}
 
 		function readLink() {
-			// The fragment is where a link lives. A query string is read only for links made
-			// before that was so, and one is rewritten into the fragment as soon as it lands.
-			var params = new URLSearchParams(location.hash.slice(1) || location.search);
+			// The fragment is where a link lives, and it is the one part of an address the
+			// browser never sends to the server.
+			var params = new URLSearchParams(location.hash.slice(1));
 			var calendar = params.get('calendar');
 			if (calendar) {
 				var known = CALENDARS.some(function (entry) { return entry.id === calendar; });

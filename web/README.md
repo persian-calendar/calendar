@@ -16,8 +16,7 @@ date, and opening one starts there:
 ```
 
 It is a fragment rather than a query string, so the address is never sent to the server:
-a link says where it came from to nobody. `?date=…&calendar=…` is still read, for links made
-before that was so, and is rewritten into the fragment as soon as it lands.
+a link says where it came from to nobody.
 
 `calendar` takes the ICU ids — `gregorian`, `persian` and `islamic` — which are also the
 values of the selector; the library knows the first one as `civil`, and the page maps
